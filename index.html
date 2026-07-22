@@ -45,8 +45,8 @@
     </script>
     
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Kakao Official JavaScript SDK -->
-    <script src="https://tapi.kakao.com/v2/api/kakao.min.js"></script>
+    <!-- Kakao Official JavaScript SDK (최신 정식 CDN 주소로 교체) -->
+    <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
 
     <style>
         body {
@@ -565,12 +565,20 @@
     </div>
 
     <script>
-        // Kakao SDK Initialization with provided Javascript Key
-        if (typeof Kakao !== 'undefined') {
-            try {
-                Kakao.init('101f34dcf662b0df8c6e813ca1fbfa8f');
-            } catch(e) {
-                console.warn('Kakao SDK already initialized or error:', e);
+        // Kakao SDK Safe Initialization with Automatic Retry
+        function initKakaoSDK() {
+            if (typeof Kakao !== 'undefined' && Kakao) {
+                try {
+                    if (!Kakao.isInitialized()) {
+                        Kakao.init('101f34dcf662b0df8c6e813ca1fbfa8f');
+                        console.log('Kakao SDK successfully initialized.');
+                    }
+                } catch(e) {
+                    console.warn('Kakao SDK init warning:', e);
+                }
+            } else {
+                // SDK 스크립트 비동기 로딩 대기 후 재시도
+                setTimeout(initKakaoSDK, 300);
             }
         }
 
@@ -664,6 +672,7 @@
         let currentRoleFilter = 'all';
 
         window.onload = function() {
+            initKakaoSDK();
             checkSavedUser();
             applyFilters();
             if (window.lucide && lucide.createIcons) lucide.createIcons();
@@ -729,8 +738,18 @@
 
         // Kakao 1-Second Quick Login Implementation
         function loginWithKakao() {
-            if (typeof Kakao === 'undefined' || !Kakao.isInitialized()) {
-                showToast('카카오 SDK 초기화에 실패하였습니다.');
+            if (typeof Kakao === 'undefined' || !Kakao) {
+                initKakaoSDK();
+                showToast('카카오 SDK를 로딩 중입니다. 1~2초 후 다시 시도해 주세요.');
+                return;
+            }
+
+            if (!Kakao.isInitialized()) {
+                initKakaoSDK();
+            }
+
+            if (!Kakao.isInitialized()) {
+                showToast('카카오 SDK 초기화 중입니다. 잠시 후 다시 눌러주세요.');
                 return;
             }
 
@@ -740,8 +759,12 @@
                         url: '/v2/user/me',
                         success: function(res) {
                             const kakaoAccount = res.kakao_account;
-                            const name = kakaoAccount.profile ? kakaoAccount.profile.nickname : '카카오회원';
-                            const phone = kakaoAccount.phone_number || '010-0000-0000';
+                            const name = (kakaoAccount && kakaoAccount.profile && kakaoAccount.profile.nickname) 
+                                ? kakaoAccount.profile.nickname 
+                                : '카카오회원';
+                            const phone = (kakaoAccount && kakaoAccount.phone_number) 
+                                ? kakaoAccount.phone_number 
+                                : '010-0000-0000';
                             
                             currentUser = { role: 'celeb', name, phone };
                             try {
@@ -764,12 +787,12 @@
                             }
                         },
                         fail: function(error) {
-                            showToast('카카오 유저 정보 요청 실패');
+                            showToast('카카오 유저 정보 요청 실패 (도메인 설정을 확인해주세요)');
                         }
                     });
                 },
                 fail: function(err) {
-                    showToast('카카오 로그인 취소/실패');
+                    showToast('카카오 로그인 도메인 인증 필요 (플랫폼 도메인 등록 필요)');
                 }
             });
         }

@@ -16,6 +16,10 @@
     <meta property="og:image" content="https://changgo-match.vercel.app/og-image.png">
     <meta property="og:url" content="https://changgo-match.vercel.app">
 
+    <!-- PWA Web App Manifest Link -->
+    <link rel="manifest" href="https://changgo-match.vercel.app/manifest.json">
+    <link rel="apple-touch-icon" href="https://changgo-match.vercel.app/og-image.png">
+
     <!-- 트위터 전용 카드 설정 -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="창고의민족 | 창고-셀럽 1초 매칭">
@@ -45,7 +49,7 @@
     </script>
     
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Kakao Official JavaScript SDK (최신 정식 CDN 주소로 교체) -->
+    <!-- Kakao Official JavaScript SDK -->
     <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
 
     <style>
@@ -93,7 +97,7 @@
     <div id="appContainer" class="w-full max-w-[440px] h-screen sm:h-[92vh] bg-baemin-bg sm:rounded-[36px] shadow-2xl flex flex-col relative overflow-hidden border-0 sm:border-8 sm:border-slate-800">
         
         <!-- Mobile Top App Header -->
-        <header class="bg-white border-b border-gray-100 px-4 py-3 flex items-center justify-between shrink-0 z-30 pt-safe shadow-xs">
+        <header class="bg-white border-b border-gray-100 px-3.5 py-3 flex items-center justify-between shrink-0 z-30 pt-safe shadow-xs">
             <div class="flex items-center gap-2">
                 <div class="w-8 h-8 rounded-xl bg-baemin flex items-center justify-center text-white font-black text-sm shadow-sm rotate-[-2deg]">
                     1초
@@ -108,19 +112,24 @@
             </div>
 
             <div class="flex items-center gap-1.5">
+                <button onclick="openAppGuide()" class="text-[10px] font-black text-baemin-dark bg-baemin-light px-2 py-1.5 rounded-xl border border-baemin/30 flex items-center gap-1 touch-active shadow-2xs">
+                    <i data-lucide="smartphone" class="w-3.5 h-3.5 text-baemin"></i>
+                    <span>앱 설치</span>
+                </button>
+
                 <div id="userInfoHeader" class="hidden text-xs font-bold text-gray-700 bg-gray-100 px-2 py-1 rounded-xl flex items-center gap-1">
                     <span id="userRoleBadge" class="text-[9px] bg-baemin text-white px-1 py-0.5 rounded font-black">셀럽</span>
-                    <span id="userNameText" class="truncate max-w-[65px] text-[11px]">사용자</span>
+                    <span id="userNameText" class="truncate max-w-[60px] text-[11px]">사용자</span>
                     <button onclick="logout()" class="text-gray-400 hover:text-rose-500 p-0.5 ml-0.5" title="로그아웃">
                         <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
                     </button>
                 </div>
 
-                <button id="authBtnHeader" onclick="showAuthModal('3초 간편가입 후 연결됩니다.')" class="text-[11px] font-extrabold text-baemin border border-baemin/30 bg-baemin-light/60 px-2.5 py-1.5 rounded-xl touch-active">
+                <button id="authBtnHeader" onclick="showAuthModal('3초 간편가입 후 연결됩니다.')" class="text-[11px] font-extrabold text-baemin border border-baemin/30 bg-baemin-light/60 px-2 py-1.5 rounded-xl touch-active">
                     가입/로그인
                 </button>
 
-                <button onclick="openAdminModal()" class="w-8 h-8 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 flex items-center justify-center font-bold text-xs touch-active" title="어드민">
+                <button onclick="openAdminModal()" class="w-7 h-7 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 flex items-center justify-center font-bold text-xs touch-active" title="어드민">
                     🔑
                 </button>
             </div>
@@ -131,6 +140,23 @@
             <!-- TAB 1: FEED VIEW -->
             <section id="tabFeed" class="space-y-3">
                 
+                <!-- App Install Banner inside Feed -->
+                <div onclick="openAppGuide()" class="bg-slate-900 text-white p-3 rounded-2xl shadow-md flex items-center justify-between cursor-pointer touch-active border border-slate-700">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-xl bg-baemin text-white flex items-center justify-center shrink-0 font-black text-sm">
+                            📲
+                        </div>
+                        <div>
+                            <p class="text-[11px] font-black text-amber-300 flex items-center gap-1">
+                                스마트폰 어플로 바로 설치하기 
+                                <span class="bg-rose-500 text-white text-[8px] font-bold px-1 rounded">추천</span>
+                            </p>
+                            <p class="text-[10px] text-slate-300 mt-0.5">안드로이드 APK 설치 & 아이폰 3초 홈 화면 앱 등록</p>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 shrink-0"></i>
+                </div>
+
                 <div class="bg-gradient-to-r from-baemin-light to-white p-3 rounded-2xl border border-baemin/20 flex items-center justify-between shadow-xs">
                     <div class="flex items-center gap-2.5">
                         <div class="w-8 h-8 rounded-xl bg-baemin/15 text-baemin-dark flex items-center justify-center shrink-0 font-bold">
@@ -144,7 +170,6 @@
                 </div>
 
                 <div class="bg-white p-3 rounded-2xl border border-gray-100 shadow-xs space-y-2.5">
-                    
                     <div class="flex p-0.5 bg-gray-100 rounded-xl text-xs font-bold">
                         <button id="roleFilterAll" onclick="setRoleFilter('all')" class="flex-1 py-1.5 rounded-lg bg-white text-gray-900 shadow-xs text-[11px] font-black transition">
                             전체 보기
@@ -292,7 +317,7 @@
         </main>
 
         <!-- Bottom Fixed Navigation -->
-        <nav class="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2 flex items-center justify-around z-40 safe-area-bottom shadow-lg">
+        <nav class="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-3 py-2 flex items-center justify-around z-40 safe-area-bottom shadow-lg">
             <button id="navFeedBtn" onclick="switchTab('feed')" class="flex flex-col items-center gap-1 text-baemin transition touch-active font-extrabold">
                 <i data-lucide="layout-grid" class="w-5 h-5"></i>
                 <span class="text-[10px]">매칭 피드</span>
@@ -301,12 +326,112 @@
                 <i data-lucide="plus-circle" class="w-5 h-5"></i>
                 <span class="text-[10px]">창고 DB 등록</span>
             </button>
+            <button onclick="openAppGuide()" class="flex flex-col items-center gap-1 text-gray-400 transition touch-active">
+                <i data-lucide="smartphone" class="w-5 h-5"></i>
+                <span class="text-[10px] font-bold">앱 설치 가이드</span>
+            </button>
             <button onclick="openAdminModal()" class="flex flex-col items-center gap-1 text-gray-400 transition touch-active">
                 <i data-lucide="shield-check" class="w-5 h-5"></i>
                 <span class="text-[10px] font-bold">어드민</span>
             </button>
         </nav>
 
+    </div>
+
+    <!-- Modal 0: App Install & Setup Guide Modal -->
+    <div id="appInstallModal" class="fixed inset-0 z-50 flex items-end justify-center modal-backdrop hidden">
+        <div id="appInstallModalCard" class="bg-white w-full max-w-[440px] rounded-t-3xl p-5 space-y-3.5 shadow-2xl bottom-sheet-enter max-h-[88vh] overflow-y-auto">
+            <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto -mt-1 mb-1"></div>
+
+            <div class="flex items-center justify-between border-b border-gray-100 pb-2">
+                <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 bg-baemin text-white rounded-xl flex items-center justify-center font-black text-xs">
+                        📱
+                    </div>
+                    <div>
+                        <h3 class="font-extrabold text-gray-900 text-sm">모바일 앱 설치 & 이용 가이드</h3>
+                        <p class="text-[10px] text-gray-400">스마트폰에서 바탕화면 앱으로 바로 사용하는 방법</p>
+                    </div>
+                </div>
+                <button onclick="closeAppGuide()" class="text-gray-400 p-1">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Operating System Tabs (Android vs iOS) -->
+            <div class="flex p-0.5 bg-gray-100 rounded-xl text-xs font-bold">
+                <button id="guideTabAndroid" onclick="switchGuideTab('android')" class="flex-1 py-2 rounded-lg bg-white text-gray-900 shadow-xs text-xs font-black transition flex items-center justify-center gap-1">
+                    <span>🤖 안드로이드 (APK)</span>
+                </button>
+                <button id="guideTabIos" onclick="switchGuideTab('ios')" class="flex-1 py-2 rounded-lg text-gray-500 text-xs font-bold transition flex items-center justify-center gap-1">
+                    <span>🍎 아이폰 (iOS)</span>
+                </button>
+            </div>
+
+            <!-- Android Section -->
+            <div id="guideSectionAndroid" class="space-y-3">
+                <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-2xl space-y-1">
+                    <p class="text-xs font-black text-emerald-900 flex items-center gap-1">
+                        <i data-lucide="download" class="w-4 h-4 text-emerald-600"></i>
+                        안드로이드 전용 APK 어플 파일
+                    </p>
+                    <p class="text-[11px] text-emerald-800 leading-relaxed">
+                        아래 다운로드 버튼을 눌러 APK 설치 파일을 스마트폰에 직접 받아 실행할 수 있습니다.
+                    </p>
+                </div>
+
+                <div class="bg-gray-50 p-3 rounded-2xl border border-gray-200 space-y-2">
+                    <p class="text-[11px] font-black text-gray-700">📌 안드로이드 앱 설치 순서 (1분 완료)</p>
+                    <ol class="text-xs text-gray-700 space-y-1.5 pl-4 list-decimal leading-relaxed font-medium">
+                        <li>하단 <b>[안드로이드 APK 다운로드]</b> 버튼 클릭</li>
+                        <li>스마트폰에서 다운로드된 <code class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded text-[10px] font-mono">창고의민족.apk</code> 실행</li>
+                        <li><b>'출처를 알 수 없는 앱 설치'</b> 경고가 뜨면 <b>[설정 ➔ 이 출처 허용]</b> 켜기</li>
+                        <li>설치 완료 후 바탕화면에서 <b>창고의민족</b> 앱 터치!</li>
+                    </ol>
+                </div>
+
+                <a href="https://www.webintoapp.com" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs py-3.5 rounded-xl shadow-md touch-active flex items-center justify-center gap-2">
+                    <i data-lucide="download-cloud" class="w-4 h-4"></i>
+                    <span>안드로이드 APK 다운로드 바로가기 ↗</span>
+                </a>
+            </div>
+
+            <!-- iOS Section -->
+            <div id="guideSectionIos" class="hidden space-y-3">
+                <div class="bg-amber-50 border border-amber-200 p-3 rounded-2xl space-y-1">
+                    <p class="text-xs font-black text-amber-900 flex items-center gap-1">
+                        <i data-lucide="sparkles" class="w-4 h-4 text-amber-600"></i>
+                        아이폰 3초 풀스크린 앱 등록
+                    </p>
+                    <p class="text-[11px] text-amber-800 leading-relaxed">
+                        Safari 브라우저에서 [홈 화면에 추가]만 누르면 브라우저 틀이 사라진 <b>진짜 아이폰 어플</b>로 등록됩니다!
+                    </p>
+                </div>
+
+                <div class="bg-gray-50 p-3 rounded-2xl border border-gray-200 space-y-2">
+                    <p class="text-[11px] font-black text-gray-700">📌 아이폰 Safari 3초 설치 방법</p>
+                    <ol class="text-xs text-gray-700 space-y-2 pl-4 list-decimal leading-relaxed font-medium">
+                        <li>
+                            아이폰 기본 브라우저 <b>Safari(사파리)</b>로 본 사이트에 접속
+                        </li>
+                        <li>
+                            하단 중앙의 <b>[공유 ⬆️]</b> 아이콘 버튼을 터치
+                        </li>
+                        <li>
+                            메뉴를 아래로 내려 <b>[홈 화면에 추가]</b> 클릭
+                        </li>
+                        <li>
+                            우측 상단 <b>[추가]</b> 클릭 후 홈 화면의 <b>'창고의민족'</b> 앱 아이콘 실행!
+                        </li>
+                    </ol>
+                </div>
+
+                <button onclick="copySingleValue('https://changgo-match.vercel.app', '웹사이트 URL')" class="w-full bg-slate-900 text-white font-black text-xs py-3.5 rounded-xl shadow-md touch-active flex items-center justify-center gap-2">
+                    <i data-lucide="copy" class="w-4 h-4"></i>
+                    <span>Safari 접속용 URL 주소 복사하기</span>
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- Modal 1: Auth Modal -->
@@ -577,8 +702,55 @@
                     console.warn('Kakao SDK init warning:', e);
                 }
             } else {
-                // SDK 스크립트 비동기 로딩 대기 후 재시도
                 setTimeout(initKakaoSDK, 300);
+            }
+        }
+
+        // App Guide Modal Controllers
+        function openAppGuide() {
+            const modal = document.getElementById('appInstallModal');
+            const card = document.getElementById('appInstallModalCard');
+            if (modal && card) {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    card.classList.remove('bottom-sheet-enter');
+                    card.classList.add('bottom-sheet-active');
+                }, 10);
+            }
+            if (window.lucide && lucide.createIcons) lucide.createIcons();
+        }
+
+        function closeAppGuide() {
+            const modal = document.getElementById('appInstallModal');
+            const card = document.getElementById('appInstallModalCard');
+            if (card) {
+                card.classList.remove('bottom-sheet-active');
+                card.classList.add('bottom-sheet-enter');
+            }
+            setTimeout(() => {
+                if (modal) modal.classList.add('hidden');
+            }, 250);
+        }
+
+        function switchGuideTab(type) {
+            const btnAndroid = document.getElementById('guideTabAndroid');
+            const btnIos = document.getElementById('guideTabIos');
+            const secAndroid = document.getElementById('guideSectionAndroid');
+            const secIos = document.getElementById('guideSectionIos');
+
+            const activeClass = "flex-1 py-2 rounded-lg bg-white text-gray-900 shadow-xs text-xs font-black transition flex items-center justify-center gap-1";
+            const inactiveClass = "flex-1 py-2 rounded-lg text-gray-500 text-xs font-bold transition flex items-center justify-center gap-1";
+
+            if (type === 'android') {
+                btnAndroid.className = activeClass;
+                btnIos.className = inactiveClass;
+                secAndroid.classList.remove('hidden');
+                secIos.classList.add('hidden');
+            } else {
+                btnIos.className = activeClass;
+                btnAndroid.className = inactiveClass;
+                secIos.classList.remove('hidden');
+                secAndroid.classList.add('hidden');
             }
         }
 
@@ -593,7 +765,6 @@
                 .replace(/'/g, '&#039;');
         }
 
-        // Global State Variables
         let currentUser = null;
         let pendingAction = null;
         let activeDetailPostId = null;
@@ -736,7 +907,6 @@
             if (window.lucide && lucide.createIcons) lucide.createIcons();
         }
 
-        // Kakao 1-Second Quick Login Implementation
         function loginWithKakao() {
             if (typeof Kakao === 'undefined' || !Kakao) {
                 initKakaoSDK();
@@ -927,7 +1097,6 @@
                         <div class="bg-gray-50 p-2 rounded-xl border border-gray-100 flex items-center justify-between text-[11px] text-gray-500 pointer-events-none">
                             <span class="truncate">작성: <strong class="text-gray-800 font-bold">${escapeHtml(item.writerInfo || '회원')}</strong></span>
                             
-                            <!-- Static view-only stats -->
                             <div class="flex items-center gap-2 shrink-0">
                                 <span class="flex items-center gap-0.5 text-[10px] text-gray-400">
                                     <i data-lucide="eye" class="w-3 h-3 text-baemin"></i>
@@ -1049,7 +1218,6 @@
 
             activeDetailPostId = id;
 
-            // Increment views ONLY when opening detail modal
             post.views += 1;
             savePostsToStorage();
             applyFilters();
@@ -1168,7 +1336,6 @@
             }
         }
 
-        // Toggle Like INSIDE Modal ONLY
         function toggleLikeInModal() {
             if (!activeDetailPostId) return;
             const post = posts.find(p => p.id === activeDetailPostId);

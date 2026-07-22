@@ -48,8 +48,11 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Kakao Official JavaScript SDK -->
     <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
-    <!-- Supabase Official JavaScript Client for Real-time Central DB -->
+    <!-- Supabase Official JavaScript Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Firebase Official Compatibility SDKs for Push Notifications -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
 
     <style>
         body {
@@ -168,7 +171,7 @@
 
     <div id="appContainer" class="w-full max-w-[440px] h-screen sm:h-[92vh] bg-baemin-bg sm:rounded-[36px] shadow-2xl flex flex-col relative overflow-hidden border-0 sm:border-8 sm:border-slate-800">
         
-        <!-- Mobile Top Header -->
+        <!-- Mobile Top Header (Guarded against text overflow breaking) -->
         <header class="bg-white border-b border-gray-100 px-2.5 py-2.5 flex items-center justify-between shrink-0 z-30 pt-safe shadow-xs whitespace-nowrap overflow-hidden">
             <div class="flex items-center gap-1.5 min-w-0 shrink-0">
                 <div class="w-7 h-7 rounded-xl bg-baemin flex items-center justify-center text-white font-black text-xs shadow-sm rotate-[-2deg] shrink-0">
@@ -209,10 +212,9 @@
 
         <main id="scrollableArea" class="flex-1 overflow-y-auto p-3 space-y-3 pb-24 hide-scrollbar">
 
-            <!-- TAB 1: FEED VIEW -->
             <section id="tabFeed" class="space-y-3">
                 
-                <!-- App Install Banner inside Feed -->
+                <!-- App Install & Push Banner -->
                 <div onclick="openAppGuide()" class="bg-slate-900 text-white p-3 rounded-2xl shadow-md flex items-center justify-between cursor-pointer touch-active border border-slate-700">
                     <div class="flex items-center gap-2.5">
                         <div class="w-8 h-8 rounded-xl bg-baemin text-white flex items-center justify-center shrink-0 font-black text-sm">
@@ -220,10 +222,10 @@
                         </div>
                         <div>
                             <p class="text-[11px] font-black text-amber-300 flex items-center gap-1">
-                                스마트폰 어플로 바로 설치하기 
+                                스마트폰 홈 화면 앱 설치 & 알림 수신
                                 <span class="bg-rose-500 text-white text-[8px] font-bold px-1 rounded">추천</span>
                             </p>
-                            <p class="text-[10px] text-slate-300 mt-0.5">안드로이드 APK 설치 & 아이폰 3초 홈 화면 앱 등록</p>
+                            <p class="text-[10px] text-slate-300 mt-0.5">안드로이드 APK 및 아이폰 3초 홈 화면 푸시 알림 수신</p>
                         </div>
                     </div>
                     <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 shrink-0"></i>
@@ -403,8 +405,8 @@
                         📱
                     </div>
                     <div>
-                        <h3 class="font-extrabold text-gray-900 text-sm">모바일 앱 설치 & 이용 가이드</h3>
-                        <p class="text-[10px] text-gray-400">스마트폰에서 바탕화면 앱으로 바로 사용하는 방법</p>
+                        <h3 class="font-extrabold text-gray-900 text-sm">모바일 앱 설치 & 알림 설정 가이드</h3>
+                        <p class="text-[10px] text-gray-400">스마트폰에서 바탕화면 앱으로 등록 및 푸시 알림 받기</p>
                     </div>
                 </div>
                 <button onclick="closeAppGuide()" class="text-gray-400 p-1">
@@ -439,14 +441,16 @@
             </div>
 
             <div id="guideSectionIos" class="hidden space-y-3">
-                <div class="bg-amber-50 border border-amber-200 p-3 rounded-2xl space-y-1">
+                <div class="bg-amber-50 border border-amber-200 p-3 rounded-2xl space-y-2">
                     <p class="text-xs font-black text-amber-900 flex items-center gap-1">
-                        <i data-lucide="sparkles" class="w-4 h-4 text-amber-600"></i>
-                        아이폰 3초 풀스크린 앱 등록
+                        <i data-lucide="bell-ring" class="w-4 h-4 text-amber-600"></i>
+                        아이폰 푸시 알림 수신 방법 (필수!)
                     </p>
-                    <p class="text-[11px] text-amber-800 leading-relaxed">
-                        Safari 브라우저에서 [홈 화면에 추가]를 누르면 어플 형태로 등록됩니다.
-                    </p>
+                    <div class="text-[11px] text-amber-900 space-y-1 font-medium leading-relaxed">
+                        <p>1. Safari 하단 중앙 <span class="bg-amber-200 font-bold px-1 rounded">공유 버튼 (⎘)</span> 클릭</p>
+                        <p>2. 메뉴에서 <span class="bg-amber-200 font-bold px-1 rounded">[홈 화면에 추가]</span> 선택</p>
+                        <p>3. 바탕화면에 생성된 앱으로 실행 시 <span class="bg-amber-200 font-bold px-1 rounded">알림 수신 허용</span> 완료!</p>
+                    </div>
                 </div>
 
                 <button onclick="copySingleValue('https://changgo-match.vercel.app', '웹사이트 URL')" class="w-full bg-slate-900 text-white font-black text-xs py-3.5 rounded-xl shadow-md touch-active flex items-center justify-center gap-2">
@@ -706,26 +710,81 @@
         </div>
     </div>
 
+    <!-- Toast Notification -->
     <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-gray-900/90 text-white text-xs font-bold px-4 py-2 rounded-full shadow-2xl transition duration-300 opacity-0 pointer-events-none flex items-center gap-1.5 border border-white/10">
         <i data-lucide="info" class="w-3.5 h-3.5 text-baemin"></i>
         <span id="toastMsg">메시지</span>
     </div>
 
     <script>
-        // Real-time Central DB Hardcoded Credentials
+        // Supabase Realtime Central DB Credentials
         const SUPABASE_URL = 'https://faodjxlwoxlupgyptdqy.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_34MMUjfGZotegjHeGQEWXg__6LmjTaf';
 
-        let supabaseClient = null;
+        // Firebase Cloud Messaging (FCM) Credentials
+        const firebaseConfig = {
+            apiKey: "AIzaSyBVXxaASh3JFjyXxNSyCsqBBBrS0GOf8PE",
+            authDomain: "changgo-match.firebaseapp.com",
+            projectId: "changgo-match",
+            storageBucket: "changgo-match.firebasestorage.app",
+            messagingSenderId: "87959949264",
+            appId: "1:87959949264:web:7711ed81bd31afb62273d5",
+            measurementId: "G-YCKLXNH61B"
+        };
+        const VAPID_KEY = "BG-wm8HHOuBSK5GUzqn_K6OjIO7KfYmVLmKrkcg0HHU8HlqrP-1z6bvXvv4k5Z0Uqc_gdJDfYvHx0BkhZ4_uzMw";
 
-        // Initialize Supabase Client immediately
+        let supabaseClient = null;
+        let firebaseMessaging = null;
+
+        // Initialize Supabase Client
         try {
             if (typeof supabase !== 'undefined') {
                 supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-                console.log('Supabase initialized with hardcoded credentials.');
             }
         } catch(e) {
             console.error('Supabase init error:', e);
+        }
+
+        // Initialize Firebase SDK & Web Push Notifications
+        function initFirebaseMessaging() {
+            try {
+                if (typeof firebase !== 'undefined') {
+                    if (!firebase.apps.length) {
+                        firebase.initializeApp(firebaseConfig);
+                    }
+                    firebaseMessaging = firebase.messaging();
+
+                    // Register Service Worker and request Push Permission
+                    if ('serviceWorker' in navigator && 'Notification' in window) {
+                        navigator.serviceWorker.register('/firebase-messaging-sw.js')
+                            .then((registration) => {
+                                console.log('Service Worker Registered successfully:', registration.scope);
+                                return firebaseMessaging.getToken({
+                                    serviceWorkerRegistration: registration,
+                                    vapidKey: VAPID_KEY
+                                });
+                            })
+                            .then((currentToken) => {
+                                if (currentToken) {
+                                    console.log('FCM Push Token generated:', currentToken);
+                                }
+                            })
+                            .catch((err) => {
+                                console.log('Push notification permission or SW init note:', err);
+                            });
+
+                        // Foreground message listener
+                        firebaseMessaging.onMessage((payload) => {
+                            console.log('Foreground message received:', payload);
+                            const title = payload.notification?.title || '창고의민족 알림';
+                            const body = payload.notification?.body || '새 메시지가 도착했습니다.';
+                            showToast(`🔔 ${title}: ${body}`);
+                        });
+                    }
+                }
+            } catch(e) {
+                console.warn('Firebase Messaging Init Notice:', e);
+            }
         }
 
         // Automatic Splash Screen Controller
@@ -824,7 +883,6 @@
         let posts = [];
         let currentRoleFilter = 'warehouse'; // Default strict tab: Warehouse
 
-        // Mapping App Posts to Supabase Row
         function mapPostToSupabaseRow(p) {
             return {
                 id: String(p.id),
@@ -849,7 +907,6 @@
             };
         }
 
-        // Mapping Supabase Row to App Posts
         function mapRowToAppPost(row) {
             let extra = {};
             try {
@@ -880,7 +937,6 @@
             };
         }
 
-        // Synchronize Posts from Central DB
         async function syncFromCentralDB() {
             if (supabaseClient) {
                 try {
@@ -903,9 +959,10 @@
 
         // Window Load Initialization
         window.onload = function() {
-            setTimeout(hideSplashScreen, 2000);
+            setTimeout(hideSplashScreen, 1800);
 
             initKakaoSDK();
+            initFirebaseMessaging();
             checkSavedUser();
             
             // Subscribe to real-time changes
@@ -1065,7 +1122,6 @@
             if (window.lucide && lucide.createIcons) lucide.createIcons();
         }
 
-        // Role Filter Controller (Strict Separation)
         function setRoleFilter(role) {
             currentRoleFilter = role;
             const whBtn = document.getElementById('roleFilterWh');
@@ -1499,7 +1555,6 @@
             }
         }
 
-        // Form Submission with Instant Role Tab Switch & Realtime DB Sync
         async function handleFormSubmit(event) {
             event.preventDefault();
 
@@ -1575,7 +1630,7 @@
             setRoleFilter(role);
             switchTab('feed');
 
-            showToast('매칭 DB가 등록되었습니다! 🎉');
+            showToast('매칭 DB가 성공적으로 등록되었습니다! 🎉');
 
             // 5. Asynchronous Push to Supabase
             if (supabaseClient) {
@@ -1796,7 +1851,7 @@
             setTimeout(() => {
                 toast.classList.remove('opacity-100');
                 toast.classList.add('opacity-0', 'pointer-events-none');
-            }, 2000);
+            }, 2200);
         }
     </script>
 </body>

@@ -971,11 +971,6 @@
         }
 
         function openInquiryModal() {
-            if (!currentUser) {
-                showAuthModal('1:1 문의 이용을 위해 3초 간편가입이 필요합니다.', () => openInquiryModal());
-                return;
-            }
-
             loadInquiries();
             renderInquiries();
 
@@ -1038,6 +1033,19 @@
         function renderInquiries() {
             const container = document.getElementById('inquiryListContainer');
             if (!container) return;
+
+            if (!currentUser) {
+                container.innerHTML = `
+                    <div class="p-4 text-center bg-amber-50 rounded-2xl border border-amber-200 space-y-2">
+                        <p class="text-xs font-black text-amber-900">🔒 비밀 문의 내역 확인 및 작성</p>
+                        <p class="text-[10px] text-amber-700">작성하신 문의 내역을 보시려면 간편가입/로그인이 필요합니다.</p>
+                        <button onclick="showAuthModal('1:1 문의 작성을 위해 3초 간편가입이 필요합니다.', () => openInquiryModal())" class="bg-amber-400 text-gray-900 font-black text-xs px-3 py-1.5 rounded-xl touch-active shadow-xs">
+                            3초 간편가입/로그인하기
+                        </button>
+                    </div>
+                `;
+                return;
+            }
 
             if (inquiries.length === 0) {
                 container.innerHTML = `

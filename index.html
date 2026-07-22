@@ -9,7 +9,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <title>창고의민족 - 창고-셀럽 1초 매칭</title>
 
-    <!-- 카카오톡 / SNS 링크 공유 썸네일 & 설명 설정 (OG 태그) -->
+    <!-- SNS OpenGraph Meta Tags -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="창고의민족 | 창고-셀럽 1초 매칭">
     <meta property="og:description" content="오픈카톡보다 10배 빠른 B2B 창고/재고 직거래 및 셀럽 라이브 커머스 매칭 플랫폼!">
@@ -20,7 +20,7 @@
     <link rel="manifest" href="https://changgo-match.vercel.app/manifest.json">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
-    <!-- 트위터 전용 카드 설정 -->
+    <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="창고의민족 | 창고-셀럽 1초 매칭">
     <meta name="twitter:description" content="오픈카톡보다 10배 빠른 창고-셀럽 매칭 플랫폼">
@@ -52,6 +52,8 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Kakao Official JavaScript SDK -->
     <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
+    <!-- Supabase Official JavaScript Client for Real-time Central DB -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
         body {
@@ -123,34 +125,25 @@
             </span>
         </div>
 
-        <!-- Center Graphic Artwork Section (첨부 이미지 반영) -->
+        <!-- Center Graphic Artwork Section -->
         <div class="flex flex-col items-center justify-center text-center space-y-4 my-auto animate-pulse-glow">
             
-            <!-- Graphic Container Badge -->
             <div class="relative w-64 h-64 sm:w-72 sm:h-72 bg-[#FFDF00] rounded-3xl p-4 flex flex-col items-center justify-center">
                 
-                <!-- Background Ray Effect -->
                 <div class="absolute inset-0 bg-gradient-to-tr from-amber-400/30 to-yellow-100/50 rounded-3xl -z-10 blur-xl"></div>
 
                 <!-- Warehouse & Lightning Vector Illustration -->
                 <div class="relative w-48 h-40 flex items-center justify-center mb-2">
-                    
-                    <!-- Warehouse Graphic -->
                     <svg class="w-36 h-36 text-gray-900 drop-shadow-md" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Roof & Outer Wall -->
                         <path d="M50 12L12 36V88H88V36L50 12Z" fill="#FFFFFF" stroke="#1E1E1E" stroke-width="7" stroke-linejoin="round"/>
-                        <!-- Inner Door / Storage -->
                         <rect x="28" y="44" width="44" height="44" rx="4" fill="#6B5B4E" stroke="#1E1E1E" stroke-width="5"/>
-                        <!-- Cargo Boxes -->
                         <rect x="36" y="62" width="13" height="13" rx="2" fill="#E5A93C" stroke="#1E1E1E" stroke-width="3"/>
                         <rect x="51" y="62" width="13" height="13" rx="2" fill="#E5A93C" stroke="#1E1E1E" stroke-width="3"/>
                         <rect x="43" y="49" width="14" height="14" rx="2" fill="#F3BF59" stroke="#1E1E1E" stroke-width="3"/>
-                        <!-- Ventilation Lines -->
                         <line x1="42" y1="26" x2="58" y2="26" stroke="#1E1E1E" stroke-width="4" stroke-linecap="round"/>
                         <line x1="42" y1="32" x2="58" y2="32" stroke="#1E1E1E" stroke-width="4" stroke-linecap="round"/>
                     </svg>
 
-                    <!-- Lightning Bolt Badge -->
                     <div class="absolute -right-1 -top-1 bg-[#FFE600] border-4 border-gray-900 p-2 rounded-2xl shadow-lg rotate-12">
                         <svg class="w-10 h-10 text-amber-500 fill-amber-400" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
@@ -158,7 +151,6 @@
                     </div>
                 </div>
 
-                <!-- 1초 창고매칭 Banner Box -->
                 <div class="w-full bg-gray-900 text-white rounded-2xl py-3 px-4 shadow-xl border-2 border-gray-900 transform -rotate-1">
                     <div class="flex items-center justify-center gap-1.5">
                         <span class="text-3xl font-black text-white tracking-tighter">1초</span>
@@ -168,19 +160,16 @@
 
             </div>
 
-            <!-- Sub Text Header -->
             <div>
                 <h1 class="text-2xl font-black text-gray-900 tracking-tight">창고의민족</h1>
                 <p class="text-xs font-bold text-gray-800 mt-1">창고주와 셀럽을 1초 만에 직접 연결합니다</p>
             </div>
 
-            <!-- Loading Spinner Bar -->
             <div class="w-32 bg-black/10 h-1.5 rounded-full overflow-hidden mt-4">
                 <div class="bg-gray-900 h-full w-full animate-pulse rounded-full"></div>
             </div>
         </div>
 
-        <!-- Bottom App Developer Credits (어플 개발자 - 아르더스튜디오 -) -->
         <div class="w-full text-center pb-6 space-y-1">
             <p class="text-[11px] font-black text-gray-900 tracking-wider">
                 어플 개발자 <span class="mx-1 font-bold text-gray-700">|</span> <span class="bg-gray-900 text-[#FFDF00] px-2.5 py-0.5 rounded-md font-black">아르더스튜디오</span>
@@ -200,9 +189,9 @@
                 <div>
                     <h1 class="font-extrabold text-base text-gray-900 tracking-tight leading-none flex items-center gap-1">
                         창고의민족
-                        <span class="bg-baemin-light text-baemin-dark text-[9px] font-black px-1.5 py-0.5 rounded-full border border-baemin/20">LIVE</span>
+                        <span id="dbStatusBadge" class="bg-emerald-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full shadow-xs">중앙DB 연동완료</span>
                     </h1>
-                    <p class="text-[10px] text-gray-400 font-medium mt-0.5">오픈카톡 DB 1초 연결</p>
+                    <p class="text-[10px] text-gray-400 font-medium mt-0.5">실시간 매칭 DB 가동 중</p>
                 </div>
             </div>
 
@@ -453,7 +442,6 @@
                 </button>
             </div>
 
-            <!-- Operating System Tabs (Android vs iOS) -->
             <div class="flex p-0.5 bg-gray-100 rounded-xl text-xs font-bold">
                 <button id="guideTabAndroid" onclick="switchGuideTab('android')" class="flex-1 py-2 rounded-lg bg-white text-gray-900 shadow-xs text-xs font-black transition flex items-center justify-center gap-1">
                     <span>🤖 안드로이드 (APK)</span>
@@ -485,13 +473,15 @@
                     </ol>
                 </div>
 
+                <!-- APK Direct Download Button -->
                 <a href="https://drive.google.com/uc?export=download&confirm=no&id=1wtglv4eohumEnEYwRB6WiGqcwymkVfm_" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs py-3.5 rounded-xl shadow-md touch-active flex items-center justify-center gap-2">
                     <i data-lucide="download-cloud" class="w-4 h-4"></i>
                     <span>안드로이드 APK 다운로드 바로가기 ↗</span>
                 </a>
 
+                <!-- Google Drive Download Notice -->
                 <p class="text-[10px] text-gray-500 text-center font-medium leading-relaxed">
-                    💡 구글 드라이브 연결 시 '바이러스 검사' 또는 '미리보기 없음' 안내가 나오면 <b>[다운로드]</b> 및 <b>[그래도 다운로드]</b>를 눌러주시면 바로 설치됩니다.
+                    💡 구글 드라이브 연결 시 <b>[다운로드]</b> 및 <b>[그래도 다운로드]</b>를 눌러주시면 바로 설치됩니다.
                 </p>
             </div>
 
@@ -630,7 +620,6 @@
                     게시글 제목
                 </h4>
 
-                <!-- 상세 긴글 영역 -->
                 <div class="bg-gray-50 p-3.5 rounded-2xl border border-gray-100 space-y-1.5">
                     <p class="text-[11px] font-black text-gray-500 uppercase">📢 창고 상세 홍보 내용</p>
                     <div id="modalFullDesc" class="text-xs text-gray-800 leading-relaxed font-medium whitespace-pre-line break-words max-h-[220px] overflow-y-auto hide-scrollbar">
@@ -638,7 +627,6 @@
                     </div>
                 </div>
 
-                <!-- 모달 내부 반응 & 추천 버튼 영역 -->
                 <div class="bg-baemin-subtle p-2.5 rounded-xl border border-baemin/20 flex items-center justify-between text-xs">
                     <div class="flex items-center gap-1.5 text-gray-600 font-bold text-[11px]">
                         <i data-lucide="eye" class="w-4 h-4 text-baemin"></i>
@@ -693,7 +681,7 @@
             <div id="adminMainContent" class="hidden flex-1 overflow-hidden flex flex-col space-y-3">
                 <div class="grid grid-cols-3 gap-1.5 shrink-0">
                     <div class="bg-baemin-light p-2 rounded-xl text-center border border-baemin/20">
-                        <p class="text-[9px] font-bold text-baemin-dark">회원 DB</p>
+                        <p class="text-[9px] font-bold text-baemin-dark">가입 유저</p>
                         <p id="adminStatUserCount" class="text-base font-black text-gray-900">0명</p>
                     </div>
                     <div class="bg-purple-50 p-2 rounded-xl text-center border border-purple-200">
@@ -701,12 +689,12 @@
                         <p id="adminStatPostCount" class="text-base font-black text-gray-900">0개</p>
                     </div>
                     <div class="bg-amber-50 p-2 rounded-xl text-center border border-amber-200">
-                        <p class="text-[9px] font-bold text-amber-800">조회수</p>
+                        <p class="text-[9px] font-bold text-amber-800">누적 조회</p>
                         <p id="adminStatMatchCount" class="text-base font-black text-gray-900">0회</p>
                     </div>
                 </div>
 
-                <div class="flex border-b border-gray-100 gap-3 text-xs font-bold shrink-0">
+                <div class="flex border-b border-gray-100 gap-2 text-xs font-bold shrink-0">
                     <button id="adminTabUserBtn" onclick="switchAdminTab('users')" class="pb-1.5 border-b-2 border-baemin text-baemin font-black text-[11px]">
                         가입자 DB
                     </button>
@@ -714,7 +702,7 @@
                         게시글 관리
                     </button>
                     <button id="adminTabSettingsBtn" onclick="switchAdminTab('settings')" class="pb-1.5 border-b-2 border-transparent text-gray-400 text-[11px]">
-                        ⚙️ 비번 변경
+                        ⚙️ DB & 비번
                     </button>
                 </div>
 
@@ -745,18 +733,49 @@
 
                 <!-- Section 2: Posts Management -->
                 <div id="adminSectionPosts" class="hidden flex-1 overflow-y-auto space-y-1.5 hide-scrollbar">
+                    <div class="flex items-center justify-between pb-1">
+                        <span class="text-[11px] font-bold text-gray-500">실시간 매칭 DB 목록</span>
+                        <button onclick="clearAllPostsAdmin()" class="bg-rose-600 text-white text-[10px] font-black px-2 py-1 rounded-lg touch-active">
+                            ⚠️ 전체 삭제
+                        </button>
+                    </div>
                     <div id="adminPostListContainer" class="space-y-1.5">
                         <!-- Dynamic -->
                     </div>
                 </div>
 
-                <!-- Section 3: Admin Settings & Password Change -->
-                <div id="adminSectionSettings" class="hidden flex-1 overflow-y-auto space-y-3 hide-scrollbar pt-2">
+                <!-- Section 3: Admin Settings & Supabase Central DB Setup -->
+                <div id="adminSectionSettings" class="hidden flex-1 overflow-y-auto space-y-3 hide-scrollbar pt-1">
+                    
+                    <!-- Supabase DB Configuration Card -->
+                    <div class="bg-emerald-50 p-3 rounded-2xl border border-emerald-200 space-y-2">
+                        <h4 class="text-xs font-black text-emerald-950 flex items-center gap-1">
+                            🌐 실시간 중앙 DB (Supabase) 정보
+                        </h4>
+                        <p class="text-[10px] text-emerald-800 leading-relaxed">
+                            연동된 Supabase 프로젝트 URL과 Publishable Key 정보입니다.
+                        </p>
+                        
+                        <div class="space-y-1.5">
+                            <div>
+                                <label class="block text-[10px] font-bold text-emerald-900 mb-0.5">Project URL</label>
+                                <input id="supabaseUrlInput" type="text" placeholder="https://faodjxlwoxlupgyptdqy.supabase.co" class="w-full bg-white border border-emerald-300 text-xs rounded-xl p-2 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-emerald-900 mb-0.5">Publishable Key / Anon Key</label>
+                                <input id="supabaseKeyInput" type="password" placeholder="sb_publishable_..." class="w-full bg-white border border-emerald-300 text-xs rounded-xl p-2 focus:outline-none">
+                            </div>
+                            <button onclick="saveSupabaseConfig()" class="w-full bg-emerald-700 text-white font-black text-xs py-2 rounded-xl touch-active shadow-xs">
+                                중앙 DB 연동 정보 변경 저장
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Password Change Card -->
                     <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 space-y-2.5">
                         <h4 class="text-xs font-black text-slate-800 flex items-center gap-1">
                             🔐 관리자 비밀번호 변경
                         </h4>
-                        <p class="text-[10px] text-gray-500">새로운 비밀번호를 입력 후 변경하세요. 변경된 암호는 즉시 반영 및 저장됩니다.</p>
                         
                         <form onsubmit="handlePasswordChangeSubmit(event)" class="space-y-2">
                             <div>
@@ -789,7 +808,7 @@
     </div>
 
     <script>
-        // Automatic Splash Screen Timer Controller
+        // Automatic Splash Screen Controller
         function hideSplashScreen() {
             const splash = document.getElementById('splashScreen');
             if (splash) {
@@ -800,7 +819,7 @@
             }
         }
 
-        // Kakao SDK Safe Initialization with Automatic Retry
+        // Kakao SDK Safe Initialization
         function initKakaoSDK() {
             if (typeof Kakao !== 'undefined' && Kakao) {
                 try {
@@ -875,89 +894,157 @@
                 .replace(/'/g, '&#039;');
         }
 
+        // App States
         let currentUser = null;
         let pendingAction = null;
         let activeDetailPostId = null;
         let isAdminUnlocked = false;
         let adminPassword = '1234';
 
-        let userDatabase = [
-            { role: 'warehouse', name: 'OO물류 의정부점', phone: '010-9876-5432', date: '2026-07-20' },
-            { role: 'celeb', name: '인스타 @celeb_kr', phone: '010-2222-3333', date: '2026-07-21' },
-            { role: 'warehouse', name: '인천 로지스틱스', phone: '032-555-1234', date: '2026-07-21' }
-        ];
-
-        let posts = [
-            {
-                id: 1,
-                role: 'warehouse',
-                area: '경기 북부',
-                category: '의류/잡화',
-                title: '[경기 의정부] OO물류 200평 창고 덤핑',
-                summary: '의류/잡화 이월 덤핑재고 상시 보유 중입니다. 현장 라방 공간 완비!',
-                desc: '의정부 용현산업단지 근처 대형 창고입니다.\n\n- 이월 의류 및 패션 잡화 땡처리 대량 보유 중입니다.\n- 현장 라이브 커머스 전용 조명 및 스튜디오 공간 보유\n- MOQ: 100개부터 자율 사입 가능\n- 현장 방문하셔서 편하게 제품 확인하시고 조건 협의 가능합니다!',
-                writerInfo: 'OO물류 의정부점 대표',
-                kakaoUrl: 'https://open.kakao.com/o/sSampleWh1',
-                kakaoId: 'wh_ujb_200',
-                phone: '010-9876-5432',
-                email: 'wh_ujb@logistics.co.kr',
-                wechat: 'wh_ujb_wechat',
-                otherContact: '인스타 DM @ujb_warehouse',
-                timeAgo: '10분 전',
-                views: 142,
-                likes: 38,
-                isLiked: false
-            },
-            {
-                id: 2,
-                role: 'celeb',
-                area: '서울',
-                category: '뷰티/화장품',
-                title: '[서울] 뷰티/의류 전문 인스타 셀럽 (8만)',
-                summary: '3040 타겟 뷰티/이너뷰티 덤핑 및 사입 창고주분 구합니다.',
-                desc: '인스타그램 8만 팔로워 뷰티/라이프스타일 인플루언서입니다.\n\n- 공구 및 라이브 방송 진행 경험 다수\n- 이너뷰티, 화장품, 피부케어 땡처리 및 위탁 협업 원합니다.\n- 샘플 제공 가능 창고주분들 많은 연락 바랍니다!',
-                writerInfo: '인스타그램 @beauty_celeb_kr',
-                kakaoUrl: 'https://open.kakao.com/o/sSampleCeleb1',
-                kakaoId: 'celeb_beauty8',
-                phone: '010-2222-3333',
-                email: 'celeb@beauty.kr',
-                wechat: '',
-                otherContact: '네이버 톡톡 공식링크',
-                timeAgo: '25분 전',
-                views: 98,
-                likes: 24,
-                isLiked: false
-            },
-            {
-                id: 3,
-                role: 'warehouse',
-                area: '인천',
-                category: '식품/건기식',
-                title: '[인천 서구] 냉장/냉동 물류 창고',
-                summary: '식품 및 건강기능식품 소량 보관 및 3PL 출고 가능.',
-                desc: '인천 서구 위치 냉장/냉동 물류 전문 업체입니다.\n\n- 건강기능식품 및 이너뷰티 3PL 출고 가능\n- 인플루언서 분들 샘플 무료 지원 및 B2B 위탁 진행\n- 당일 출고 시스템 완비',
-                writerInfo: '인천 로지스틱스 대표',
-                kakaoUrl: 'https://open.kakao.com/o/sSampleWh2',
-                kakaoId: '',
-                phone: '032-555-1234',
-                email: 'incheon_3pl@naver.com',
-                wechat: 'incheon_logistics_cn',
-                otherContact: '',
-                timeAgo: '1시간 전',
-                views: 210,
-                likes: 52,
-                isLiked: false
-            }
-        ];
-
+        let userDatabase = [];
+        let posts = [];
         let currentRoleFilter = 'all';
 
+        const DEFAULT_SUPABASE_URL = 'https://faodjxlwoxlupgyptdqy.supabase.co';
+        const DEFAULT_SUPABASE_KEY = 'sb_publishable_34MMUjfGZotegjHeGQEWXg__6LmjTaf';
+        
+        let supabaseClient = null;
+        let SUPABASE_URL = localStorage.getItem('baemin_supabase_url') || DEFAULT_SUPABASE_URL;
+        let SUPABASE_KEY = localStorage.getItem('baemin_supabase_key') || DEFAULT_SUPABASE_KEY;
+
+        function initSupabase() {
+            if (SUPABASE_URL && SUPABASE_KEY && typeof supabase !== 'undefined') {
+                try {
+                    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                    console.log('Supabase Realtime Central DB initialized.');
+                    
+                    const badge = document.getElementById('dbStatusBadge');
+                    if (badge) {
+                        badge.innerText = "중앙DB 연동완료";
+                        badge.className = "bg-emerald-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full shadow-xs";
+                    }
+
+                    // Subscribe to real-time changes
+                    supabaseClient
+                        .channel('public:posts')
+                        .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, payload => {
+                            syncFromCentralDB();
+                        })
+                        .subscribe();
+
+                } catch(e) {
+                    console.warn('Supabase init failed:', e);
+                }
+            } else if (SUPABASE_URL && !SUPABASE_KEY) {
+                const badge = document.getElementById('dbStatusBadge');
+                if (badge) {
+                    badge.innerText = "Key 필요";
+                    badge.className = "bg-amber-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full shadow-xs";
+                }
+            }
+        }
+
+        function saveSupabaseConfig() {
+            const url = document.getElementById('supabaseUrlInput').value.trim();
+            const key = document.getElementById('supabaseKeyInput').value.trim();
+
+            if (!url || !key) {
+                showToast('Supabase URL과 Key를 모두 입력해주세요.');
+                return;
+            }
+
+            localStorage.setItem('baemin_supabase_url', url);
+            localStorage.setItem('baemin_supabase_key', key);
+            SUPABASE_URL = url;
+            SUPABASE_KEY = key;
+
+            initSupabase();
+            syncFromCentralDB();
+            showToast('🌐 중앙 DB 정보가 성공적으로 연동되었습니다!');
+        }
+
+        function mapPostToSupabaseRow(p) {
+            return {
+                id: String(p.id),
+                type: p.role || 'warehouse',
+                title: p.title || '',
+                location: p.area || '기타',
+                size: p.category || '기타',
+                period: p.summary || '',
+                content: p.desc || '',
+                contact: JSON.stringify({
+                    writerInfo: p.writerInfo || '',
+                    kakaoUrl: p.kakaoUrl || '',
+                    kakaoId: p.kakaoId || '',
+                    phone: p.phone || '',
+                    email: p.email || '',
+                    wechat: p.wechat || '',
+                    otherContact: p.otherContact || '',
+                    likes: p.likes || 0
+                }),
+                views: p.views || 0,
+                status: '모집중'
+            };
+        }
+
+        function mapRowToAppPost(row) {
+            let extra = {};
+            try {
+                if (row.contact && row.contact.trim().startsWith('{')) {
+                    extra = JSON.parse(row.contact);
+                }
+            } catch(e) {}
+
+            return {
+                id: String(row.id),
+                role: row.type || extra.role || 'warehouse',
+                area: row.location || '전체',
+                category: row.size || '기타',
+                title: row.title || '',
+                summary: row.period || row.content || '',
+                desc: row.content || '',
+                writerInfo: extra.writerInfo || '회원',
+                kakaoUrl: extra.kakaoUrl || '',
+                kakaoId: extra.kakaoId || '',
+                phone: extra.phone || (typeof row.contact === 'string' && !row.contact.startsWith('{') ? row.contact : ''),
+                email: extra.email || '',
+                wechat: extra.wechat || '',
+                otherContact: extra.otherContact || '',
+                timeAgo: row.created_at ? new Date(row.created_at).toLocaleDateString() : '방금 전',
+                views: row.views || 0,
+                likes: extra.likes || 0,
+                isLiked: false
+            };
+        }
+
+        async function syncFromCentralDB() {
+            if (supabaseClient) {
+                try {
+                    const { data: postsData, error: postsErr } = await supabaseClient
+                        .from('posts')
+                        .select('*')
+                        .order('created_at', { ascending: false });
+
+                    if (!postsErr && postsData) {
+                        posts = postsData.map(mapRowToAppPost);
+                        savePostsToStorage();
+                    }
+                } catch(e) {
+                    console.error('Central DB Sync Error:', e);
+                }
+            }
+            applyFilters();
+            if (isAdminUnlocked) renderAdminDashboard();
+        }
+
         window.onload = function() {
-            // Hide splash screen after 2.2 seconds with smooth transition
             setTimeout(hideSplashScreen, 2200);
 
             initKakaoSDK();
             checkSavedUser();
+            initSupabase();
+            syncFromCentralDB();
+
             applyFilters();
             if (window.lucide && lucide.createIcons) lucide.createIcons();
         };
@@ -1054,10 +1141,9 @@
                                 localStorage.setItem('baemin_matching_user', JSON.stringify(currentUser));
                             } catch(e) {}
 
-                            userDatabase.unshift({ role: 'celeb', name, phone, date: new Date().toISOString().slice(0, 10) });
-                            try {
-                                localStorage.setItem('baemin_user_db', JSON.stringify(userDatabase));
-                            } catch(e) {}
+                            const userObj = { role: 'celeb', name, phone, date: new Date().toISOString().slice(0, 10) };
+                            userDatabase.unshift(userObj);
+                            try { localStorage.setItem('baemin_user_db', JSON.stringify(userDatabase)); } catch(e) {}
 
                             updateUserUI();
                             closeAuthModal();
@@ -1070,12 +1156,12 @@
                             }
                         },
                         fail: function(error) {
-                            showToast('카카오 유저 정보 요청 실패 (도메인 설정을 확인해주세요)');
+                            showToast('카카오 유저 정보 요청 실패');
                         }
                     });
                 },
                 fail: function(err) {
-                    showToast('카카오 로그인 도메인 인증 필요 (플랫폼 도메인 등록 필요)');
+                    showToast('카카오 로그인 인증 실패');
                 }
             });
         }
@@ -1138,10 +1224,10 @@
                 const matchRegion = (region === 'all') || (post.area === region);
                 const matchCategory = (category === 'all') || (post.category === category);
                 const matchQuery = !query || 
-                    post.title.toLowerCase().includes(query) || 
+                    (post.title && post.title.toLowerCase().includes(query)) || 
                     (post.summary && post.summary.toLowerCase().includes(query)) ||
-                    post.desc.toLowerCase().includes(query) || 
-                    post.area.toLowerCase().includes(query);
+                    (post.desc && post.desc.toLowerCase().includes(query)) || 
+                    (post.area && post.area.toLowerCase().includes(query));
 
                 return matchRole && matchRegion && matchCategory && matchQuery;
             });
@@ -1157,18 +1243,19 @@
             if (item.email) count++;
             if (item.wechat) count++;
             if (item.otherContact) count++;
-            return `${count}개 수단`;
+            return `${Math.max(count, 1)}개 수단`;
         }
 
         function renderPosts(items) {
             const container = document.getElementById('postsList');
             if (!container) return;
 
-            if (items.length === 0) {
+            if (!items || items.length === 0) {
                 container.innerHTML = `
                     <div class="bg-white rounded-2xl p-6 text-center space-y-2 border border-gray-100">
                         <div class="text-2xl">🔍</div>
-                        <p class="text-xs font-bold text-gray-700">일치하는 창고 매칭 카드가 없습니다.</p>
+                        <p class="text-xs font-bold text-gray-700">등록된 매칭 카드가 없습니다.</p>
+                        <p class="text-[10px] text-gray-400">새로운 창고 DB를 가장 먼저 등록해보세요!</p>
                     </div>
                 `;
                 return;
@@ -1182,7 +1269,7 @@
                 const roleLabel = isWarehouse ? '🏢 창고주' : '✨ 셀럽';
 
                 return `
-                    <div onclick="openKakaoModal(${item.id})" class="bg-white rounded-2xl p-3.5 border border-gray-100 shadow-xs space-y-2.5 touch-active cursor-pointer hover:border-baemin/40 transition">
+                    <div onclick="openKakaoModal('${item.id}')" class="bg-white rounded-2xl p-3.5 border border-gray-100 shadow-xs space-y-2.5 touch-active cursor-pointer hover:border-baemin/40 transition">
                         <div class="flex items-center justify-between text-[11px]">
                             <div class="flex items-center gap-1">
                                 <span class="font-bold px-1.5 py-0.5 rounded border text-[10px] ${roleBadgeClass}">
@@ -1195,7 +1282,7 @@
                                     ${escapeHtml(item.category)}
                                 </span>
                             </div>
-                            <span class="text-[10px] text-gray-400">${escapeHtml(item.timeAgo)}</span>
+                            <span class="text-[10px] text-gray-400">${escapeHtml(item.timeAgo || '방금 전')}</span>
                         </div>
 
                         <div>
@@ -1213,11 +1300,11 @@
                             <div class="flex items-center gap-2 shrink-0">
                                 <span class="flex items-center gap-0.5 text-[10px] text-gray-400">
                                     <i data-lucide="eye" class="w-3 h-3 text-baemin"></i>
-                                    <span>${item.views}</span>
+                                    <span>${item.views || 0}</span>
                                 </span>
                                 <span class="flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded border ${item.isLiked ? 'bg-rose-50 border-rose-200 text-rose-600 font-bold' : 'bg-white border-gray-200 text-gray-600'}">
                                     <i data-lucide="thumbs-up" class="w-3 h-3 ${item.isLiked ? 'fill-current text-rose-500' : ''}"></i>
-                                    <span>${item.likes}</span>
+                                    <span>${item.likes || 0}</span>
                                 </span>
                             </div>
                         </div>
@@ -1304,10 +1391,9 @@
                 localStorage.setItem('baemin_matching_user', JSON.stringify(currentUser));
             } catch(e) {}
 
-            userDatabase.unshift({ role, name, phone, date: new Date().toISOString().slice(0, 10) });
-            try {
-                localStorage.setItem('baemin_user_db', JSON.stringify(userDatabase));
-            } catch(e) {}
+            const userObj = { role, name, phone, date: new Date().toISOString().slice(0, 10) };
+            userDatabase.unshift(userObj);
+            try { localStorage.setItem('baemin_user_db', JSON.stringify(userDatabase)); } catch(e) {}
 
             updateUserUI();
             closeAuthModal();
@@ -1320,20 +1406,24 @@
             }
         }
 
-        function openKakaoModal(id) {
+        async function openKakaoModal(id) {
             if (!currentUser) {
                 showAuthModal('상세 정보 확인을 위해 3초 간편가입이 필요합니다.', () => openKakaoModal(id));
                 return;
             }
 
-            const post = posts.find(p => p.id === id);
+            const post = posts.find(p => String(p.id) === String(id));
             if (!post) return;
 
             activeDetailPostId = id;
+            post.views = (post.views || 0) + 1;
 
-            post.views += 1;
             savePostsToStorage();
             applyFilters();
+
+            if (supabaseClient) {
+                await supabaseClient.from('posts').update({ views: post.views }).eq('id', id);
+            }
 
             document.getElementById('modalCategoryBadge').innerText = `${post.area} · ${post.category}`;
             document.getElementById('modalTitle').innerText = post.title;
@@ -1341,7 +1431,7 @@
             document.getElementById('modalFullDesc').innerText = post.desc || post.summary || '상세 내용이 없습니다.';
             
             document.getElementById('modalViewsText').innerText = post.views;
-            document.getElementById('modalLikesText').innerText = post.likes;
+            document.getElementById('modalLikesText').innerText = post.likes || 0;
 
             updateModalLikeButton(post);
 
@@ -1449,14 +1539,20 @@
             }
         }
 
-        function toggleLikeInModal() {
+        async function toggleLikeInModal() {
             if (!activeDetailPostId) return;
-            const post = posts.find(p => p.id === activeDetailPostId);
+            const post = posts.find(p => String(p.id) === String(activeDetailPostId));
             if (!post) return;
 
             post.isLiked = !post.isLiked;
-            post.likes += post.isLiked ? 1 : -1;
+            post.likes = (post.likes || 0) + (post.isLiked ? 1 : -1);
+
             savePostsToStorage();
+
+            if (supabaseClient) {
+                const row = mapPostToSupabaseRow(post);
+                await supabaseClient.from('posts').update({ contact: row.contact }).eq('id', post.id);
+            }
 
             document.getElementById('modalLikesText').innerText = post.likes;
             updateModalLikeButton(post);
@@ -1494,7 +1590,7 @@
             }
         }
 
-        function handleFormSubmit(event) {
+        async function handleFormSubmit(event) {
             event.preventDefault();
 
             if (!currentUser) {
@@ -1527,18 +1623,23 @@
             }
 
             const newPost = {
-                id: Date.now(),
+                id: String(Date.now()),
                 role: 'warehouse',
                 area, category, title, summary, desc,
                 writerInfo: writerInfo || `${currentUser.name} (${currentUser.phone || ''})`,
                 kakaoUrl, kakaoId, phone, email, wechat, otherContact,
                 timeAgo: '방금 전',
-                views: 0, likes: 0, isLiked: false
+                views: 0, likes: 0
             };
 
             posts.unshift(newPost);
             savePostsToStorage();
-            
+
+            if (supabaseClient) {
+                const dbRow = mapPostToSupabaseRow(newPost);
+                await supabaseClient.from('posts').insert([dbRow]);
+            }
+
             document.getElementById('postForm').reset();
             showToast('창고 DB가 등록되었습니다! 🎉');
 
@@ -1552,6 +1653,10 @@
             if (isAdminUnlocked) {
                 document.getElementById('adminLockScreen').classList.add('hidden');
                 document.getElementById('adminMainContent').classList.remove('hidden');
+                
+                document.getElementById('supabaseUrlInput').value = SUPABASE_URL;
+                document.getElementById('supabaseKeyInput').value = SUPABASE_KEY;
+
                 renderAdminDashboard();
             } else {
                 document.getElementById('adminLockScreen').classList.remove('hidden');
@@ -1573,6 +1678,10 @@
                 showToast('🔑 관리자 로그인 성공');
                 document.getElementById('adminLockScreen').classList.add('hidden');
                 document.getElementById('adminMainContent').classList.remove('hidden');
+                
+                document.getElementById('supabaseUrlInput').value = SUPABASE_URL;
+                document.getElementById('supabaseKeyInput').value = SUPABASE_KEY;
+
                 renderAdminDashboard();
             } else {
                 showToast('비밀번호가 일치하지 않습니다.');
@@ -1580,7 +1689,7 @@
         }
 
         function renderAdminDashboard() {
-            const totalMatches = posts.reduce((acc, curr) => acc + curr.views, 0);
+            const totalMatches = posts.reduce((acc, curr) => acc + (curr.views || 0), 0);
             document.getElementById('adminStatUserCount').innerText = `${userDatabase.length}명`;
             document.getElementById('adminStatPostCount').innerText = `${posts.length}개`;
             document.getElementById('adminStatMatchCount').innerText = `${totalMatches}회`;
@@ -1604,9 +1713,9 @@
                     <div class="bg-[#F8FAFC] p-2 rounded-xl border border-gray-200 flex items-center justify-between text-xs">
                         <div class="overflow-hidden mr-1">
                             <p class="font-bold text-gray-900 text-[11px] truncate">${escapeHtml(p.title)}</p>
-                            <p class="text-[9px] text-gray-400">${escapeHtml(p.area)} · 조회 ${p.views}회</p>
+                            <p class="text-[9px] text-gray-400">${escapeHtml(p.area)} · 조회 ${p.views || 0}회</p>
                         </div>
-                        <button onclick="deletePostAdmin(${p.id})" class="bg-rose-100 text-rose-700 font-bold px-2 py-0.5 rounded text-[10px] shrink-0 touch-active">
+                        <button onclick="deletePostAdmin('${p.id}')" class="bg-rose-100 text-rose-700 font-bold px-2 py-0.5 rounded text-[10px] shrink-0 touch-active">
                             삭제
                         </button>
                     </div>
@@ -1676,27 +1785,50 @@
             document.getElementById('adminNewPwdInput').value = '';
             document.getElementById('adminNewPwdConfirmInput').value = '';
 
-            showToast('🔐 어드민 비밀번호가 성공적으로 변경되었습니다!');
+            showToast('🔐 어드민 비밀번호가 변경되었습니다!');
             switchAdminTab('users');
         }
 
-        function deletePostAdmin(id) {
-            const idx = posts.findIndex(p => p.id === id);
+        async function deletePostAdmin(id) {
+            const idx = posts.findIndex(p => String(p.id) === String(id));
             if (idx !== -1) {
                 posts.splice(idx, 1);
                 savePostsToStorage();
+
+                if (supabaseClient) {
+                    await supabaseClient.from('posts').delete().eq('id', id);
+                }
+
                 applyFilters();
                 renderAdminDashboard();
                 showToast('게시글 삭제 완료');
             }
         }
 
+        async function clearAllPostsAdmin() {
+            if (!confirm('정말로 모든 게시글을 삭제하시겠습니까?')) return;
+
+            posts = [];
+            savePostsToStorage();
+
+            if (supabaseClient) {
+                await supabaseClient.from('posts').delete().neq('id', '0');
+            }
+
+            applyFilters();
+            renderAdminDashboard();
+            showToast('전체 게시글 삭제 완료');
+        }
+
         function downloadUserCSV() {
-            if (userDatabase.length === 0) return;
+            if (userDatabase.length === 0) {
+                showToast('다운로드할 유저 데이터가 없습니다.');
+                return;
+            }
             let csvContent = "\uFEFF구분,이름/상호,휴대폰번호,가입일\n";
             userDatabase.forEach(u => {
                 const role = u.role === 'warehouse' ? '창고주' : '셀럽';
-                csvContent += `"${role}","${u.name}","${u.phone || ''}","${u.date || '2026-07-22'}"\n`;
+                csvContent += `"${role}","${u.name}","${u.phone || ''}","${u.date || '2026-07-23'}"\n`;
             });
 
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });

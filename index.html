@@ -1,641 +1,1361 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="theme-color" content="#2AC1BC">
-  <title>창고-셀럽 1초 매칭</title>
-
-  <!-- 카카오톡 / SNS 링크 공유 썸네일 & 설명 설정 (OG 태그) -->
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="창고-셀럽 1초 매칭 | 덤핑·이월재고 B2B 직거래">
-  <meta property="og:description" content="오픈카톡보다 10배 빠른 창고-셀럽 매칭! 실시간 재고 정보를 1초 만에 확인하고 직접 연락해보세요.">
-  <meta property="og:image" content="https://changgo-match.vercel.app/og-image.png">
-  <meta property="og:url" content="https://changgo-match.vercel.app">
-
-  <!-- 트위터 / 기타 플랫폼 전용 카드 설정 -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="창고-셀럽 1초 매칭">
-  <meta name="twitter:description" content="오픈카톡보다 10배 빠른 창고-셀럽 매칭 플랫폼">
-  <meta name="twitter:image" content="https://changgo-match.vercel.app/og-image.png">
-
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            baemin: {
-              DEFAULT: '#2AC1BC',
-              dark: '#22A29D',
-              light: '#E8F8F7',
-              subtle: '#F0FAF9',
-              bg: '#F4F6F8'
-            }
-          },
-          fontFamily: {
-            sans: ['Pretendard', '-apple-system', 'BlinkMacSystemFont', 'System UI', 'sans-serif']
-          }
-        }
-      }
-    }
-  </script>
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <style>
-    body {
-      background-color: #121212;
-      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
-    }
-    .hide-scrollbar::-webkit-scrollbar { display: none; }
-    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    .modal-backdrop { background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); }
-  </style>
-</head>
-<body class="flex justify-center items-center min-h-screen p-0 sm:p-4">
-
-  <div class="w-full max-w-md bg-baemin-bg h-[100vh] sm:h-[880px] sm:rounded-[36px] shadow-2xl flex flex-col overflow-hidden relative border-0 sm:border-8 border-gray-800">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#2AC1BC">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>창고-셀럽 1초 매칭 (모바일 전용)</title>
     
-    <!-- Header -->
-    <header class="bg-baemin pt-10 pb-3 px-4 text-white flex justify-between items-center shadow-md z-10 shrink-0">
-      <div class="flex items-center space-x-2">
-        <span class="bg-white text-baemin text-xs font-black px-2 py-0.5 rounded-full uppercase tracking-wider">B2B LIVE</span>
-        <h1 class="text-xl font-black tracking-tight">창고-셀럽 1초 매칭</h1>
-      </div>
-      <div class="flex items-center space-x-2">
-        <button onclick="openAdminModal()" class="text-xs bg-black/20 hover:bg-black/30 text-white px-2.5 py-1 rounded-full font-bold flex items-center gap-1 transition">
-          <i data-lucide="key" class="w-3 h-3"></i> 어드민
-        </button>
-      </div>
-    </header>
+    <!-- 카카오톡 / SNS 링크 공유 썸네일 & 설명 설정 (OG 태그) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="창고-셀럽 1초 매칭 | 덤핑·이월재고 B2B 직거래">
+    <meta property="og:description" content="오픈카톡보다 10배 빠른 창고-셀럽 매칭! 실시간 재고 정보를 1초 만에 확인하고 직접 연락해보세요.">
+    <meta property="og:image" content="https://changgo-match.vercel.app/og-image.png">
+    <meta property="og:url" content="https://changgo-match.vercel.app">
 
-    <!-- Notice Bar -->
-    <div class="bg-white px-4 py-2 border-b border-gray-100 flex items-center justify-between text-xs text-gray-600 shrink-0">
-      <div class="flex items-center space-x-1.5 font-medium">
-        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-        <span>등록된 창고/재고 정보 <strong id="totalCount" class="text-baemin font-bold">0</strong>건</span>
-      </div>
-      <span class="text-gray-400">카톡보다 10배 빠른 매칭</span>
-    </div>
+    <!-- 트위터 전용 카드 설정 -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="창고-셀럽 1초 매칭">
+    <meta name="twitter:description" content="오픈카톡보다 10배 빠른 창고-셀럽 매칭 플랫폼">
+    <meta name="twitter:image" content="https://changgo-match.vercel.app/og-image.png">
 
-    <!-- Tabs -->
-    <div class="bg-white border-b border-gray-200 flex text-center font-bold text-sm shrink-0">
-      <button id="tab1" onclick="switchTab('feed')" class="flex-1 py-3 border-b-2 border-baemin text-baemin flex items-center justify-center gap-1.5 transition">
-        <i data-lucide="layout-grid" class="w-4 h-4"></i> 매칭 피드 (셀럽)
-      </button>
-      <button id="tab2" onclick="switchTab('register')" class="flex-1 py-3 text-gray-400 border-b-2 border-transparent flex items-center justify-center gap-1.5 transition">
-        <i data-lucide="plus-circle" class="w-4 h-4"></i> 1분 창고/재고 등록
-      </button>
-    </div>
-
-    <!-- TAB 1: 매칭 피드 -->
-    <main id="viewFeed" class="flex-1 overflow-y-auto p-4 space-y-3 hide-scrollbar">
-      <!-- Filter Bar -->
-      <div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 space-y-2 mb-3">
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="text-[11px] font-bold text-gray-400 mb-1 block">지역 선택</label>
-            <select id="filterRegion" onchange="applyFilters()" class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-xs rounded-xl p-2 font-bold focus:outline-none focus:border-baemin">
-              <option value="전체">지역 전체</option>
-              <option value="경기 북부">경기 북부 (의정부/양주 등)</option>
-              <option value="경기 남부">경기 남부 (용인/평택 등)</option>
-              <option value="서울">서울 전체</option>
-              <option value="인천">인천/부천</option>
-              <option value="기타">기타 지역</option>
-            </select>
-          </div>
-          <div>
-            <label class="text-[11px] font-bold text-gray-400 mb-1 block">취급 품목</label>
-            <select id="filterCategory" onchange="applyFilters()" class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-xs rounded-xl p-2 font-bold focus:outline-none focus:border-baemin">
-              <option value="전체">품목 전체</option>
-              <option value="의류/잡화">의류 / 잡화</option>
-              <option value="뷰티/화장품">뷰티 / 화장품</option>
-              <option value="식품/건강">식품 / 건강식품</option>
-              <option value="가전/디지털">가전 / 디지털</option>
-              <option value="생활/리빙">생활 / 리빙</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <!-- Post List Container -->
-      <div id="postListContainer" class="space-y-3"></div>
-    </main>
-
-    <!-- TAB 2: 창고 등록 -->
-    <main id="viewRegister" class="flex-1 overflow-y-auto p-4 hide-scrollbar hidden bg-white">
-      <div class="bg-baemin-light p-3.5 rounded-2xl border border-baemin/20 mb-4 flex items-start gap-2.5">
-        <i data-lucide="info" class="w-5 h-5 text-baemin shrink-0 mt-0.5"></i>
-        <div class="text-xs text-gray-700 leading-relaxed">
-          <strong class="text-baemin font-bold">창고주분들만 자유롭게 등록해 주세요!</strong><br/>
-          셀럽 분들은 등록 없이 피드에서 원하시는 창고를 자유롭게 찾아보실 수 있습니다.
-        </div>
-      </div>
-
-      <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-4">
-        <div>
-          <label class="block text-xs font-bold text-gray-700 mb-1">상호명 / 창고명 <span class="text-red-500">*</span></label>
-          <input type="text" id="regTitle" required placeholder="예: [의정부] OO물류 덤핑 전문 창고" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-xs focus:outline-none focus:border-baemin font-medium">
-        </div>
-
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block text-xs font-bold text-gray-700 mb-1">지역 선택 <span class="text-red-500">*</span></label>
-            <select id="regRegion" required class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-xs focus:outline-none focus:border-baemin font-bold">
-              <option value="경기 북부">경기 북부</option>
-              <option value="경기 남부">경기 남부</option>
-              <option value="서울">서울</option>
-              <option value="인천">인천/부천</option>
-              <option value="기타">기타</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-gray-700 mb-1">주요 품목 <span class="text-red-500">*</span></label>
-            <select id="regCategory" required class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-xs focus:outline-none focus:border-baemin font-bold">
-              <option value="의류/잡화">의류 / 잡화</option>
-              <option value="뷰티/화장품">뷰티 / 화장품</option>
-              <option value="식품/건강">식품 / 건강식품</option>
-              <option value="가전/디지털">가전 / 디지털</option>
-              <option value="생활/리빙">생활 / 리빙</option>
-            </select>
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-gray-700 mb-1">목록 한 줄 요약 <span class="text-red-500">*</span></label>
-          <input type="text" id="regDesc" required placeholder="예: 의류/잡화 이월 덤핑재고 보유. 현장 라이브 커머스 방송 공간 지원!" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-xs focus:outline-none focus:border-baemin font-medium">
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-gray-700 mb-1">상세 홍보 내용 (자유 양식, 긴 글 작성 가능) <span class="text-red-500">*</span></label>
-          <textarea id="regFullDesc" rows="6" required placeholder="창고의 핵심 메리트, 재고 종류, 공급 조건, MOQ, 라이브커머스 협업 방식 등 셀럽들에게 어필하고 싶은 자세한 내용을 자유롭게 적어주세요." class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-xs focus:outline-none focus:border-baemin font-medium leading-relaxed"></textarea>
-        </div>
-
-        <!-- 연락처 채널 -->
-        <div class="border-t border-gray-200 pt-3 space-y-3">
-          <label class="block text-xs font-bold text-gray-800">연락받으실 연락처 정보 (최소 1개 이상)</label>
-          
-          <div>
-            <span class="text-[11px] font-bold text-gray-500 block mb-1">1. 카카오톡 오픈채팅 링크</span>
-            <input type="url" id="contactKakaoOpen" placeholder="https://open.kakao.com/o/..." class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs focus:outline-none focus:border-baemin">
-          </div>
-
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <span class="text-[11px] font-bold text-gray-500 block mb-1">2. 카카오톡 ID</span>
-              <input type="text" id="contactKakaoId" placeholder="카톡 아이디" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs focus:outline-none focus:border-baemin">
-            </div>
-            <div>
-              <span class="text-[11px] font-bold text-gray-500 block mb-1">3. 전화번호 / 문자</span>
-              <input type="tel" id="contactPhone" placeholder="010-0000-0000" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs focus:outline-none focus:border-baemin">
-            </div>
-          </div>
-
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <span class="text-[11px] font-bold text-gray-500 block mb-1">4. 이메일</span>
-              <input type="email" id="contactEmail" placeholder="example@email.com" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs focus:outline-none focus:border-baemin">
-            </div>
-            <div>
-              <span class="text-[11px] font-bold text-gray-500 block mb-1">5. 위챗 ID (WeChat)</span>
-              <input type="text" id="contactWechat" placeholder="WeChat ID" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs focus:outline-none focus:border-baemin">
-            </div>
-          </div>
-
-          <div>
-            <span class="text-[11px] font-bold text-gray-500 block mb-1">6. 기타 연락 수단</span>
-            <input type="text" id="contactOther" placeholder="예: 인스타그램 @official_account" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs focus:outline-none focus:border-baemin">
-          </div>
-        </div>
-
-        <button type="submit" class="w-full bg-baemin hover:bg-baemin-dark text-white font-black py-3.5 rounded-xl shadow-md transition text-sm">
-          등록 완료하기 🚀
-        </button>
-      </form>
-    </main>
-
-  </div>
-
-  <!-- Detail Modal -->
-  <div id="detailModal" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-sm w-full p-5 shadow-2xl relative space-y-4 max-h-[90vh] overflow-y-auto hide-scrollbar">
-      <button onclick="closeDetailModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 bg-gray-100 p-1.5 rounded-full">
-        <i data-lucide="x" class="w-5 h-5"></i>
-      </button>
-
-      <div class="flex items-center gap-2">
-        <span class="px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-100 text-emerald-800">🏢 창고주</span>
-        <span id="modalRegionBadge" class="px-2 py-0.5 rounded-md text-xs font-bold bg-gray-100 text-gray-600">지역</span>
-        <span id="modalCategoryBadge" class="px-2 py-0.5 rounded-md text-xs font-bold bg-baemin-light text-baemin">품목</span>
-      </div>
-
-      <div>
-        <h3 id="modalTitle" class="text-lg font-black text-gray-900 leading-tight">창고 상호명</h3>
-      </div>
-
-      <!-- 상세 홍보 내용 (긴글) -->
-      <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 space-y-2">
-        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider">상세 홍보 내용</h4>
-        <p id="modalFullDesc" class="text-xs text-gray-800 leading-relaxed font-medium whitespace-pre-line"></p>
-      </div>
-
-      <!-- 모달 내 반응/추천 영역 -->
-      <div class="flex items-center justify-between bg-baemin-subtle p-3 rounded-xl border border-baemin/20">
-        <div class="text-xs text-gray-600 flex items-center gap-1.5 font-bold">
-          <i data-lucide="eye" class="w-4 h-4 text-baemin"></i> 조회수 <span id="modalViews">0</span>회
-        </div>
-        <button id="modalLikeBtn" onclick="toggleLikeInModal()" class="px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 bg-white border border-gray-200 text-gray-700 shadow-sm transition">
-          <i data-lucide="thumbs-up" class="w-4 h-4"></i> 추천 <span id="modalLikes">0</span>
-        </button>
-      </div>
-
-      <!-- 연락처 연결 수단 -->
-      <div class="space-y-2 pt-2 border-t border-gray-100">
-        <h4 class="text-xs font-bold text-gray-700">창고주에게 직접 연락하기</h4>
-        <div id="modalContacts" class="space-y-2"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Signup Modal -->
-  <div id="signupModal" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-xs w-full p-5 shadow-2xl relative text-center space-y-4">
-      <div class="w-12 h-12 bg-baemin-light text-baemin rounded-full flex items-center justify-center mx-auto">
-        <i data-lucide="lock" class="w-6 h-6"></i>
-      </div>
-      <div>
-        <h3 class="text-base font-black text-gray-900">3초 간편 정보 입력</h3>
-        <p class="text-xs text-gray-500 mt-1">상세 정보 조회 및 연락처 확인을 위해 작성해 주세요.</p>
-      </div>
-      <form onsubmit="handleSignup(event)" class="space-y-2.5 text-left">
-        <input type="text" id="userNick" required placeholder="닉네임 / 업체명" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs focus:outline-none focus:border-baemin">
-        <input type="tel" id="userPhone" required placeholder="휴대폰 번호 (010-0000-0000)" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs focus:outline-none focus:border-baemin">
-        <button type="submit" class="w-full bg-baemin hover:bg-baemin-dark text-white font-bold py-3 rounded-xl text-xs shadow-md">
-          확인하고 연결하기
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Admin Modal -->
-  <div id="adminModal" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-sm w-full p-5 shadow-2xl relative space-y-4 max-h-[85vh] overflow-y-auto hide-scrollbar">
-      <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 bg-gray-100 p-1.5 rounded-full">
-        <i data-lucide="x" class="w-5 h-5"></i>
-      </button>
-      
-      <div class="flex items-center gap-2">
-        <div class="w-8 h-8 bg-black text-white rounded-lg flex items-center justify-center font-black text-sm">🔑</div>
-        <h3 class="text-base font-black text-gray-900">어드민 DB 관리</h3>
-      </div>
-
-      <div id="adminAuthSection" class="space-y-3">
-        <p class="text-xs text-gray-500">관리자 비밀번호를 입력하세요.</p>
-        <input type="password" id="adminPassword" placeholder="비밀번호 입력" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-xs focus:outline-none focus:border-baemin">
-        <button onclick="checkAdminAuth()" class="w-full bg-black text-white font-bold py-3 rounded-xl text-xs">관리자 인증</button>
-      </div>
-
-      <div id="adminContentSection" class="hidden space-y-4">
-        <div class="bg-gray-100 p-1 rounded-xl flex text-xs font-bold">
-          <button onclick="switchAdminSubTab('users')" id="subTabUsers" class="flex-1 py-2 bg-white rounded-lg shadow-sm text-black">가입 회원 DB</button>
-          <button onclick="switchAdminSubTab('pw')" id="subTabPw" class="flex-1 py-2 text-gray-500">비번 변경</button>
-        </div>
-
-        <div id="adminUsersList" class="space-y-2 max-h-60 overflow-y-auto"></div>
-
-        <div id="adminPwChange" class="hidden space-y-3">
-          <input type="password" id="newAdminPw" placeholder="새 비밀번호 입력" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs">
-          <button onclick="changeAdminPassword()" class="w-full bg-emerald-600 text-white font-bold py-2.5 rounded-xl text-xs">비밀번호 변경 저장</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // Initial Data
-    let posts = JSON.parse(localStorage.getItem('app_posts_db') || 'null') || [
-      {
-        id: 1,
-        title: '[경기 의정부] OO물류 덤핑 전문 창고',
-        region: '경기 북부',
-        category: '의류/잡화',
-        desc: '의류/잡화 이월 덤핑재고 50,000점 상시 보유 중입니다. 현장 라이브 커머스 방송 공간 지원!',
-        fullDesc: '의정부 용현산업단지 근처 대형 창고입니다.\n\n- 이월 의류 및 패션 잡화 땡처리 대량 보유\n- 라이브 커머스 전용 조명 및 스튜디오 공간 보유\n- MOQ: 100개부터 자율 사입 가능\n- 오셔서 편하게 제품 확인하시고 조건 협의 가능합니다!',
-        contacts: {
-          kakaoOpen: 'https://open.kakao.com',
-          kakaoId: 'warehouse_ujb',
-          phone: '010-1234-5678',
-          email: 'ujb_storage@naver.com'
-        },
-        views: 142,
-        likes: 18,
-        liked: false
-      },
-      {
-        id: 2,
-        title: '[인천 항동] 프레시 바이오 뷰티 물류',
-        region: '인천',
-        category: '뷰티/화장품',
-        desc: '비건 화장품/스킨케어 덤핑재고보유. 인스타 셀럽 샘플 무상 지원!',
-        fullDesc: '뷰티 브랜드 직영 수입/유통 창고입니다.\n\n- 마스크팩, 기초 케어 세트 대량 보유\n- 공구 및 라이브 진행 셀럽 분들께 무상 샘플 발송 해드립니다.\n- 수량에 따른 단가 맞춰드리니 편하게 문의주세요.',
-        contacts: {
-          kakaoOpen: 'https://open.kakao.com',
-          phone: '010-9876-5432'
-        },
-        views: 89,
-        likes: 12,
-        liked: false
-      }
-    ];
-
-    let userDB = JSON.parse(localStorage.getItem('app_user_db') || '[]');
-    let currentUser = JSON.parse(localStorage.getItem('app_current_user') || 'null');
-    let adminPw = localStorage.getItem('app_admin_pw') || '1234';
-    let currentDetailPostId = null;
-    let pendingAction = null;
-
-    function savePostsDB() {
-      localStorage.setItem('app_posts_db', JSON.stringify(posts));
-    }
-
-    function escapeHtml(text) {
-      if (!text) return '';
-      return String(text)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-    }
-
-    window.onload = function() {
-      renderPosts();
-      updateTotalCount();
-      lucide.createIcons();
-    };
-
-    function switchTab(tab) {
-      const feedView = document.getElementById('viewFeed');
-      const regView = document.getElementById('viewRegister');
-      const tab1 = document.getElementById('tab1');
-      const tab2 = document.getElementById('tab2');
-
-      if (tab === 'feed') {
-        feedView.classList.remove('hidden');
-        regView.classList.add('hidden');
-        tab1.className = "flex-1 py-3 border-b-2 border-baemin text-baemin flex items-center justify-center gap-1.5 transition";
-        tab2.className = "flex-1 py-3 text-gray-400 border-b-2 border-transparent flex items-center justify-center gap-1.5 transition";
-      } else {
-        if (!currentUser) {
-          pendingAction = () => switchTab('register');
-          openSignupModal();
-          return;
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        baemin: {
+                            DEFAULT: '#2AC1BC',
+                            dark: '#22A29D',
+                            light: '#E8F8F7',
+                            subtle: '#F0FAF9',
+                            bg: '#F4F6F8'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Pretendard', '-apple-system', 'BlinkMacSystemFont', 'System UI', 'sans-serif']
+                    }
+                }
+            }
         }
-        feedView.classList.add('hidden');
-        regView.classList.remove('hidden');
-        tab2.className = "flex-1 py-3 border-b-2 border-baemin text-baemin flex items-center justify-center gap-1.5 transition";
-        tab1.className = "flex-1 py-3 text-gray-400 border-b-2 border-transparent flex items-center justify-center gap-1.5 transition";
-      }
-    }
+    </script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 
-    function renderPosts() {
-      const container = document.getElementById('postListContainer');
-      const region = document.getElementById('filterRegion').value;
-      const category = document.getElementById('filterCategory').value;
+    <style>
+        body {
+            background-color: #121212;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        .touch-active:active {
+            transform: scale(0.98);
+            opacity: 0.93;
+            transition: transform 0.1s ease;
+        }
 
-      const filtered = posts.filter(p => {
-        const matchRegion = (region === '전체') || (p.region === region);
-        const matchCat = (category === '전체') || (p.category === category);
-        return matchRegion && matchCat;
-      });
+        .bottom-sheet-enter {
+            transform: translateY(100%);
+            transition: transform 0.25s cubic-bezier(0.1, 0.9, 0.2, 1);
+        }
+        .bottom-sheet-active {
+            transform: translateY(0%);
+            transition: transform 0.25s cubic-bezier(0.1, 0.9, 0.2, 1);
+        }
 
-      if (filtered.length === 0) {
-        container.innerHTML = `
-          <div class="text-center py-12 text-gray-400 text-xs">
-            등록된 매칭 정보가 없습니다.
-          </div>
-        `;
-        return;
-      }
+        .safe-area-bottom {
+            padding-bottom: env(safe-area-inset-bottom, 12px);
+        }
+    </style>
+</head>
+<body class="text-gray-900 antialiased min-h-screen flex justify-center items-center">
 
-      container.innerHTML = filtered.map(post => {
-        return `
-          <div onclick="openDetailModal(${post.id})" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 hover:border-baemin/50 transition cursor-pointer relative">
-            <div class="flex justify-between items-start mb-2">
-              <div class="flex items-center gap-1.5">
-                <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800">🏢 창고주</span>
-                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-gray-100 text-gray-600">[${escapeHtml(post.region)}]</span>
-                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-baemin-light text-baemin">${escapeHtml(post.category)}</span>
-              </div>
+    <div id="appContainer" class="w-full max-w-[440px] h-screen sm:h-[92vh] bg-baemin-bg sm:rounded-[36px] shadow-2xl flex flex-col relative overflow-hidden border-0 sm:border-8 sm:border-slate-800">
+        
+        <!-- Mobile Top App Header -->
+        <header class="bg-white border-b border-gray-100 px-4 py-3 flex items-center justify-between shrink-0 z-30 pt-safe shadow-xs">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-xl bg-baemin flex items-center justify-center text-white font-black text-sm shadow-sm rotate-[-2deg]">
+                    1초
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-base text-gray-900 tracking-tight leading-none flex items-center gap-1">
+                        창고-셀럽 매칭
+                        <span class="bg-baemin-light text-baemin-dark text-[9px] font-black px-1.5 py-0.5 rounded-full border border-baemin/20">LIVE</span>
+                    </h1>
+                    <p class="text-[10px] text-gray-400 font-medium mt-0.5">오픈카톡 DB 1초 연결</p>
+                </div>
             </div>
 
-            <h3 class="font-black text-sm text-gray-900 mb-1">${escapeHtml(post.title)}</h3>
-            <p class="text-xs text-gray-600 leading-relaxed line-clamp-2 mb-3 font-medium">${escapeHtml(post.desc)}</p>
+            <div class="flex items-center gap-1.5">
+                <div id="userInfoHeader" class="hidden text-xs font-bold text-gray-700 bg-gray-100 px-2 py-1 rounded-xl flex items-center gap-1">
+                    <span id="userRoleBadge" class="text-[9px] bg-baemin text-white px-1 py-0.5 rounded font-black">셀럽</span>
+                    <span id="userNameText" class="truncate max-w-[60px] text-[11px]">사용자</span>
+                    <button onclick="logout()" class="text-gray-400 hover:text-rose-500 p-0.5" title="로그아웃">
+                        <i data-lucide="log-out" class="w-3 h-3"></i>
+                    </button>
+                </div>
 
-            <div class="flex justify-between items-center border-t border-gray-50 pt-2 text-[11px] text-gray-400 pointer-events-none">
-              <div class="flex items-center gap-3">
-                <span class="flex items-center gap-1"><i data-lucide="eye" class="w-3.5 h-3.5"></i> ${post.views}</span>
-                <span class="flex items-center gap-1 ${post.liked ? 'text-red-500 font-bold' : ''}"><i data-lucide="thumbs-up" class="w-3.5 h-3.5 ${post.liked ? 'fill-current' : ''}"></i> ${post.likes}</span>
-              </div>
-              <span class="text-baemin font-bold flex items-center gap-0.5">상세보기 및 연락 <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i></span>
+                <button id="authBtnHeader" onclick="showAuthModal('3초 간편가입 후 연결됩니다.')" class="text-[11px] font-extrabold text-baemin border border-baemin/30 bg-baemin-light/60 px-2.5 py-1.5 rounded-xl touch-active">
+                    가입/로그인
+                </button>
+
+                <button onclick="openAdminModal()" class="w-8 h-8 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 flex items-center justify-center font-bold text-xs touch-active" title="어드민">
+                    🔑
+                </button>
             </div>
-          </div>
-        `;
-      }).join('');
+        </header>
 
-      lucide.createIcons();
-    }
+        <main id="scrollableArea" class="flex-1 overflow-y-auto p-3 space-y-3 pb-24 hide-scrollbar">
 
-    // 상세보기 모달 열기
-    function openDetailModal(postId) {
-      if (!currentUser) {
-        pendingAction = () => openDetailModal(postId);
-        openSignupModal();
-        return;
-      }
+            <!-- TAB 1: FEED VIEW (MAIN MOBILE SCREEN) -->
+            <section id="tabFeed" class="space-y-3">
+                
+                <div class="bg-gradient-to-r from-baemin-light to-white p-3 rounded-2xl border border-baemin/20 flex items-center justify-between shadow-xs">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-xl bg-baemin/15 text-baemin-dark flex items-center justify-center shrink-0 font-bold">
+                            ⚡
+                        </div>
+                        <div>
+                            <p class="text-[11px] font-black text-gray-800">셀럽님, 원하시는 창고를 찾으셨나요?</p>
+                            <p class="text-[10px] text-gray-500 mt-0.5">카드를 클릭하면 상세 홍보글 및 연락처 연결!</p>
+                        </div>
+                    </div>
+                </div>
 
-      const post = posts.find(p => p.id === postId);
-      if (!post) return;
+                <!-- Filters Section -->
+                <div class="bg-white p-3 rounded-2xl border border-gray-100 shadow-xs space-y-2.5">
+                    
+                    <div class="flex p-0.5 bg-gray-100 rounded-xl text-xs font-bold">
+                        <button id="roleFilterAll" onclick="setRoleFilter('all')" class="flex-1 py-1.5 rounded-lg bg-white text-gray-900 shadow-xs text-[11px] transition">
+                            전체 보기
+                        </button>
+                        <button id="roleFilterWh" onclick="setRoleFilter('warehouse')" class="flex-1 py-1.5 rounded-lg text-gray-500 text-[11px] transition">
+                            🏢 창고주만
+                        </button>
+                        <button id="roleFilterCeleb" onclick="setRoleFilter('celeb')" class="flex-1 py-1.5 rounded-lg text-gray-500 text-[11px] transition">
+                            ✨ 셀럽/인플루언서
+                        </button>
+                    </div>
 
-      currentDetailPostId = postId;
-      
-      // 모달 진입 시에만 조회수 +1
-      post.views += 1;
-      savePostsDB();
-      renderPosts();
+                    <div class="grid grid-cols-2 gap-2">
+                        <select id="regionSelect" onchange="applyFilters()" class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-xs font-semibold rounded-xl px-2.5 py-2 focus:outline-none focus:border-baemin">
+                            <option value="all">📍 전체 지역</option>
+                            <option value="서울">서울</option>
+                            <option value="경기 북부">경기 북부</option>
+                            <option value="경기 남부">경기 남부</option>
+                            <option value="인천">인천</option>
+                            <option value="충청/대전">충청/대전</option>
+                            <option value="경상/부산">경상/부산</option>
+                            <option value="기타">기타 지역</option>
+                        </select>
 
-      document.getElementById('modalTitle').innerText = post.title;
-      document.getElementById('modalRegionBadge').innerText = post.region;
-      document.getElementById('modalCategoryBadge').innerText = post.category;
-      document.getElementById('modalFullDesc').innerText = post.fullDesc || post.desc;
-      document.getElementById('modalViews').innerText = post.views;
-      document.getElementById('modalLikes').innerText = post.likes;
+                        <select id="categorySelect" onchange="applyFilters()" class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-xs font-semibold rounded-xl px-2.5 py-2 focus:outline-none focus:border-baemin">
+                            <option value="all">📦 전체 품목</option>
+                            <option value="의류/잡화">의류/잡화</option>
+                            <option value="뷰티/화장품">뷰티/화장품</option>
+                            <option value="식품/건기식">식품/건기식</option>
+                            <option value="생활/가전">생활/가전</option>
+                            <option value="기타/덤핑">기타/덤핑</option>
+                        </select>
+                    </div>
 
-      updateModalLikeBtnState(post);
+                    <div class="relative">
+                        <input id="searchInput" oninput="applyFilters()" type="text" placeholder="창고 위치, 키워드, 매각 품목 검색..." class="w-full bg-gray-50 border border-gray-200 text-xs rounded-xl pl-8 pr-3 py-2 focus:outline-none focus:border-baemin">
+                        <i data-lucide="search" class="w-3.5 h-3.5 text-gray-400 absolute left-2.5 top-2.5"></i>
+                    </div>
+                </div>
 
-      // contacts
-      const modalContacts = document.getElementById('modalContacts');
-      let contactsHtml = '';
-      const c = post.contacts || {};
+                <div id="postsList" class="space-y-2.5">
+                    <!-- Dynamic feed items -->
+                </div>
 
-      if (c.kakaoOpen) contactsHtml += `<a href="${escapeHtml(c.kakaoOpen)}" target="_blank" class="w-full bg-[#FEE500] text-[#3c1e1e] font-bold py-2.5 px-3 rounded-xl flex items-center justify-between text-xs shadow-sm"><span>💬 카카오톡 오픈채팅 바로가기</span> <i data-lucide="external-link" class="w-4 h-4"></i></a>`;
-      if (c.kakaoId) contactsHtml += `<button onclick="copyText('${escapeHtml(c.kakaoId)}', '카카오톡 ID')" class="w-full bg-yellow-50 text-yellow-900 border border-yellow-200 font-bold py-2 px-3 rounded-xl flex items-center justify-between text-xs"><span>💛 카톡 ID: ${escapeHtml(c.kakaoId)}</span> <span class="text-[10px] bg-yellow-200 px-1.5 py-0.5 rounded">복사</span></button>`;
-      if (c.phone) contactsHtml += `<a href="tel:${escapeHtml(c.phone)}" class="w-full bg-emerald-50 text-emerald-900 border border-emerald-200 font-bold py-2 px-3 rounded-xl flex items-center justify-between text-xs"><span>📞 전화/문자: ${escapeHtml(c.phone)}</span> <span class="text-[10px] bg-emerald-200 px-1.5 py-0.5 rounded">통화</span></a>`;
-      if (c.email) contactsHtml += `<button onclick="copyText('${escapeHtml(c.email)}', '이메일')" class="w-full bg-blue-50 text-blue-900 border border-blue-200 font-bold py-2 px-3 rounded-xl flex items-center justify-between text-xs"><span>✉️ 이메일: ${escapeHtml(c.email)}</span> <span class="text-[10px] bg-blue-200 px-1.5 py-0.5 rounded">복사</span></button>`;
-      if (c.wechat) contactsHtml += `<button onclick="copyText('${escapeHtml(c.wechat)}', '위챗 ID')" class="w-full bg-green-50 text-green-900 border border-green-200 font-bold py-2 px-3 rounded-xl flex items-center justify-between text-xs"><span>🟢 위챗 ID: ${escapeHtml(c.wechat)}</span> <span class="text-[10px] bg-green-200 px-1.5 py-0.5 rounded">복사</span></button>`;
-      if (c.other) contactsHtml += `<button onclick="copyText('${escapeHtml(c.other)}', '기타 연락처')" class="w-full bg-purple-50 text-purple-900 border border-purple-200 font-bold py-2 px-3 rounded-xl flex items-center justify-between text-xs"><span>🌐 기타 수단: ${escapeHtml(c.other)}</span> <span class="text-[10px] bg-purple-200 px-1.5 py-0.5 rounded">복사</span></button>`;
+            </section>
 
-      modalContacts.innerHTML = contactsHtml;
-      document.getElementById('detailModal').classList.remove('hidden');
-      lucide.createIcons();
-    }
+            <!-- TAB 2: REGISTER FORM (FOR WAREHOUSE OWNERS) -->
+            <section id="tabRegister" class="hidden space-y-3">
+                
+                <div class="bg-purple-50 p-3 rounded-2xl border border-purple-200 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="text-lg">✨</span>
+                        <div>
+                            <p class="text-xs font-bold text-purple-900">셀럽이신가요?</p>
+                            <p class="text-[10px] text-purple-700">글 작성 필요 없이 바로 창고와 대화해보세요!</p>
+                        </div>
+                    </div>
+                    <button onclick="switchTab('feed')" class="bg-purple-600 text-white text-[11px] font-extrabold px-2.5 py-1.5 rounded-xl touch-active shrink-0">
+                        피드로 이동
+                    </button>
+                </div>
 
-    function closeDetailModal() {
-      document.getElementById('detailModal').classList.add('hidden');
-      currentDetailPostId = null;
-    }
+                <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-xs space-y-3.5">
+                    <div class="border-b border-gray-100 pb-2.5">
+                        <h2 class="text-sm font-black text-gray-900 flex items-center gap-1.5">
+                            <span class="w-1.5 h-4 bg-baemin rounded-full inline-block"></span>
+                            1분 창고/재고 DB 무료 등록
+                        </h2>
+                        <p class="text-[11px] text-gray-400 mt-0.5">등록해두시면 셀럽들이 먼저 연락합니다.</p>
+                    </div>
 
-    // 모달 안에서 추천 누르기
-    function toggleLikeInModal() {
-      if (!currentDetailPostId) return;
-      const post = posts.find(p => p.id === currentDetailPostId);
-      if (post) {
-        post.liked = !post.liked;
-        post.likes += post.liked ? 1 : -1;
-        savePostsDB();
-        document.getElementById('modalLikes').innerText = post.likes;
-        updateModalLikeBtnState(post);
-        renderPosts();
-      }
-    }
+                    <form id="postForm" onsubmit="handleFormSubmit(event)" class="space-y-3">
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-[11px] font-bold text-gray-700 mb-1">지역 <span class="text-rose-500">*</span></label>
+                                <select id="formArea" required class="w-full bg-gray-50 border border-gray-200 text-xs font-medium rounded-xl p-2 focus:outline-none focus:border-baemin">
+                                    <option value="">지역 선택</option>
+                                    <option value="서울">서울</option>
+                                    <option value="경기 북부">경기 북부</option>
+                                    <option value="경기 남부">경기 남부</option>
+                                    <option value="인천">인천</option>
+                                    <option value="충청/대전">충청/대전</option>
+                                    <option value="경상/부산">경상/부산</option>
+                                    <option value="기타">기타 지역</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-gray-700 mb-1">주요 품목 <span class="text-rose-500">*</span></label>
+                                <select id="formCategory" required class="w-full bg-gray-50 border border-gray-200 text-xs font-medium rounded-xl p-2 focus:outline-none focus:border-baemin">
+                                    <option value="">품목 선택</option>
+                                    <option value="의류/잡화">의류/잡화</option>
+                                    <option value="뷰티/화장품">뷰티/화장품</option>
+                                    <option value="식품/건기식">식품/건기식</option>
+                                    <option value="생활/가전">생활/가전</option>
+                                    <option value="기타/덤핑">기타/덤핑</option>
+                                </select>
+                            </div>
+                        </div>
 
-    function updateModalLikeBtnState(post) {
-      const btn = document.getElementById('modalLikeBtn');
-      if (post.liked) {
-        btn.className = "px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 bg-red-500 text-white border border-red-500 shadow-sm transition";
-      } else {
-        btn.className = "px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 bg-white border border-gray-200 text-gray-700 shadow-sm transition";
-      }
-    }
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-700 mb-1">창고명 / 제목 <span class="text-rose-500">*</span></label>
+                            <input id="formTitle" type="text" required placeholder="예: [의정부] OO물류 의류 200평 창고 덤핑" class="w-full bg-gray-50 border border-gray-200 text-xs rounded-xl p-2.5 focus:outline-none focus:border-baemin">
+                        </div>
 
-    function handleRegister(e) {
-      e.preventDefault();
-      
-      const newPost = {
-        id: Date.now(),
-        title: document.getElementById('regTitle').value,
-        region: document.getElementById('regRegion').value,
-        category: document.getElementById('regCategory').value,
-        desc: document.getElementById('regDesc').value,
-        fullDesc: document.getElementById('regFullDesc').value,
-        contacts: {
-          kakaoOpen: document.getElementById('contactKakaoOpen').value,
-          kakaoId: document.getElementById('contactKakaoId').value,
-          phone: document.getElementById('contactPhone').value,
-          email: document.getElementById('contactEmail').value,
-          wechat: document.getElementById('contactWechat').value,
-          other: document.getElementById('contactOther').value
-        },
-        views: 0,
-        likes: 0,
-        liked: false
-      };
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-700 mb-1">한 줄 요약 (목록 노출용) <span class="text-rose-500">*</span></label>
+                            <input id="formSummary" type="text" required placeholder="예: 이월 덤핑재고 상시 보유 중. 현장 라방 공간 완비!" class="w-full bg-gray-50 border border-gray-200 text-xs rounded-xl p-2.5 focus:outline-none focus:border-baemin">
+                        </div>
 
-      posts.unshift(newPost);
-      savePostsDB();
-      document.getElementById('registerForm').reset();
-      updateTotalCount();
-      alert('창고 정보가 성공적으로 등록되었습니다!');
-      switchTab('feed');
-    }
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-700 mb-1">작성자 / 대표 상호명</label>
+                            <input id="formWriter" type="text" placeholder="예: OO물류 의정부점 대표" class="w-full bg-gray-50 border border-gray-200 text-xs rounded-xl p-2.5 focus:outline-none focus:border-baemin">
+                        </div>
 
-    function copyText(text, label) {
-      navigator.clipboard.writeText(text).then(() => {
-        alert(`${label} [${text}] 복사되었습니다!`);
-      }).catch(() => {
-        alert(`복사 실패: ${text}`);
-      });
-    }
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-700 mb-1">상세 홍보 내용 (긴글 가능) <span class="text-rose-500">*</span></label>
+                            <textarea id="formDesc" rows="5" required placeholder="재고 종류, 공급 조건, MOQ, 라이브커머스 협업 방식, 샘플 지원 여부 등 셀럽들에게 어필하고 싶은 자세한 내용을 자유롭게 작성해 주세요." class="w-full bg-gray-50 border border-gray-200 text-xs rounded-xl p-2.5 focus:outline-none focus:border-baemin leading-relaxed"></textarea>
+                        </div>
 
-    function openSignupModal() { document.getElementById('signupModal').classList.remove('hidden'); }
-    function closeSignupModal() { document.getElementById('signupModal').classList.add('hidden'); }
+                        <div class="bg-amber-50/70 p-3 rounded-2xl border border-amber-200 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <label class="text-xs font-extrabold text-amber-900 flex items-center gap-1">
+                                    <i data-lucide="phone-call" class="w-3.5 h-3.5 text-amber-600"></i>
+                                    연락처 수단 설정 <span class="text-rose-500 text-[10px]">*최소 1개</span>
+                                </label>
+                            </div>
 
-    function handleSignup(e) {
-      e.preventDefault();
-      const user = {
-        nick: document.getElementById('userNick').value,
-        phone: document.getElementById('userPhone').value,
-        date: new Date().toLocaleDateString('ko-KR')
-      };
-      currentUser = user;
-      userDB.push(user);
-      localStorage.setItem('app_current_user', JSON.stringify(currentUser));
-      localStorage.setItem('app_user_db', JSON.stringify(userDB));
-      closeSignupModal();
+                            <div class="space-y-2">
+                                <input id="formKakaoUrl" type="url" placeholder="💬 카카오 오픈채팅 URL" class="w-full bg-white border border-gray-200 text-xs rounded-xl p-2 focus:outline-none focus:border-baemin">
+                                <input id="formKakaoId" type="text" placeholder="🟡 카카오톡 ID" class="w-full bg-white border border-gray-200 text-xs rounded-xl p-2 focus:outline-none focus:border-baemin">
+                                <input id="formPhone" type="tel" placeholder="📞 전화번호 / 핸드폰 번호" class="w-full bg-white border border-gray-200 text-xs rounded-xl p-2 focus:outline-none focus:border-baemin">
+                                <input id="formEmail" type="email" placeholder="✉️ 이메일 주소" class="w-full bg-white border border-gray-200 text-xs rounded-xl p-2 focus:outline-none focus:border-baemin">
+                                <input id="formWechat" type="text" placeholder="💚 위챗(WeChat) ID" class="w-full bg-white border border-gray-200 text-xs rounded-xl p-2 focus:outline-none focus:border-baemin">
+                                <input id="formOtherContact" type="text" placeholder="🌐 기타 (인스타 DM @계정 등)" class="w-full bg-white border border-gray-200 text-xs rounded-xl p-2 focus:outline-none focus:border-baemin">
+                            </div>
+                        </div>
 
-      if (pendingAction) {
-        pendingAction();
-        pendingAction = null;
-      }
-    }
+                        <button type="submit" class="w-full bg-baemin hover:bg-baemin-dark text-white font-black text-xs py-3.5 rounded-xl shadow-md touch-active flex items-center justify-center gap-1.5">
+                            <i data-lucide="check-circle" class="w-4 h-4"></i>
+                            <span>1초 만에 무료 등록하기</span>
+                        </button>
+                    </form>
+                </div>
+            </section>
 
-    function openAdminModal() { document.getElementById('adminModal').classList.remove('hidden'); }
-    function closeAdminModal() { document.getElementById('adminModal').classList.add('hidden'); }
+        </main>
 
-    function checkAdminAuth() {
-      const pw = document.getElementById('adminPassword').value;
-      if (pw === adminPw) {
-        document.getElementById('adminAuthSection').classList.add('hidden');
-        document.getElementById('adminContentSection').classList.remove('hidden');
-        renderAdminUsers();
-      } else {
-        alert('비밀번호가 일치하지 않습니다.');
-      }
-    }
+        <!-- Bottom Fixed Navigation -->
+        <nav class="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2 flex items-center justify-around z-40 safe-area-bottom shadow-lg">
+            <button id="navFeedBtn" onclick="switchTab('feed')" class="flex flex-col items-center gap-1 text-baemin transition touch-active font-extrabold">
+                <i data-lucide="layout-grid" class="w-5 h-5"></i>
+                <span class="text-[10px]">매칭 피드</span>
+            </button>
+            <button id="navRegisterBtn" onclick="switchTab('register')" class="flex flex-col items-center gap-1 text-gray-400 transition touch-active font-bold">
+                <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                <span class="text-[10px]">창고 DB 등록</span>
+            </button>
+            <button onclick="openAdminModal()" class="flex flex-col items-center gap-1 text-gray-400 transition touch-active">
+                <i data-lucide="shield-check" class="w-5 h-5"></i>
+                <span class="text-[10px] font-bold">어드민</span>
+            </button>
+        </nav>
 
-    function renderAdminUsers() {
-      const list = document.getElementById('adminUsersList');
-      if (userDB.length === 0) {
-        list.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">수집된 회원 데이터가 없습니다.</p>';
-        return;
-      }
-      list.innerHTML = userDB.map(u => `
-        <div class="bg-gray-50 p-2.5 rounded-xl border border-gray-200 text-xs flex justify-between items-center">
-          <div>
-            <strong class="text-gray-800">${escapeHtml(u.nick)}</strong>
-            <p class="text-[10px] text-gray-400">${escapeHtml(u.phone)}</p>
-          </div>
-          <span class="text-[10px] text-gray-400">${u.date}</span>
+    </div>
+
+    <!-- Modal 1: Auth Modal -->
+    <div id="authModal" class="fixed inset-0 z-50 flex items-end justify-center bg-black/60 hidden backdrop-blur-xs">
+        <div id="authModalCard" class="bg-white w-full max-w-[440px] rounded-t-3xl p-5 space-y-4 shadow-2xl bottom-sheet-enter max-h-[85vh] overflow-y-auto">
+            <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto -mt-1 mb-2"></div>
+            
+            <div class="flex items-center justify-between border-b border-gray-100 pb-2.5">
+                <div class="flex items-center gap-2">
+                    <div class="w-6 h-6 rounded-lg bg-baemin flex items-center justify-center text-white font-black text-xs">
+                        1초
+                    </div>
+                    <h3 class="font-extrabold text-gray-900 text-sm">3초 필수 간편 가입</h3>
+                </div>
+                <button onclick="closeAuthModal()" class="text-gray-400 p-1">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="bg-baemin-light/60 p-3 rounded-2xl border border-baemin/20">
+                <p id="authReasonText" class="text-xs font-bold text-baemin-dark">
+                    상세 홍보글 확인 및 매칭 글 등록을 위해 최소 정보만 입력해주세요!
+                </p>
+            </div>
+
+            <form onsubmit="handleAuthSubmit(event)" class="space-y-3">
+                <div>
+                    <label class="block text-[11px] font-bold text-gray-700 mb-1">회원 구분 <span class="text-rose-500">*</span></label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="cursor-pointer border border-baemin bg-baemin-light/40 p-2 rounded-xl flex items-center justify-center gap-1 text-xs font-bold text-baemin-dark" id="authRoleWhLabel">
+                            <input type="radio" name="authRole" value="warehouse" checked onchange="updateAuthRoleUI()" class="hidden">
+                            <span>🏢 창고주</span>
+                        </label>
+                        <label class="cursor-pointer border border-gray-200 p-2 rounded-xl flex items-center justify-center gap-1 text-xs font-bold text-gray-600" id="authRoleCelebLabel">
+                            <input type="radio" name="authRole" value="celeb" onchange="updateAuthRoleUI()" class="hidden">
+                            <span>✨ 셀럽</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-gray-700 mb-1">이름 또는 채널명 <span class="text-rose-500">*</span></label>
+                    <input id="authName" type="text" required placeholder="예: 의정부물류 / 인스타 @celeb" class="w-full bg-gray-50 border border-gray-200 text-xs rounded-xl p-2.5 focus:outline-none focus:border-baemin">
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-gray-700 mb-1">휴대폰 번호 <span class="text-rose-500">*</span></label>
+                    <input id="authPhone" type="tel" required placeholder="예: 010-1234-5678" class="w-full bg-gray-50 border border-gray-200 text-xs rounded-xl p-2.5 focus:outline-none focus:border-baemin">
+                </div>
+
+                <button type="submit" class="w-full bg-[#FEE500] text-[#191919] font-black text-xs py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-sm touch-active mt-2">
+                    <i data-lucide="message-circle" class="w-4 h-4 fill-current"></i>
+                    <span>카카오 3초 간편가입 시작하기</span>
+                </button>
+            </form>
         </div>
-      `).join('');
-    }
+    </div>
 
-    function switchAdminSubTab(tab) {
-      if (tab === 'users') {
-        document.getElementById('adminUsersList').classList.remove('hidden');
-        document.getElementById('adminPwChange').classList.add('hidden');
-        document.getElementById('subTabUsers').className = "flex-1 py-2 bg-white rounded-lg shadow-sm text-black";
-        document.getElementById('subTabPw').className = "flex-1 py-2 text-gray-500";
-      } else {
-        document.getElementById('adminUsersList').classList.add('hidden');
-        document.getElementById('adminPwChange').classList.remove('hidden');
-        document.getElementById('subTabPw').className = "flex-1 py-2 bg-white rounded-lg shadow-sm text-black";
-        document.getElementById('subTabUsers').className = "flex-1 py-2 text-gray-500";
-      }
-    }
+    <!-- Modal 2: Detail Popup Modal (자세히보기 & 추천 & 연락처) -->
+    <div id="kakaoModal" class="fixed inset-0 z-50 flex items-end justify-center bg-black/60 hidden backdrop-blur-xs">
+        <div id="kakaoModalCard" class="bg-white w-full max-w-[440px] rounded-t-3xl p-5 space-y-3.5 shadow-2xl bottom-sheet-enter max-h-[88vh] overflow-y-auto">
+            <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto -mt-1 mb-1"></div>
 
-    function changeAdminPassword() {
-      const newPw = document.getElementById('newAdminPw').value;
-      if (!newPw) return alert('새 비밀번호를 입력해 주세요.');
-      adminPw = newPw;
-      localStorage.setItem('app_admin_pw', adminPw);
-      alert('어드민 비밀번호가 변경되었습니다!');
-      document.getElementById('newAdminPw').value = '';
-    }
+            <div class="flex items-center justify-between border-b border-gray-100 pb-2">
+                <h3 class="font-extrabold text-gray-900 text-sm flex items-center gap-1.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-baemin"></span>
+                    창고 상세 홍보 & 연락처 연결
+                </h3>
+                <button onclick="closeKakaoModal()" class="text-gray-400 p-1">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
 
-    function applyFilters() { renderPosts(); }
-    function updateTotalCount() { document.getElementById('totalCount').innerText = posts.length; }
-  </script>
+            <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <span id="modalCategoryBadge" class="inline-block bg-baemin-light text-baemin-dark text-[10px] font-black px-2 py-0.5 rounded-md border border-baemin/20">
+                        카테고리 정보
+                    </span>
+                    <span id="modalWriter" class="text-[11px] text-gray-400">
+                        작성자 정보
+                    </span>
+                </div>
+
+                <h4 id="modalTitle" class="font-bold text-gray-900 text-base leading-snug">
+                    게시글 제목
+                </h4>
+
+                <!-- 상세 긴글 영역 -->
+                <div class="bg-gray-50 p-3.5 rounded-2xl border border-gray-100 space-y-1.5">
+                    <p class="text-[11px] font-black text-gray-500 uppercase">📢 창고 상세 홍보 내용</p>
+                    <div id="modalFullDesc" class="text-xs text-gray-800 leading-relaxed font-medium whitespace-pre-line break-words max-h-[220px] overflow-y-auto hide-scrollbar">
+                        상세 홍보 내용
+                    </div>
+                </div>
+
+                <!-- 모달 내부 반응 & 추천 버튼 영역 -->
+                <div class="bg-baemin-subtle p-2.5 rounded-xl border border-baemin/20 flex items-center justify-between text-xs">
+                    <div class="flex items-center gap-1.5 text-gray-600 font-bold text-[11px]">
+                        <i data-lucide="eye" class="w-4 h-4 text-baemin"></i>
+                        <span>조회수 <strong id="modalViewsText" class="text-gray-900">0</strong>회</span>
+                    </div>
+
+                    <button id="modalLikeBtn" onclick="toggleLikeInModal()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-black text-xs border transition touch-active">
+                        <i data-lucide="thumbs-up" class="w-4 h-4"></i>
+                        <span>추천 <strong id="modalLikesText">0</strong></span>
+                    </button>
+                </div>
+
+                <div id="modalKakaoUrlText" class="space-y-2 pt-1">
+                    <!-- Dynamic contact items -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Modal -->
+    <div id="adminModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-3 hidden backdrop-blur-md">
+        <div id="adminModalCard" class="bg-white w-full max-w-[420px] rounded-3xl p-4 space-y-3 shadow-2xl max-h-[90vh] flex flex-col">
+            <div class="flex items-center justify-between border-b border-gray-100 pb-2.5 shrink-0">
+                <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 bg-slate-900 text-amber-400 rounded-xl flex items-center justify-center font-black text-xs">
+                        🔑
+                    </div>
+                    <div>
+                        <h3 class="font-black text-gray-900 text-sm">어드민 대시보드</h3>
+                        <p class="text-[9px] text-gray-400">회원 DB, 게시글 & 비번 설정 관리</p>
+                    </div>
+                </div>
+                <button onclick="closeAdminModal()" class="text-gray-400 p-1">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Lock Screen -->
+            <div id="adminLockScreen" class="py-8 space-y-3 text-center max-w-xs mx-auto w-full">
+                <div class="w-10 h-10 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center mx-auto text-lg font-bold">
+                    🔒
+                </div>
+                <h4 id="adminLockTitle" class="font-extrabold text-gray-800 text-xs">관리자 인증이 필요합니다.</h4>
+                <p class="text-[10px] text-gray-400">관리자 전용 접근 화면입니다.</p>
+                <input id="adminPasswordInput" type="password" placeholder="비밀번호 입력" class="w-full bg-gray-50 border border-gray-200 text-center text-xs font-bold rounded-xl p-2.5 focus:outline-none focus:border-baemin">
+                <button onclick="checkAdminPassword()" class="w-full bg-slate-900 text-white font-black text-xs py-2.5 rounded-xl touch-active">
+                    로그인
+                </button>
+            </div>
+
+            <!-- Main Admin Content -->
+            <div id="adminMainContent" class="hidden flex-1 overflow-hidden flex flex-col space-y-3">
+                <div class="grid grid-cols-3 gap-1.5 shrink-0">
+                    <div class="bg-baemin-light p-2 rounded-xl text-center border border-baemin/20">
+                        <p class="text-[9px] font-bold text-baemin-dark">회원 DB</p>
+                        <p id="adminStatUserCount" class="text-base font-black text-gray-900">0명</p>
+                    </div>
+                    <div class="bg-purple-50 p-2 rounded-xl text-center border border-purple-200">
+                        <p class="text-[9px] font-bold text-purple-700">창고 DB</p>
+                        <p id="adminStatPostCount" class="text-base font-black text-gray-900">0개</p>
+                    </div>
+                    <div class="bg-amber-50 p-2 rounded-xl text-center border border-amber-200">
+                        <p class="text-[9px] font-bold text-amber-800">조회수</p>
+                        <p id="adminStatMatchCount" class="text-base font-black text-gray-900">0회</p>
+                    </div>
+                </div>
+
+                <div class="flex border-b border-gray-100 gap-3 text-xs font-bold shrink-0">
+                    <button id="adminTabUserBtn" onclick="switchAdminTab('users')" class="pb-1.5 border-b-2 border-baemin text-baemin font-black text-[11px]">
+                        가입자 DB
+                    </button>
+                    <button id="adminTabPostBtn" onclick="switchAdminTab('posts')" class="pb-1.5 border-b-2 border-transparent text-gray-400 text-[11px]">
+                        게시글 관리
+                    </button>
+                    <button id="adminTabSettingsBtn" onclick="switchAdminTab('settings')" class="pb-1.5 border-b-2 border-transparent text-gray-400 text-[11px]">
+                        ⚙️ 비번 변경
+                    </button>
+                </div>
+
+                <!-- Section 1: Users DB -->
+                <div id="adminSectionUsers" class="flex-1 overflow-y-auto space-y-2 hide-scrollbar">
+                    <div class="flex items-center justify-between">
+                        <p class="text-[11px] font-extrabold text-gray-700">📋 가입 유저 명단</p>
+                        <button onclick="downloadUserCSV()" class="bg-emerald-600 text-white text-[10px] font-black px-2.5 py-1 rounded-lg touch-active">
+                            📥 엑셀 다운로드
+                        </button>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-xl overflow-hidden">
+                        <table class="w-full text-left text-[11px]">
+                            <thead class="bg-gray-100 text-gray-500 font-bold border-b border-gray-200">
+                                <tr>
+                                    <th class="p-2">구분</th>
+                                    <th class="p-2">이름</th>
+                                    <th class="p-2">연락처</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminUserTableBody" class="divide-y divide-gray-100 text-gray-800">
+                                <!-- Dynamic -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Section 2: Posts Management -->
+                <div id="adminSectionPosts" class="hidden flex-1 overflow-y-auto space-y-1.5 hide-scrollbar">
+                    <div id="adminPostListContainer" class="space-y-1.5">
+                        <!-- Dynamic -->
+                    </div>
+                </div>
+
+                <!-- Section 3: Admin Settings & Password Change -->
+                <div id="adminSectionSettings" class="hidden flex-1 overflow-y-auto space-y-3 hide-scrollbar pt-2">
+                    <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 space-y-2.5">
+                        <h4 class="text-xs font-black text-slate-800 flex items-center gap-1">
+                            🔐 관리자 비밀번호 변경
+                        </h4>
+                        <p class="text-[10px] text-gray-500">새로운 비밀번호를 입력 후 변경하세요. 변경된 암호는 즉시 반영 및 저장됩니다.</p>
+                        
+                        <form onsubmit="handlePasswordChangeSubmit(event)" class="space-y-2">
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-600 mb-1">현재 비밀번호</label>
+                                <input id="adminCurrentPwdInput" type="password" required placeholder="현재 암호 입력" class="w-full bg-white border border-gray-200 text-xs rounded-xl p-2 focus:outline-none focus:border-baemin">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-600 mb-1">새로운 비밀번호</label>
+                                <input id="adminNewPwdInput" type="password" required placeholder="새 암호 입력 (4자리 이상)" class="w-full bg-white border border-gray-200 text-xs rounded-xl p-2 focus:outline-none focus:border-baemin">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-600 mb-1">새로운 비밀번호 확인</label>
+                                <input id="adminNewPwdConfirmInput" type="password" required placeholder="새 암호 재입력" class="w-full bg-white border border-gray-200 text-xs rounded-xl p-2 focus:outline-none focus:border-baemin">
+                            </div>
+
+                            <button type="submit" class="w-full bg-slate-900 text-white font-black text-xs py-2.5 rounded-xl touch-active shadow-sm mt-1">
+                                비밀번호 변경 저장하기
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Component -->
+    <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-gray-900/90 text-white text-xs font-bold px-4 py-2 rounded-full shadow-2xl transition duration-300 opacity-0 pointer-events-none flex items-center gap-1.5 border border-white/10">
+        <i data-lucide="info" class="w-3.5 h-3.5 text-baemin"></i>
+        <span id="toastMsg">메시지</span>
+    </div>
+
+    <script>
+        // XSS Prevention Safe Escaper
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        // Global State Variables
+        let currentUser = null;
+        let pendingAction = null;
+        let activeDetailPostId = null;
+        let isAdminUnlocked = false;
+        let adminPassword = '1234'; // Default admin password
+
+        let userDatabase = [
+            { role: 'warehouse', name: 'OO물류 의정부점', phone: '010-9876-5432', date: '2026-07-20' },
+            { role: 'celeb', name: '인스타 @celeb_kr', phone: '010-2222-3333', date: '2026-07-21' },
+            { role: 'warehouse', name: '인천 로지스틱스', phone: '032-555-1234', date: '2026-07-21' }
+        ];
+
+        let posts = [
+            {
+                id: 1,
+                role: 'warehouse',
+                area: '경기 북부',
+                category: '의류/잡화',
+                title: '[경기 의정부] OO물류 200평 창고 덤핑',
+                summary: '의류/잡화 이월 덤핑재고 상시 보유 중입니다. 현장 라방 공간 완비!',
+                desc: '의정부 용현산업단지 근처 대형 창고입니다.\n\n- 이월 의류 및 패션 잡화 땡처리 대량 보유 중입니다.\n- 현장 라이브 커머스 전용 조명 및 스튜디오 공간 보유\n- MOQ: 100개부터 자율 사입 가능\n- 현장 방문하셔서 편하게 제품 확인하시고 조건 협의 가능합니다!',
+                writerInfo: 'OO물류 의정부점 대표',
+                kakaoUrl: 'https://open.kakao.com/o/sSampleWh1',
+                kakaoId: 'wh_ujb_200',
+                phone: '010-9876-5432',
+                email: 'wh_ujb@logistics.co.kr',
+                wechat: 'wh_ujb_wechat',
+                otherContact: '인스타 DM @ujb_warehouse',
+                timeAgo: '10분 전',
+                views: 142,
+                likes: 38,
+                isLiked: false
+            },
+            {
+                id: 2,
+                role: 'celeb',
+                area: '서울',
+                category: '뷰티/화장품',
+                title: '[서울] 뷰티/의류 전문 인스타 셀럽 (8만)',
+                summary: '3040 타겟 뷰티/이너뷰티 덤핑 및 사입 창고주분 구합니다.',
+                desc: '인스타그램 8만 팔로워 뷰티/라이프스타일 인플루언서입니다.\n\n- 공구 및 라이브 방송 진행 경험 다수\n- 이너뷰티, 화장품, 피부케어 땡처리 및 위탁 협업 원합니다.\n- 샘플 제공 가능 창고주분들 많은 연락 바랍니다!',
+                writerInfo: '인스타그램 @beauty_celeb_kr',
+                kakaoUrl: 'https://open.kakao.com/o/sSampleCeleb1',
+                kakaoId: 'celeb_beauty8',
+                phone: '010-2222-3333',
+                email: 'celeb@beauty.kr',
+                wechat: '',
+                otherContact: '네이버 톡톡 공식링크',
+                timeAgo: '25분 전',
+                views: 98,
+                likes: 24,
+                isLiked: false
+            },
+            {
+                id: 3,
+                role: 'warehouse',
+                area: '인천',
+                category: '식품/건기식',
+                title: '[인천 서구] 냉장/냉동 물류 창고',
+                summary: '식품 및 건강기능식품 소량 보관 및 3PL 출고 가능.',
+                desc: '인천 서구 위치 냉장/냉동 물류 전문 업체입니다.\n\n- 건강기능식품 및 이너뷰티 3PL 출고 가능\n- 인플루언서 분들 샘플 무료 지원 및 B2B 위탁 진행\n- 당일 출고 시스템 완비',
+                writerInfo: '인천 로지스틱스 대표',
+                kakaoUrl: 'https://open.kakao.com/o/sSampleWh2',
+                kakaoId: '',
+                phone: '032-555-1234',
+                email: 'incheon_3pl@naver.com',
+                wechat: 'incheon_logistics_cn',
+                otherContact: '',
+                timeAgo: '1시간 전',
+                views: 210,
+                likes: 52,
+                isLiked: false
+            }
+        ];
+
+        let currentRoleFilter = 'all';
+
+        window.onload = function() {
+            checkSavedUser();
+            applyFilters();
+            if (window.lucide && lucide.createIcons) lucide.createIcons();
+        };
+
+        function checkSavedUser() {
+            try {
+                const savedUser = localStorage.getItem('baemin_matching_user');
+                if (savedUser) {
+                    currentUser = JSON.parse(savedUser);
+                    updateUserUI();
+                }
+                
+                const savedUserDb = localStorage.getItem('baemin_user_db');
+                if (savedUserDb) {
+                    userDatabase = JSON.parse(savedUserDb);
+                }
+
+                const savedPostsDb = localStorage.getItem('baemin_posts_db');
+                if (savedPostsDb) {
+                    posts = JSON.parse(savedPostsDb);
+                }
+
+                const savedAdminPwd = localStorage.getItem('baemin_admin_password');
+                if (savedAdminPwd) {
+                    adminPassword = savedAdminPwd;
+                }
+            } catch(e) {
+                console.error("Localstorage parse error", e);
+            }
+        }
+
+        function savePostsToStorage() {
+            try {
+                localStorage.setItem('baemin_posts_db', JSON.stringify(posts));
+            } catch(e) {}
+        }
+
+        function updateUserUI() {
+            const userInfoHeader = document.getElementById('userInfoHeader');
+            const authBtnHeader = document.getElementById('authBtnHeader');
+            const userNameText = document.getElementById('userNameText');
+            const userRoleBadge = document.getElementById('userRoleBadge');
+
+            if (currentUser) {
+                if (userInfoHeader) userInfoHeader.classList.remove('hidden');
+                if (authBtnHeader) authBtnHeader.classList.add('hidden');
+                if (userNameText) userNameText.innerText = currentUser.name;
+                if (userRoleBadge) {
+                    userRoleBadge.innerText = currentUser.role === 'warehouse' ? '🏢창고' : '✨셀럽';
+                }
+
+                const formWriter = document.getElementById('formWriter');
+                if (formWriter && !formWriter.value) {
+                    formWriter.value = `${currentUser.name} (${currentUser.phone})`;
+                }
+            } else {
+                if (userInfoHeader) userInfoHeader.classList.add('hidden');
+                if (authBtnHeader) authBtnHeader.classList.remove('hidden');
+            }
+            if (window.lucide && lucide.createIcons) lucide.createIcons();
+        }
+
+        function switchTab(tabName) {
+            if (tabName === 'register' && !currentUser) {
+                showAuthModal('창고를 등록하려면 3초 간편가입이 필요합니다.', () => switchTab('register'));
+                return;
+            }
+
+            const feedSection = document.getElementById('tabFeed');
+            const registerSection = document.getElementById('tabRegister');
+            const navFeedBtn = document.getElementById('navFeedBtn');
+            const navRegisterBtn = document.getElementById('navRegisterBtn');
+
+            if (tabName === 'feed') {
+                feedSection.classList.remove('hidden');
+                registerSection.classList.add('hidden');
+
+                navFeedBtn.className = "flex flex-col items-center gap-1 text-baemin transition touch-active font-extrabold";
+                navRegisterBtn.className = "flex flex-col items-center gap-1 text-gray-400 transition touch-active font-bold";
+            } else {
+                feedSection.classList.add('hidden');
+                registerSection.classList.remove('hidden');
+
+                navRegisterBtn.className = "flex flex-col items-center gap-1 text-baemin transition touch-active font-extrabold";
+                navFeedBtn.className = "flex flex-col items-center gap-1 text-gray-400 transition touch-active font-bold";
+            }
+            document.getElementById('scrollableArea').scrollTop = 0;
+            if (window.lucide && lucide.createIcons) lucide.createIcons();
+        }
+
+        function setRoleFilter(role) {
+            currentRoleFilter = role;
+            const allBtn = document.getElementById('roleFilterAll');
+            const whBtn = document.getElementById('roleFilterWh');
+            const celebBtn = document.getElementById('roleFilterCeleb');
+
+            const activeClass = "flex-1 py-1.5 rounded-lg bg-white text-gray-900 shadow-xs text-[11px] font-black transition";
+            const inactiveClass = "flex-1 py-1.5 rounded-lg text-gray-500 text-[11px] font-bold transition";
+
+            if (allBtn) allBtn.className = role === 'all' ? activeClass : inactiveClass;
+            if (whBtn) whBtn.className = role === 'warehouse' ? activeClass : inactiveClass;
+            if (celebBtn) celebBtn.className = role === 'celeb' ? activeClass : inactiveClass;
+
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const regionSelect = document.getElementById('regionSelect');
+            const categorySelect = document.getElementById('categorySelect');
+            const searchInput = document.getElementById('searchInput');
+
+            const region = regionSelect ? regionSelect.value : 'all';
+            const category = categorySelect ? categorySelect.value : 'all';
+            const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+
+            const filtered = posts.filter(post => {
+                const matchRole = (currentRoleFilter === 'all') || (post.role === currentRoleFilter);
+                const matchRegion = (region === 'all') || (post.area === region);
+                const matchCategory = (category === 'all') || (post.category === category);
+                const matchQuery = !query || 
+                    post.title.toLowerCase().includes(query) || 
+                    (post.summary && post.summary.toLowerCase().includes(query)) ||
+                    post.desc.toLowerCase().includes(query) || 
+                    post.area.toLowerCase().includes(query);
+
+                return matchRole && matchRegion && matchCategory && matchQuery;
+            });
+
+            renderPosts(filtered);
+        }
+
+        function getContactCountBadge(item) {
+            let count = 0;
+            if (item.kakaoUrl) count++;
+            if (item.kakaoId) count++;
+            if (item.phone) count++;
+            if (item.email) count++;
+            if (item.wechat) count++;
+            if (item.otherContact) count++;
+            return `${count}개 수단`;
+        }
+
+        function renderPosts(items) {
+            const container = document.getElementById('postsList');
+            if (!container) return;
+
+            if (items.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white rounded-2xl p-6 text-center space-y-2 border border-gray-100">
+                        <div class="text-2xl">🔍</div>
+                        <p class="text-xs font-bold text-gray-700">일치하는 창고 매칭 카드가 없습니다.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = items.map(item => {
+                const isWarehouse = item.role === 'warehouse';
+                const roleBadgeClass = isWarehouse 
+                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
+                    : 'bg-purple-50 text-purple-700 border-purple-200';
+                const roleLabel = isWarehouse ? '🏢 창고주' : '✨ 셀럽';
+
+                return `
+                    <div onclick="openKakaoModal(${item.id})" class="bg-white rounded-2xl p-3.5 border border-gray-100 shadow-xs space-y-2.5 touch-active cursor-pointer hover:border-baemin/40 transition">
+                        <div class="flex items-center justify-between text-[11px]">
+                            <div class="flex items-center gap-1">
+                                <span class="font-bold px-1.5 py-0.5 rounded border text-[10px] ${roleBadgeClass}">
+                                    ${roleLabel}
+                                </span>
+                                <span class="bg-gray-100 text-gray-700 font-bold px-1.5 py-0.5 rounded text-[10px]">
+                                    ${escapeHtml(item.area)}
+                                </span>
+                                <span class="bg-baemin-light text-baemin-dark font-extrabold px-1.5 py-0.5 rounded text-[10px] border border-baemin/20">
+                                    ${escapeHtml(item.category)}
+                                </span>
+                            </div>
+                            <span class="text-[10px] text-gray-400">${escapeHtml(item.timeAgo)}</span>
+                        </div>
+
+                        <div>
+                            <h3 class="font-extrabold text-gray-900 text-sm leading-snug">
+                                ${escapeHtml(item.title)}
+                            </h3>
+                            <p class="text-xs text-gray-600 mt-1 leading-relaxed line-clamp-2">
+                                "${escapeHtml(item.summary || item.desc)}"
+                            </p>
+                        </div>
+
+                        <div class="bg-gray-50 p-2 rounded-xl border border-gray-100 flex items-center justify-between text-[11px] text-gray-500">
+                            <span class="truncate">작성: <strong class="text-gray-800 font-bold">${escapeHtml(item.writerInfo || '회원')}</strong></span>
+                            
+                            <!-- 외부 목록 static view-only badges -->
+                            <div class="flex items-center gap-2 shrink-0">
+                                <span class="flex items-center gap-0.5 text-[10px] text-gray-400">
+                                    <i data-lucide="eye" class="w-3 h-3 text-baemin"></i>
+                                    <span>${item.views}</span>
+                                </span>
+                                <span class="flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded border ${item.isLiked ? 'bg-rose-50 border-rose-200 text-rose-600 font-bold' : 'bg-white border-gray-200 text-gray-600'}">
+                                    <i data-lucide="thumbs-up" class="w-3 h-3 ${item.isLiked ? 'fill-current text-rose-500' : ''}"></i>
+                                    <span>${item.likes}</span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="w-full bg-[#FEE500] text-[#191919] font-black text-xs py-2.5 rounded-xl flex items-center justify-center gap-1.5 shadow-xs">
+                            <i data-lucide="message-circle" class="w-3.5 h-3.5 fill-current"></i>
+                            <span>상세 홍보글 확인 & 1초 연결</span>
+                            <span class="bg-black/10 px-1 py-0.2 rounded text-[9px]">
+                                ${getContactCountBadge(item)}
+                            </span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            if (window.lucide && lucide.createIcons) lucide.createIcons();
+        }
+
+        function showAuthModal(reasonMessage, callback) {
+            if (reasonMessage) {
+                const reasonEl = document.getElementById('authReasonText');
+                if (reasonEl) reasonEl.innerText = reasonMessage;
+            }
+            if (callback) pendingAction = callback;
+
+            updateAuthRoleUI();
+
+            const modal = document.getElementById('authModal');
+            const card = document.getElementById('authModalCard');
+
+            if (modal && card) {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    card.classList.remove('bottom-sheet-enter');
+                    card.classList.add('bottom-sheet-active');
+                }, 10);
+            }
+            if (window.lucide && lucide.createIcons) lucide.createIcons();
+        }
+
+        function updateAuthRoleUI() {
+            const warehouseRadio = document.querySelector('input[name="authRole"][value="warehouse"]');
+            const whLabel = document.getElementById('authRoleWhLabel');
+            const celebLabel = document.getElementById('authRoleCelebLabel');
+
+            if (!whLabel || !celebLabel) return;
+
+            if (warehouseRadio && warehouseRadio.checked) {
+                whLabel.className = "cursor-pointer border border-baemin bg-baemin-light/40 p-2 rounded-xl flex items-center justify-center gap-1 text-xs font-bold text-baemin-dark";
+                celebLabel.className = "cursor-pointer border border-gray-200 p-2 rounded-xl flex items-center justify-center gap-1 text-xs font-bold text-gray-600";
+            } else {
+                celebLabel.className = "cursor-pointer border border-baemin bg-baemin-light/40 p-2 rounded-xl flex items-center justify-center gap-1 text-xs font-bold text-baemin-dark";
+                whLabel.className = "cursor-pointer border border-gray-200 p-2 rounded-xl flex items-center justify-center gap-1 text-xs font-bold text-gray-600";
+            }
+        }
+
+        function closeAuthModal() {
+            const modal = document.getElementById('authModal');
+            const card = document.getElementById('authModalCard');
+
+            if (card) {
+                card.classList.remove('bottom-sheet-active');
+                card.classList.add('bottom-sheet-enter');
+            }
+            setTimeout(() => {
+                if (modal) modal.classList.add('hidden');
+            }, 250);
+        }
+
+        function handleAuthSubmit(event) {
+            event.preventDefault();
+            const roleEl = document.querySelector('input[name="authRole"]:checked');
+            const role = roleEl ? roleEl.value : 'celeb';
+            const name = document.getElementById('authName').value.trim();
+            const phone = document.getElementById('authPhone').value.trim();
+
+            if (!name || !phone) {
+                showToast('이름과 전화번호를 입력해주세요.');
+                return;
+            }
+
+            currentUser = { role, name, phone };
+            try {
+                localStorage.setItem('baemin_matching_user', JSON.stringify(currentUser));
+            } catch(e) {}
+
+            userDatabase.unshift({ role, name, phone, date: new Date().toISOString().slice(0, 10) });
+            try {
+                localStorage.setItem('baemin_user_db', JSON.stringify(userDatabase));
+            } catch(e) {}
+
+            updateUserUI();
+            closeAuthModal();
+            showToast(`🎉 ${name}님, 가입이 완료되었습니다!`);
+
+            if (pendingAction) {
+                const actionToRun = pendingAction;
+                pendingAction = null;
+                setTimeout(() => actionToRun(), 300);
+            }
+        }
+
+        function openKakaoModal(id) {
+            if (!currentUser) {
+                showAuthModal('상세 정보 확인을 위해 3초 간편가입이 필요합니다.', () => openKakaoModal(id));
+                return;
+            }
+
+            const post = posts.find(p => p.id === id);
+            if (!post) return;
+
+            activeDetailPostId = id;
+
+            // Increment views ONLY when opening detail modal
+            post.views += 1;
+            savePostsToStorage();
+            applyFilters();
+
+            document.getElementById('modalCategoryBadge').innerText = `${post.area} · ${post.category}`;
+            document.getElementById('modalTitle').innerText = post.title;
+            document.getElementById('modalWriter').innerText = `작성자: ${post.writerInfo || '회원'}`;
+            document.getElementById('modalFullDesc').innerText = post.desc || post.summary || '상세 내용이 없습니다.';
+            
+            document.getElementById('modalViewsText').innerText = post.views;
+            document.getElementById('modalLikesText').innerText = post.likes;
+
+            updateModalLikeButton(post);
+
+            const listContainer = document.getElementById('modalKakaoUrlText');
+            let contactHtml = '';
+
+            if (post.kakaoUrl) {
+                contactHtml += `
+                    <div class="bg-amber-50 p-2.5 rounded-xl border border-amber-200 flex items-center justify-between text-xs">
+                        <div>
+                            <p class="font-bold text-amber-900 text-[11px]">💬 카카오톡 오픈채팅</p>
+                            <p class="text-[10px] text-amber-800 font-mono truncate max-w-[180px]">${escapeHtml(post.kakaoUrl)}</p>
+                        </div>
+                        <a href="${escapeHtml(post.kakaoUrl)}" target="_blank" class="bg-[#FEE500] text-gray-900 text-[11px] px-2.5 py-1 rounded-lg font-black touch-active">연결 ↗</a>
+                    </div>
+                `;
+            }
+
+            if (post.kakaoId) {
+                contactHtml += `
+                    <div class="bg-yellow-50 p-2.5 rounded-xl border border-yellow-200 flex items-center justify-between text-xs">
+                        <div>
+                            <p class="font-bold text-yellow-900 text-[11px]">🟡 카카오톡 ID</p>
+                            <p class="text-xs text-yellow-950 font-bold">${escapeHtml(post.kakaoId)}</p>
+                        </div>
+                        <button onclick="copySingleValue('${escapeHtml(post.kakaoId)}', '카카오톡 ID')" class="bg-white border border-yellow-300 text-yellow-900 text-[10px] font-bold px-2 py-1 rounded-lg touch-active">복사</button>
+                    </div>
+                `;
+            }
+
+            if (post.phone) {
+                contactHtml += `
+                    <div class="bg-emerald-50 p-2.5 rounded-xl border border-emerald-200 flex items-center justify-between text-xs">
+                        <div>
+                            <p class="font-bold text-emerald-900 text-[11px]">📞 전화번호</p>
+                            <p class="text-xs text-emerald-950 font-bold">${escapeHtml(post.phone)}</p>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <a href="tel:${escapeHtml(post.phone)}" class="bg-emerald-600 text-white text-[10px] font-bold px-2 py-1 rounded-lg touch-active">전화</a>
+                            <button onclick="copySingleValue('${escapeHtml(post.phone)}', '전화번호')" class="bg-white border border-emerald-300 text-emerald-900 text-[10px] font-bold px-2 py-1 rounded-lg touch-active">복사</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (post.email) {
+                contactHtml += `
+                    <div class="bg-blue-50 p-2.5 rounded-xl border border-blue-200 flex items-center justify-between text-xs">
+                        <div class="overflow-hidden mr-1">
+                            <p class="font-bold text-blue-900 text-[11px]">✉️ 이메일</p>
+                            <p class="text-[11px] text-blue-950 font-bold truncate">${escapeHtml(post.email)}</p>
+                        </div>
+                        <button onclick="copySingleValue('${escapeHtml(post.email)}', '이메일')" class="bg-white border border-blue-300 text-blue-900 text-[10px] font-bold px-2 py-1 rounded-lg shrink-0 touch-active">복사</button>
+                    </div>
+                `;
+            }
+
+            if (post.wechat) {
+                contactHtml += `
+                    <div class="bg-teal-50 p-2.5 rounded-xl border border-teal-200 flex items-center justify-between text-xs">
+                        <div>
+                            <p class="font-bold text-teal-900 text-[11px]">💚 위챗(WeChat) ID</p>
+                            <p class="text-xs text-teal-950 font-bold">${escapeHtml(post.wechat)}</p>
+                        </div>
+                        <button onclick="copySingleValue('${escapeHtml(post.wechat)}', '위챗 ID')" class="bg-white border border-teal-300 text-teal-900 text-[10px] font-bold px-2 py-1 rounded-lg touch-active">복사</button>
+                    </div>
+                `;
+            }
+
+            if (post.otherContact) {
+                contactHtml += `
+                    <div class="bg-purple-50 p-2.5 rounded-xl border border-purple-200 flex items-center justify-between text-xs">
+                        <div class="overflow-hidden mr-1">
+                            <p class="font-bold text-purple-900 text-[11px]">🌐 기타 연락수단</p>
+                            <p class="text-[11px] text-purple-950 font-bold truncate">${escapeHtml(post.otherContact)}</p>
+                        </div>
+                        <button onclick="copySingleValue('${escapeHtml(post.otherContact)}', '기타 연락처')" class="bg-white border border-purple-300 text-purple-900 text-[10px] font-bold px-2 py-1 rounded-lg shrink-0 touch-active">복사</button>
+                    </div>
+                `;
+            }
+
+            if (listContainer) listContainer.innerHTML = contactHtml;
+
+            const modal = document.getElementById('kakaoModal');
+            const card = document.getElementById('kakaoModalCard');
+
+            if (modal && card) {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    card.classList.remove('bottom-sheet-enter');
+                    card.classList.add('bottom-sheet-active');
+                }, 10);
+            }
+            if (window.lucide && lucide.createIcons) lucide.createIcons();
+        }
+
+        function updateModalLikeButton(post) {
+            const btn = document.getElementById('modalLikeBtn');
+            if (!btn) return;
+
+            if (post.isLiked) {
+                btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-black text-xs bg-rose-500 text-white border border-rose-500 shadow-xs transition touch-active";
+            } else {
+                btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-black text-xs bg-white text-gray-700 border border-gray-200 hover:border-rose-300 shadow-xs transition touch-active";
+            }
+        }
+
+        // Toggle Like INSIDE Modal ONLY
+        function toggleLikeInModal() {
+            if (!activeDetailPostId) return;
+            const post = posts.find(p => p.id === activeDetailPostId);
+            if (!post) return;
+
+            post.isLiked = !post.isLiked;
+            post.likes += post.isLiked ? 1 : -1;
+            savePostsToStorage();
+
+            document.getElementById('modalLikesText').innerText = post.likes;
+            updateModalLikeButton(post);
+            applyFilters();
+        }
+
+        function closeKakaoModal() {
+            const modal = document.getElementById('kakaoModal');
+            const card = document.getElementById('kakaoModalCard');
+
+            if (card) {
+                card.classList.remove('bottom-sheet-active');
+                card.classList.add('bottom-sheet-enter');
+            }
+            setTimeout(() => {
+                if (modal) modal.classList.add('hidden');
+                activeDetailPostId = null;
+            }, 250);
+        }
+
+        function copySingleValue(textToCopy, labelName) {
+            if (!textToCopy) return;
+            const tempInput = document.createElement('input');
+            tempInput.value = textToCopy;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+
+            try {
+                document.execCommand('copy');
+                showToast(`${labelName} 복사 완료!`);
+            } catch (err) {
+                showToast('복사에 실패했습니다.');
+            } finally {
+                document.body.removeChild(tempInput);
+            }
+        }
+
+        function handleFormSubmit(event) {
+            event.preventDefault();
+
+            if (!currentUser) {
+                showAuthModal('글을 등록하려면 3초 간편가입이 필요합니다.');
+                return;
+            }
+
+            const area = document.getElementById('formArea').value;
+            const category = document.getElementById('formCategory').value;
+            const title = document.getElementById('formTitle').value.trim();
+            const summary = document.getElementById('formSummary').value.trim();
+            const desc = document.getElementById('formDesc').value.trim();
+            const writerInfo = document.getElementById('formWriter').value.trim();
+            
+            const kakaoUrl = document.getElementById('formKakaoUrl').value.trim();
+            const kakaoId = document.getElementById('formKakaoId').value.trim();
+            const phone = document.getElementById('formPhone').value.trim();
+            const email = document.getElementById('formEmail').value.trim();
+            const wechat = document.getElementById('formWechat').value.trim();
+            const otherContact = document.getElementById('formOtherContact').value.trim();
+
+            if (!area || !category || !title || !summary || !desc) {
+                showToast('필수 항목을 모두 입력해주세요.');
+                return;
+            }
+
+            if (!kakaoUrl && !kakaoId && !phone && !email && !wechat && !otherContact) {
+                showToast('최소 1개 이상의 연락처를 입력해주세요.');
+                return;
+            }
+
+            const newPost = {
+                id: Date.now(),
+                role: 'warehouse',
+                area, category, title, summary, desc,
+                writerInfo: writerInfo || `${currentUser.name} (${currentUser.phone})`,
+                kakaoUrl, kakaoId, phone, email, wechat, otherContact,
+                timeAgo: '방금 전',
+                views: 0, likes: 0, isLiked: false
+            };
+
+            posts.unshift(newPost);
+            savePostsToStorage();
+            
+            document.getElementById('postForm').reset();
+            showToast('창고 DB가 등록되었습니다! 🎉');
+
+            setTimeout(() => switchTab('feed'), 400);
+        }
+
+        function openAdminModal() {
+            const modal = document.getElementById('adminModal');
+            if (modal) modal.classList.remove('hidden');
+
+            if (isAdminUnlocked) {
+                document.getElementById('adminLockScreen').classList.add('hidden');
+                document.getElementById('adminMainContent').classList.remove('hidden');
+                renderAdminDashboard();
+            } else {
+                document.getElementById('adminLockScreen').classList.remove('hidden');
+                document.getElementById('adminMainContent').classList.add('hidden');
+                document.getElementById('adminPasswordInput').value = '';
+            }
+            if (window.lucide && lucide.createIcons) lucide.createIcons();
+        }
+
+        function closeAdminModal() {
+            const modal = document.getElementById('adminModal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function checkAdminPassword() {
+            const pwdInput = document.getElementById('adminPasswordInput').value.trim();
+            if (pwdInput === adminPassword) {
+                isAdminUnlocked = true;
+                showToast('🔑 관리자 로그인 성공');
+                document.getElementById('adminLockScreen').classList.add('hidden');
+                document.getElementById('adminMainContent').classList.remove('hidden');
+                renderAdminDashboard();
+            } else {
+                showToast('비밀번호가 일치하지 않습니다.');
+            }
+        }
+
+        function renderAdminDashboard() {
+            const totalMatches = posts.reduce((acc, curr) => acc + curr.views, 0);
+            document.getElementById('adminStatUserCount').innerText = `${userDatabase.length}명`;
+            document.getElementById('adminStatPostCount').innerText = `${posts.length}개`;
+            document.getElementById('adminStatMatchCount').innerText = `${totalMatches}회`;
+
+            const tbody = document.getElementById('adminUserTableBody');
+            if (tbody) {
+                tbody.innerHTML = userDatabase.map(u => `
+                    <tr class="border-b border-gray-100">
+                        <td class="p-1.5 font-bold text-[10px] ${u.role === 'warehouse' ? 'text-emerald-700' : 'text-purple-700'}">
+                            ${u.role === 'warehouse' ? '창고' : '셀럽'}
+                        </td>
+                        <td class="p-1.5 font-bold truncate max-w-[80px]">${escapeHtml(u.name)}</td>
+                        <td class="p-1.5 font-mono text-[10px]">${escapeHtml(u.phone)}</td>
+                    </tr>
+                `).join('');
+            }
+
+            const pContainer = document.getElementById('adminPostListContainer');
+            if (pContainer) {
+                pContainer.innerHTML = posts.map(p => `
+                    <div class="bg-gray-50 p-2 rounded-xl border border-gray-200 flex items-center justify-between text-xs">
+                        <div class="overflow-hidden mr-1">
+                            <p class="font-bold text-gray-900 text-[11px] truncate">${escapeHtml(p.title)}</p>
+                            <p class="text-[9px] text-gray-400">${escapeHtml(p.area)} · 조회 ${p.views}회</p>
+                        </div>
+                        <button onclick="deletePostAdmin(${p.id})" class="bg-rose-100 text-rose-700 font-bold px-2 py-0.5 rounded text-[10px] shrink-0 touch-active">
+                            삭제
+                        </button>
+                    </div>
+                `).join('');
+            }
+            if (window.lucide && lucide.createIcons) lucide.createIcons();
+        }
+
+        function switchAdminTab(tab) {
+            const btnUser = document.getElementById('adminTabUserBtn');
+            const btnPost = document.getElementById('adminTabPostBtn');
+            const btnSettings = document.getElementById('adminTabSettingsBtn');
+
+            const secUsers = document.getElementById('adminSectionUsers');
+            const secPosts = document.getElementById('adminSectionPosts');
+            const secSettings = document.getElementById('adminSectionSettings');
+
+            const activeClass = "pb-1.5 border-b-2 border-baemin text-baemin font-black text-[11px]";
+            const inactiveClass = "pb-1.5 border-b-2 border-transparent text-gray-400 text-[11px]";
+
+            btnUser.className = tab === 'users' ? activeClass : inactiveClass;
+            btnPost.className = tab === 'posts' ? activeClass : inactiveClass;
+            btnSettings.className = tab === 'settings' ? activeClass : inactiveClass;
+
+            if (tab === 'users') {
+                secUsers.classList.remove('hidden');
+                secPosts.classList.add('hidden');
+                secSettings.classList.add('hidden');
+            } else if (tab === 'posts') {
+                secPosts.classList.remove('hidden');
+                secUsers.classList.add('hidden');
+                secSettings.classList.add('hidden');
+            } else {
+                secSettings.classList.remove('hidden');
+                secUsers.classList.add('hidden');
+                secPosts.classList.add('hidden');
+            }
+        }
+
+        function handlePasswordChangeSubmit(event) {
+            event.preventDefault();
+            const currInput = document.getElementById('adminCurrentPwdInput').value.trim();
+            const newPwd = document.getElementById('adminNewPwdInput').value.trim();
+            const newPwdConfirm = document.getElementById('adminNewPwdConfirmInput').value.trim();
+
+            if (currInput !== adminPassword) {
+                showToast('현재 비밀번호가 올바르지 않습니다.');
+                return;
+            }
+
+            if (newPwd.length < 4) {
+                showToast('새 비밀번호는 최소 4자리 이상이어야 합니다.');
+                return;
+            }
+
+            if (newPwd !== newPwdConfirm) {
+                showToast('새 비밀번호와 확인 입력이 일치하지 않습니다.');
+                return;
+            }
+
+            adminPassword = newPwd;
+            try {
+                localStorage.setItem('baemin_admin_password', newPwd);
+            } catch(e) {}
+
+            document.getElementById('adminCurrentPwdInput').value = '';
+            document.getElementById('adminNewPwdInput').value = '';
+            document.getElementById('adminNewPwdConfirmInput').value = '';
+
+            showToast('🔐 어드민 비밀번호가 성공적으로 변경되었습니다!');
+            switchAdminTab('users');
+        }
+
+        function deletePostAdmin(id) {
+            const idx = posts.findIndex(p => p.id === id);
+            if (idx !== -1) {
+                posts.splice(idx, 1);
+                savePostsToStorage();
+                applyFilters();
+                renderAdminDashboard();
+                showToast('게시글 삭제 완료');
+            }
+        }
+
+        function downloadUserCSV() {
+            if (userDatabase.length === 0) return;
+            let csvContent = "\uFEFF구분,이름/상호,휴대폰번호,가입일\n";
+            userDatabase.forEach(u => {
+                const role = u.role === 'warehouse' ? '창고주' : '셀럽';
+                csvContent += `"${role}","${u.name}","${u.phone}","${u.date || '2026-07-22'}"\n`;
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `창고셀럽_유저DB_${new Date().toISOString().slice(0,10)}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast('📥 엑셀 CSV 파일 다운로드 완료!');
+        }
+
+        function logout() {
+            currentUser = null;
+            try { localStorage.removeItem('baemin_matching_user'); } catch(e) {}
+            updateUserUI();
+            showToast('로그아웃 되었습니다.');
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            if (!toast || !toastMsg) return;
+
+            toastMsg.innerText = msg;
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            toast.classList.add('opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('opacity-100');
+                toast.classList.add('opacity-0', 'pointer-events-none');
+            }, 2000);
+        }
+    </script>
 </body>
 </html>

@@ -894,7 +894,6 @@
                 .replace(/'/g, '&#039;');
         }
 
-        // App States
         let currentUser = null;
         let pendingAction = null;
         let activeDetailPostId = null;
@@ -934,12 +933,6 @@
 
                 } catch(e) {
                     console.warn('Supabase init failed:', e);
-                }
-            } else if (SUPABASE_URL && !SUPABASE_KEY) {
-                const badge = document.getElementById('dbStatusBadge');
-                if (badge) {
-                    badge.innerText = "Key 필요";
-                    badge.className = "bg-amber-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full shadow-xs";
                 }
             }
         }
@@ -1625,25 +1618,66 @@
             const newPost = {
                 id: String(Date.now()),
                 role: 'warehouse',
-                area, category, title, summary, desc,
+                area: area,
+                category: category,
+                title: title,
+                summary: summary,
+                desc: desc,
                 writerInfo: writerInfo || `${currentUser.name} (${currentUser.phone || ''})`,
-                kakaoUrl, kakaoId, phone, email, wechat, otherContact,
+                kakaoUrl: kakaoUrl,
+                kakaoId: kakaoId,
+                phone: phone,
+                email: email,
+                wechat: wechat,
+                otherContact: otherContact,
                 timeAgo: '방금 전',
-                views: 0, likes: 0
+                views: 0,
+                likes: 0
             };
 
+            // 1. Immediately update local state
             posts.unshift(newPost);
             savePostsToStorage();
 
-            if (supabaseClient) {
-                const dbRow = mapPostToSupabaseRow(newPost);
-                await supabaseClient.from('posts').insert([dbRow]);
-            }
-
+            // 2. Reset form input fields
             document.getElementById('postForm').reset();
+
+            // 3. Reset feed UI filters to 'all' so new post is immediately visible in all views
+            const regionSelect = document.getElementById('regionSelect');
+            const categorySelect = document.getElementById('categorySelect');
+            const searchInput = document.getElementById('searchInput');
+
+            if (regionSelect) regionSelect.value = 'all';
+            if (categorySelect) categorySelect.value = 'all';
+            if (searchInput) searchInput.value = '';
+
+            // Reset role filter tab to All
+            currentRoleFilter = 'all';
+            const allBtn = document.getElementById('roleFilterAll');
+            const whBtn = document.getElementById('roleFilterWh');
+            const celebBtn = document.getElementById('roleFilterCeleb');
+            const activeClass = "flex-1 py-1.5 rounded-lg bg-white text-gray-900 shadow-xs text-[11px] font-black transition";
+            const inactiveClass = "flex-1 py-1.5 rounded-lg text-gray-500 text-[11px] font-bold transition";
+            if (allBtn) allBtn.className = activeClass;
+            if (whBtn) whBtn.className = inactiveClass;
+            if (celebBtn) celebBtn.className = inactiveClass;
+
+            // 4. Switch to feed tab and force re-filter render
+            switchTab('feed');
+            applyFilters();
+
             showToast('창고 DB가 등록되었습니다! 🎉');
 
-            setTimeout(() => switchTab('feed'), 400);
+            // 5. Asynchronously push to Supabase central DB
+            if (supabaseClient) {
+                try {
+                    const dbRow = mapPostToSupabaseRow(newPost);
+                    await supabaseClient.from('posts').insert([dbRow]);
+                    syncFromCentralDB();
+                } catch(e) {
+                    console.error('Supabase Insert Error:', e);
+                }
+            }
         }
 
         function openAdminModal() {

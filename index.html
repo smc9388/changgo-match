@@ -90,11 +90,11 @@
         }
 
         #splashScreen {
-            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
         }
         #splashScreen.splash-hide {
             opacity: 0;
-            transform: scale(1.05);
+            transform: scale(1.04);
             pointer-events: none;
         }
 
@@ -166,6 +166,7 @@
 
     <div id="appContainer" class="w-full max-w-[440px] h-screen sm:h-[92vh] bg-baemin-bg sm:rounded-[36px] shadow-2xl flex flex-col relative overflow-hidden border-0 sm:border-8 sm:border-slate-800">
         
+        <!-- Header with break protection -->
         <header class="bg-white border-b border-gray-100 px-2.5 py-2.5 flex items-center justify-between shrink-0 z-30 pt-safe shadow-xs whitespace-nowrap overflow-hidden">
             <div class="flex items-center gap-1.5 min-w-0 shrink-0">
                 <div class="w-7 h-7 rounded-xl bg-baemin flex items-center justify-center text-white font-black text-xs shadow-sm rotate-[-2deg] shrink-0">
@@ -211,6 +212,7 @@
 
         <main id="scrollableArea" class="flex-1 overflow-y-auto p-3 space-y-3 pb-24 hide-scrollbar">
 
+            <!-- Tab 1: Feed View -->
             <section id="tabFeed" class="space-y-3">
                 
                 <div onclick="openAppGuide()" class="bg-slate-900 text-white p-3 rounded-2xl shadow-md flex items-center justify-between cursor-pointer touch-active border border-slate-700">
@@ -229,6 +231,7 @@
                     <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 shrink-0"></i>
                 </div>
 
+                <!-- Role Filter and Search controls -->
                 <div class="bg-white p-2.5 rounded-2xl border border-gray-100 shadow-xs space-y-2.5">
                     <div class="flex p-1 bg-gray-100 rounded-xl text-xs font-bold gap-1">
                         <button id="roleFilterWh" onclick="setRoleFilter('warehouse')" class="flex-1 py-2 rounded-lg bg-white text-emerald-800 shadow-xs text-xs font-black transition flex items-center justify-center gap-1">
@@ -271,7 +274,7 @@
                     <!-- Dynamic Feed Items -->
                 </div>
 
-                <!-- 서비스 면책 및 법적 고지 안내 -->
+                <!-- Legal Exemption Notice in Feed -->
                 <div class="p-3 text-center space-y-1.5 opacity-80 pt-6 pb-2 border-t border-gray-200/60 mt-4">
                     <p class="text-[10px] font-extrabold text-gray-600 flex items-center justify-center gap-1">
                         <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-gray-400"></i>
@@ -337,7 +340,7 @@
                         </div>
 
                         <div>
-                            <label class="block text-[11px] font-bold text-gray-700 mb-1">상호명 / 게시글 제목 <span class="text-rose-500">*</span></label>
+                            <label id="formTitleLabel" class="block text-[11px] font-bold text-gray-700 mb-1">상호명 / 게시글 제목 <span class="text-rose-500">*</span></label>
                             <input id="formTitle" type="text" required placeholder="예: [의정부] OO물류 S/S 의류 덤핑 및 라이브커머스 공급" class="w-full bg-gray-50 border border-gray-200 text-xs rounded-xl p-2.5 focus:outline-none focus:border-baemin">
                         </div>
 
@@ -352,7 +355,7 @@
                         </div>
 
                         <div>
-                            <label class="block text-[11px] font-bold text-gray-700 mb-1">상세 내용 (자세한 제안사항) <span class="text-rose-500">*</span></label>
+                            <label id="formDescLabel" class="block text-[11px] font-bold text-gray-700 mb-1">상세 내용 (자세한 제안사항) <span class="text-rose-500">*</span></label>
                             <textarea id="formDesc" rows="5" required placeholder="보유 제품 종류, 공급 수량, 수수료 배분율, 방송 지원 조건, 샘플 제공 여부 등 상세 내용을 공유해 주세요." class="w-full bg-gray-50 border border-gray-200 text-xs rounded-xl p-2.5 focus:outline-none focus:border-baemin leading-relaxed"></textarea>
                         </div>
 
@@ -829,9 +832,7 @@
             if (typeof supabase !== 'undefined') {
                 supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
             }
-        } catch(e) {
-            console.error('Supabase init error:', e);
-        }
+        } catch(e) {}
 
         function initFirebaseMessaging() {
             try {
@@ -868,11 +869,11 @@
 
         function hideSplashScreen() {
             const splash = document.getElementById('splashScreen');
-            if (splash) {
+            if (splash && !splash.classList.contains('splash-hide')) {
                 splash.classList.add('splash-hide');
                 setTimeout(() => {
                     splash.style.display = 'none';
-                }, 600);
+                }, 500);
             }
         }
 
@@ -883,8 +884,6 @@
                         Kakao.init('101f34dcf662b0df8c6e813ca1fbfa8f');
                     }
                 } catch(e) {}
-            } else {
-                setTimeout(initKakaoSDK, 300);
             }
         }
 
@@ -945,6 +944,7 @@
                 .replace(/'/g, '&#039;');
         }
 
+        // Global State
         let currentUser = null;
         let pendingAction = null;
         let activeDetailPostId = null;
@@ -956,7 +956,60 @@
         let inquiries = [];
         let currentRoleFilter = 'warehouse';
 
-        // Load inquiries from localStorage
+        // Sample initial posts if local/DB is empty
+        const samplePosts = [
+            {
+                id: '101',
+                role: 'warehouse',
+                area: '경기 북부',
+                category: '의류/잡화',
+                title: '[의정부] OO물류 S/S 의류 덤핑 및 라이브커머스 공급',
+                summary: '이월 덤핑재고 보유 중. 방송 진행자 수수료 30% 조건!',
+                desc: '의정부 위치 물류센터입니다. S/S 의류 덤핑 3000벌 보유 중입니다. 라이브커머스 및 블로그 공구 진행하실 셀러분 모집합니다. 샘플 무료 제공 및 택배 당일발송 지원 가능합니다.',
+                writerInfo: 'OO물류 의정부점 대표',
+                kakaoUrl: 'https://open.kakao.com/o/s1234567',
+                phone: '010-1234-5678',
+                timeAgo: '10분 전',
+                views: 18,
+                likes: 3
+            },
+            {
+                id: '102',
+                role: 'celeb',
+                area: '경기 북부',
+                category: '뷰티/화장품',
+                title: '의류 전문 셀러 또는 전자 셀러 입니다 창고 구합니다.',
+                summary: '경기북부 쪽 뷰티/식품전문입니다 3~4명 셀러 가능합니다.',
+                desc: '방송인원: 메인쇼호스트 2명, 서브 2명\n팔로워 수: 인스타그램 4.5만, 네이버쇼핑 라이브 등\n야간/주간 라이브방송 진행 가능합니다. 의류 및 뷰티 덤핑 보유 창고주님들의 많은 제안 부탁드립니다.',
+                writerInfo: '셀러 홍길동 / @celeb_kr',
+                kakaoId: 'celeb_talk',
+                phone: '010-9876-5432',
+                timeAgo: '1시간 전',
+                views: 24,
+                likes: 5
+            }
+        ];
+
+        function loadPostsFromStorage() {
+            try {
+                const saved = localStorage.getItem('baemin_matching_posts_db');
+                if (saved) {
+                    posts = JSON.parse(saved);
+                } else {
+                    posts = [...samplePosts];
+                    savePostsToStorage();
+                }
+            } catch(e) {
+                posts = [...samplePosts];
+            }
+        }
+
+        function savePostsToStorage() {
+            try {
+                localStorage.setItem('baemin_matching_posts_db', JSON.stringify(posts));
+            } catch(e) {}
+        }
+
         function loadInquiries() {
             try {
                 const saved = localStorage.getItem('baemin_inquiries_db');
@@ -968,6 +1021,233 @@
             try {
                 localStorage.setItem('baemin_inquiries_db', JSON.stringify(inquiries));
             } catch(e) {}
+        }
+
+        function loadUserDatabase() {
+            try {
+                const saved = localStorage.getItem('baemin_user_db');
+                if (saved) userDatabase = JSON.parse(saved);
+            } catch(e) {}
+        }
+
+        function loadSavedAdminPassword() {
+            try {
+                const saved = localStorage.getItem('baemin_admin_password');
+                if (saved) adminPassword = saved;
+            } catch(e) {}
+        }
+
+        function mapPostToSupabaseRow(p) {
+            return {
+                id: String(p.id),
+                title: p.title || '',
+                summary: p.summary || '',
+                area: p.area || '',
+                category: p.category || '',
+                role: p.role || 'warehouse',
+                desc: p.desc || '',
+                writer_info: p.writerInfo || '',
+                kakao_url: p.kakaoUrl || '',
+                kakao_id: p.kakaoId || '',
+                phone: p.phone || '',
+                email: p.email || '',
+                wechat: p.wechat || '',
+                other_contact: p.otherContact || '',
+                views: p.views || 0,
+                likes: p.likes || 0
+            };
+        }
+
+        async function syncFromCentralDB() {
+            if (!supabaseClient) return;
+            try {
+                const { data, error } = await supabaseClient.from('posts').select('*').order('created_at', { ascending: false });
+                if (!error && data && data.length > 0) {
+                    const dbPosts = data.map(row => ({
+                        id: String(row.id),
+                        role: row.role || 'warehouse',
+                        area: row.area || '전체',
+                        category: row.category || '기타',
+                        title: row.title || '제안글',
+                        summary: row.summary || '',
+                        desc: row.desc || '',
+                        writerInfo: row.writer_info || '회원',
+                        kakaoUrl: row.kakao_url || '',
+                        kakaoId: row.kakao_id || '',
+                        phone: row.phone || '',
+                        email: row.email || '',
+                        wechat: row.wechat || '',
+                        otherContact: row.other_contact || '',
+                        timeAgo: '최신',
+                        views: row.views || 0,
+                        likes: row.likes || 0
+                    }));
+                    posts = dbPosts;
+                    savePostsToStorage();
+                    applyFilters();
+                }
+            } catch(e) {}
+        }
+
+        function switchTab(tabName) {
+            const feedTab = document.getElementById('tabFeed');
+            const registerTab = document.getElementById('tabRegister');
+            const navFeedBtn = document.getElementById('navFeedBtn');
+            const navRegisterBtn = document.getElementById('navRegisterBtn');
+
+            if (tabName === 'feed') {
+                feedTab.classList.remove('hidden');
+                registerTab.classList.add('hidden');
+                navFeedBtn.className = "flex flex-col items-center gap-1 text-baemin transition touch-active font-extrabold";
+                navRegisterBtn.className = "flex flex-col items-center gap-1 text-gray-400 transition touch-active font-bold";
+                applyFilters();
+            } else {
+                registerTab.classList.remove('hidden');
+                feedTab.classList.add('hidden');
+                navRegisterBtn.className = "flex flex-col items-center gap-1 text-baemin transition touch-active font-extrabold";
+                navFeedBtn.className = "flex flex-col items-center gap-1 text-gray-400 transition touch-active font-bold";
+            }
+        }
+
+        function setRoleFilter(role) {
+            currentRoleFilter = role;
+            const whBtn = document.getElementById('roleFilterWh');
+            const celebBtn = document.getElementById('roleFilterCeleb');
+
+            const activeStyle = "flex-1 py-2 rounded-lg bg-white shadow-xs text-xs font-black transition flex items-center justify-center gap-1 ";
+            const inactiveStyle = "flex-1 py-2 rounded-lg text-gray-500 text-xs font-bold transition flex items-center justify-center gap-1";
+
+            if (role === 'warehouse') {
+                whBtn.className = activeStyle + "text-emerald-800";
+                celebBtn.className = inactiveStyle;
+            } else {
+                celebBtn.className = activeStyle + "text-purple-800";
+                whBtn.className = inactiveStyle;
+            }
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const regionSelect = document.getElementById('regionSelect');
+            const categorySelect = document.getElementById('categorySelect');
+            const searchInput = document.getElementById('searchInput');
+
+            const selectedRegion = regionSelect ? regionSelect.value : 'all';
+            const selectedCategory = categorySelect ? categorySelect.value : 'all';
+            const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+
+            const filtered = posts.filter(p => {
+                if (p.role !== currentRoleFilter) return false;
+                if (selectedRegion !== 'all' && p.area !== selectedRegion) return false;
+                if (selectedCategory !== 'all' && p.category !== selectedCategory) return false;
+                if (query) {
+                    const matchTitle = (p.title || '').toLowerCase().includes(query);
+                    const matchSummary = (p.summary || '').toLowerCase().includes(query);
+                    const matchArea = (p.area || '').toLowerCase().includes(query);
+                    const matchCategory = (p.category || '').toLowerCase().includes(query);
+                    const matchDesc = (p.desc || '').toLowerCase().includes(query);
+                    return matchTitle || matchSummary || matchArea || matchCategory || matchDesc;
+                }
+                return true;
+            });
+
+            renderPosts(filtered);
+        }
+
+        function renderPosts(items) {
+            const container = document.getElementById('postsList');
+            if (!container) return;
+
+            if (items.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white p-8 rounded-2xl text-center text-gray-400 space-y-2 border border-gray-100">
+                        <div class="text-3xl">📦</div>
+                        <p class="text-xs font-bold">등록된 매칭 제안이 없습니다.</p>
+                        <p class="text-[10px] text-gray-400">하단 'DB 무료 등록' 탭에서 제안 글을 먼저 올려보세요!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = items.map(item => `
+                <div onclick="openKakaoModal('${item.id}')" class="bg-white p-3.5 rounded-2xl border border-gray-100 shadow-xs space-y-2 cursor-pointer touch-active hover:border-baemin/40 transition">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-[9.5px] font-black px-2 py-0.5 rounded-md ${item.role === 'warehouse' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-purple-50 text-purple-800 border border-purple-200'}">
+                                ${item.role === 'warehouse' ? '🏢 창고' : '🎥 셀러'}
+                            </span>
+                            <span class="text-[10px] font-bold text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded-md">
+                                ${escapeHtml(item.area)} · ${escapeHtml(item.category)}
+                            </span>
+                        </div>
+                        <span class="text-[9.5px] font-bold text-gray-400">${escapeHtml(item.timeAgo || '방금 전')}</span>
+                    </div>
+
+                    <div>
+                        <h3 class="font-extrabold text-xs text-gray-900 leading-snug line-clamp-1">${escapeHtml(item.title)}</h3>
+                        <p class="text-[11px] text-gray-600 mt-1 line-clamp-2 font-medium leading-normal">${escapeHtml(item.summary || item.desc)}</p>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-1 border-t border-gray-50 text-[10px] text-gray-400 font-bold">
+                        <span>작성자: ${escapeHtml(item.writerInfo || '회원')}</span>
+                        <div class="flex items-center gap-2">
+                            <span>조회 ${item.views || 0}</span>
+                            <span class="text-rose-500">추천 ${item.likes || 0}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            if (window.lucide && lucide.createIcons) lucide.createIcons();
+        }
+
+        // Dynamic Form UI updates based on role
+        function updateFormRoleUI() {
+            const warehouseRadio = document.querySelector('input[name="formRole"][value="warehouse"]');
+            const isWarehouse = warehouseRadio && warehouseRadio.checked;
+
+            const whLabel = document.getElementById('formRoleWhLabel');
+            const celebLabel = document.getElementById('formRoleCelebLabel');
+
+            if (isWarehouse) {
+                whLabel.className = "cursor-pointer border border-emerald-500 bg-emerald-50 p-2.5 rounded-xl flex items-center justify-center gap-1.5 text-xs font-black text-emerald-900";
+                celebLabel.className = "cursor-pointer border border-gray-200 p-2.5 rounded-xl flex items-center justify-center gap-1.5 text-xs font-bold text-gray-600";
+                
+                document.getElementById('formTitle').placeholder = "예: [의정부] OO물류 S/S 의류 덤핑 및 라이브커머스 공급";
+                document.getElementById('formSummary').placeholder = "예: 이월 덤핑재고 보유 중. 방송 진행자 수수료 30% 조건!";
+                document.getElementById('formWriterLabel').innerText = "작성자 / 대표자 명";
+                document.getElementById('formWriter').placeholder = "예: OO물류 의정부점 대표";
+                document.getElementById('formDesc').placeholder = "보유 제품 종류, 공급 수량, 수수료 배분율, 방송 지원 조건, 샘플 제공 여부 등 상세 내용을 공유해 주세요.";
+            } else {
+                celebLabel.className = "cursor-pointer border border-purple-500 bg-purple-50 p-2.5 rounded-xl flex items-center justify-center gap-1.5 text-xs font-black text-purple-900";
+                whLabel.className = "cursor-pointer border border-gray-200 p-2.5 rounded-xl flex items-center justify-center gap-1.5 text-xs font-bold text-gray-600";
+
+                document.getElementById('formTitle').placeholder = "예) 의류 전문 셀러 또는 전자 셀러 입니다 창고 구합니다.";
+                document.getElementById('formSummary').placeholder = "예) 경기북부 쪽 뷰티/식품전문입니다 3~4명 셀러 가능합니다.";
+                document.getElementById('formWriterLabel').innerText = "셀러명 / 활동명";
+                document.getElementById('formWriter').placeholder = "예: 셀러 홍길동 / 인스타 @celeb_kr";
+                document.getElementById('formDesc').placeholder = "예) 방송인원, 팔로워 수, 어떤 전문방송인지, 야간/주간 방송 가능 여부 등 상세 역량을 공유해 주세요.";
+            }
+        }
+
+        function updateUserUI() {
+            const userInfoHeader = document.getElementById('userInfoHeader');
+            const authBtnHeader = document.getElementById('authBtnHeader');
+            const userNameText = document.getElementById('userNameText');
+            const userRoleBadge = document.getElementById('userRoleBadge');
+
+            if (currentUser) {
+                if (userInfoHeader) userInfoHeader.classList.remove('hidden');
+                if (authBtnHeader) authBtnHeader.classList.add('hidden');
+                if (userNameText) userNameText.innerText = currentUser.name;
+                if (userRoleBadge) {
+                    userRoleBadge.innerText = currentUser.role === 'warehouse' ? '창고' : '셀러';
+                    userRoleBadge.className = `text-[9px] ${currentUser.role === 'warehouse' ? 'bg-emerald-600' : 'bg-purple-600'} text-white px-1 py-0.5 rounded font-black whitespace-nowrap shrink-0`;
+                }
+            } else {
+                if (userInfoHeader) userInfoHeader.classList.add('hidden');
+                if (authBtnHeader) authBtnHeader.classList.remove('hidden');
+            }
         }
 
         function openInquiryModal() {
@@ -1000,7 +1280,10 @@
 
         function handleInquirySubmit(e) {
             e.preventDefault();
-            if (!currentUser) return;
+            if (!currentUser) {
+                showAuthModal('1:1 비밀 문의 등록을 위해 3초 간편가입이 필요합니다.', () => openInquiryModal());
+                return;
+            }
 
             const title = document.getElementById('inquiryTitle').value.trim();
             const content = document.getElementById('inquiryContent').value.trim();
@@ -1150,6 +1433,45 @@
             if (window.lucide && lucide.createIcons) lucide.createIcons();
         }
 
+        function loginWithKakao() {
+            if (typeof Kakao !== 'undefined' && Kakao && Kakao.Auth) {
+                try {
+                    Kakao.Auth.login({
+                        success: function(authObj) {
+                            Kakao.API.request({
+                                url: '/v2/user/me',
+                                success: function(res) {
+                                    const kakaoAccount = res.kakao_account || {};
+                                    const nickname = kakaoAccount.profile?.nickname || '카카오 회원';
+                                    const phone = kakaoAccount.phone_number || '010-0000-0000';
+                                    
+                                    currentUser = { role: 'warehouse', name: nickname, phone: phone };
+                                    try { localStorage.setItem('baemin_matching_user', JSON.stringify(currentUser)); } catch(e) {}
+                                    
+                                    updateUserUI();
+                                    closeAuthModal();
+                                    showToast(`🎉 ${nickname}님 환영합니다!`);
+
+                                    if (pendingAction) {
+                                        const actionToRun = pendingAction;
+                                        pendingAction = null;
+                                        setTimeout(() => actionToRun(), 300);
+                                    }
+                                }
+                            });
+                        },
+                        fail: function() {
+                            showToast('카카오 로그인에 실패했습니다.');
+                        }
+                    });
+                } catch(e) {
+                    showToast('직접 입력 가입 방식을 이용해주세요.');
+                }
+            } else {
+                showToast('카카오 SDK 로딩 중입니다.');
+            }
+        }
+
         function updateAuthRoleUI() {
             const warehouseRadio = document.querySelector('input[name="authRole"][value="warehouse"]');
             const whLabel = document.getElementById('authRoleWhLabel');
@@ -1233,7 +1555,7 @@
             // PERMANENT BAN RULE: Cannot view detail modal or contacts
             const bannedStatus = isUserBanned(currentUser.phone);
             if (bannedStatus === '영구정지') {
-                showToast('⚠️ [영구정지] 계정은 상세 정보 및 연락처를 조회할 수 없습니다.');
+                showToast('⚠️ [영구정지] 계정은 상세 정보 및 연락처를 볼 수 없습니다.');
                 return;
             }
 
@@ -1376,7 +1698,7 @@
 
             if (supabaseClient) {
                 const row = mapPostToSupabaseRow(post);
-                await supabaseClient.from('posts').update({ contact: row.contact }).eq('id', post.id);
+                await supabaseClient.from('posts').update({ likes: post.likes }).eq('id', post.id);
             }
 
             document.getElementById('modalLikesText').innerText = post.likes;
@@ -1751,6 +2073,42 @@
                 toast.classList.add('opacity-0', 'pointer-events-none');
             }, 2200);
         }
+
+        function initApp() {
+            try {
+                const savedUser = localStorage.getItem('baemin_matching_user');
+                if (savedUser) currentUser = JSON.parse(savedUser);
+            } catch(e) {}
+
+            loadSavedAdminPassword();
+            loadUserDatabase();
+            loadPostsFromStorage();
+            loadInquiries();
+
+            updateUserUI();
+            updateFormRoleUI();
+
+            if (window.lucide && lucide.createIcons) lucide.createIcons();
+
+            initKakaoSDK();
+            initFirebaseMessaging();
+            syncFromCentralDB();
+
+            applyFilters();
+        }
+
+        // Auto execution on DOM Ready & Window Load with Splash Dismissal
+        document.addEventListener('DOMContentLoaded', function() {
+            initApp();
+            setTimeout(hideSplashScreen, 1000);
+        });
+
+        window.addEventListener('load', function() {
+            setTimeout(hideSplashScreen, 1200);
+        });
+
+        // Fail-safe timeout to force hide splash screen after 2.2 seconds max
+        setTimeout(hideSplashScreen, 2200);
     </script>
 </body>
 </html>

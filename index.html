@@ -644,7 +644,7 @@
                 <!-- Section 1: Users DB -->
                 <div id="adminSectionUsers" class="flex-1 overflow-y-auto space-y-2 hide-scrollbar">
                     <div class="flex items-center justify-between">
-                        <p class="text-[11px] font-extrabold text-gray-700">📋 가입 유저 명단</p>
+                        <p class="text-[11px] font-extrabold text-gray-700">📋 가입 유저 명단 및 상태 관리</p>
                         <button onclick="downloadUserCSV()" class="bg-emerald-600 text-white text-[10px] font-black px-2.5 py-1 rounded-lg touch-active">
                             📥 엑셀 다운로드
                         </button>
@@ -657,6 +657,7 @@
                                     <th class="p-2">구분</th>
                                     <th class="p-2">이름</th>
                                     <th class="p-2">연락처</th>
+                                    <th class="p-2 text-right">상태 변경</th>
                                 </tr>
                             </thead>
                             <tbody id="adminUserTableBody" class="divide-y divide-gray-100 text-gray-800">
@@ -1064,13 +1065,23 @@
                                 ? kakaoAccount.phone_number 
                                 : '010-0000-0000';
                             
+                            const bannedStatus = isUserBanned(phone);
+                            if (bannedStatus) {
+                                showToast(`⚠️ 해당 계정은 현재 [${bannedStatus}] 상태입니다. 이용이 제한됩니다.`);
+                                return;
+                            }
+
                             currentUser = { role: 'warehouse', name, phone };
                             try {
                                 localStorage.setItem('baemin_matching_user', JSON.stringify(currentUser));
                             } catch(e) {}
 
-                            const userObj = { role: 'warehouse', name, phone, date: new Date().toISOString().slice(0, 10) };
-                            userDatabase.unshift(userObj);
+                            const existingUserIndex = userDatabase.findIndex(u => u.phone === phone);
+                            if (existingUserIndex !== -1) {
+                                userDatabase[existingUserIndex].name = name;
+                            } else {
+                                userDatabase.unshift({ role: 'warehouse', name, phone, status: '정상', date: new Date().toISOString().slice(0, 10) });
+                            }
                             try { localStorage.setItem('baemin_user_db', JSON.stringify(userDatabase)); } catch(e) {}
 
                             updateUserUI();
@@ -1351,13 +1362,24 @@
                 return;
             }
 
+            const bannedStatus = isUserBanned(phone);
+            if (bannedStatus) {
+                showToast(`⚠️ 해당 계정은 현재 [${bannedStatus}] 상태입니다. 이용이 제한됩니다.`);
+                return;
+            }
+
             currentUser = { role, name, phone };
             try {
                 localStorage.setItem('baemin_matching_user', JSON.stringify(currentUser));
             } catch(e) {}
 
-            const userObj = { role, name, phone, date: new Date().toISOString().slice(0, 10) };
-            userDatabase.unshift(userObj);
+            const existingUserIndex = userDatabase.findIndex(u => u.phone === phone);
+            if (existingUserIndex !== -1) {
+                userDatabase[existingUserIndex].role = role;
+                userDatabase[existingUserIndex].name = name;
+            } else {
+                userDatabase.unshift({ role, name, phone, status: '정상', date: new Date().toISOString().slice(0, 10) });
+            }
             try { localStorage.setItem('baemin_user_db', JSON.stringify(userDatabase)); } catch(e) {}
 
             updateUserUI();
@@ -1563,6 +1585,12 @@
                 return;
             }
 
+            const bannedStatus = isUserBanned(currentUser.phone);
+            if (bannedStatus) {
+                showToast(`⚠️ 현재 계정이 [${bannedStatus}] 상태입니다. 글 등록이 불가능합니다.`);
+                return;
+            }
+
             const roleRadio = document.querySelector('input[name="formRole"]:checked');
             const role = roleRadio ? roleRadio.value : 'warehouse';
 
@@ -1687,15 +1715,29 @@
 
             const tbody = document.getElementById('adminUserTableBody');
             if (tbody) {
-                tbody.innerHTML = userDatabase.map(u => `
+                tbody.innerHTML = userDatabase.map(u => {
+                    const status = u.status || '정상';
+                    let selectBg = 'bg-emerald-50 text-emerald-800 border-emerald-300';
+                    if (status === '정지') selectBg = 'bg-amber-50 text-amber-800 border-amber-300';
+                    if (status === '영구정지') selectBg = 'bg-rose-50 text-rose-800 border-rose-300';
+
+                    return `
                     <tr class="border-b border-gray-100">
                         <td class="p-1.5 font-bold text-[10px] ${u.role === 'warehouse' ? 'text-emerald-700' : 'text-purple-700'}">
                             ${u.role === 'warehouse' ? '창고' : '셀럽'}
                         </td>
-                        <td class="p-1.5 font-bold truncate max-w-[80px]">${escapeHtml(u.name)}</td>
+                        <td class="p-1.5 font-bold truncate max-w-[65px]">${escapeHtml(u.name)}</td>
                         <td class="p-1.5 font-mono text-[10px]">${escapeHtml(u.phone)}</td>
+                        <td class="p-1.5 text-right">
+                            <select onchange="changeUserStatus('${escapeHtml(u.phone)}', this.value)" class="text-[10px] font-black rounded-lg px-1.5 py-0.5 border focus:outline-none ${selectBg}">
+                                <option value="정상" ${status === '정상' ? 'selected' : ''}>🟢 정상</option>
+                                <option value="정지" ${status === '정지' ? 'selected' : ''}>🟡 일시정지</option>
+                                <option value="영구정지" ${status === '영구정지' ? 'selected' : ''}>🔴 영구정지</option>
+                            </select>
+                        </td>
                     </tr>
-                `).join('');
+                    `;
+                }).join('');
             }
 
             const pContainer = document.getElementById('adminPostListContainer');
@@ -1816,10 +1858,11 @@
                 showToast('다운로드할 유저 데이터가 없습니다.');
                 return;
             }
-            let csvContent = "\uFEFF구분,이름/상호,휴대폰번호,가입일\n";
+            let csvContent = "\uFEFF구분,이름/상호,휴대폰번호,상태,가입일\n";
             userDatabase.forEach(u => {
                 const role = u.role === 'warehouse' ? '창고' : '셀럽';
-                csvContent += `"${role}","${u.name}","${u.phone || ''}","${u.date || '2026-07-23'}"\n`;
+                const status = u.status || '정상';
+                csvContent += `"${role}","${u.name}","${u.phone || ''}","${status}","${u.date || '2026-07-23'}"\n`;
             });
 
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -1830,6 +1873,33 @@
             link.click();
             document.body.removeChild(link);
             showToast('📥 엑셀 CSV 파일 다운로드 완료!');
+        }
+
+        function isUserBanned(phone) {
+            if (!phone) return false;
+            const user = userDatabase.find(u => u.phone === phone);
+            if (user && (user.status === '정지' || user.status === '영구정지')) {
+                return user.status;
+            }
+            return false;
+        }
+
+        function changeUserStatus(phone, newStatus) {
+            const user = userDatabase.find(u => u.phone === phone);
+            if (user) {
+                user.status = newStatus;
+                try {
+                    localStorage.setItem('baemin_user_db', JSON.stringify(userDatabase));
+                } catch(e) {}
+
+                if (currentUser && currentUser.phone === phone && (newStatus === '정지' || newStatus === '영구정지')) {
+                    logout();
+                    showToast('⚠️ 관리자에 의해 계정이 정지되었습니다.');
+                } else {
+                    showToast(`[${user.name}] 님의 상태가 '${newStatus}'(으)로 변경되었습니다.`);
+                }
+                renderAdminDashboard();
+            }
         }
 
         function logout() {

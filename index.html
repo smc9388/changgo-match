@@ -9,17 +9,18 @@
     <meta name="mobile-web-app-capable" content="yes">
     <title>창고의민족 - 창고·셀럽 1초 매칭 플랫폼</title>
 
-    <!-- SNS OpenGraph Meta Tags -->
+    <!-- OpenGraph Meta Tags -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="창고의민족 | 창고·셀럽 1초 매칭">
     <meta property="og:description" content="재고 보유 창고(공급자)와 셀럽/인플루언서 간의 1초 라이브커머스·공구 매칭 플랫폼!">
     <meta property="og:image" content="https://changgo-match.vercel.app/og-image.png">
     <meta property="og:url" content="https://changgo-match.vercel.app">
 
-    <!-- PWA Web App Manifest Link & Apple Touch Icon -->
-    <link rel="manifest" href="https://changgo-match.vercel.app/manifest.json">
+    <!-- PWA & Touch Icons -->
+    <link rel="manifest" href="/manifest.json">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -66,8 +67,8 @@
         }
         
         .touch-active:active {
-            transform: scale(0.98);
-            opacity: 0.93;
+            transform: scale(0.97);
+            opacity: 0.92;
             transition: transform 0.1s ease;
         }
 
@@ -174,7 +175,7 @@
     <div id="appContainer" class="w-full max-w-[440px] h-screen sm:h-[92vh] bg-baemin-bg sm:rounded-[36px] shadow-2xl flex flex-col relative overflow-hidden border-0 sm:border-8 sm:border-slate-800">
         
         <!-- Header: Optimized for compact mobile display without overflow -->
-        <header class="bg-white border-b border-gray-100 px-2 py-2 flex items-center justify-between shrink-0 z-30 pt-safe shadow-xs w-full overflow-hidden">
+        <header class="bg-white border-b border-gray-100 px-2.5 py-2 flex items-center justify-between shrink-0 z-30 pt-safe shadow-xs w-full overflow-hidden">
             <div class="flex items-center gap-1 min-w-0 shrink-0">
                 <div class="w-6 h-6 rounded-lg bg-baemin flex items-center justify-center text-white font-black text-[10px] shadow-xs rotate-[-2deg] shrink-0">
                     1초
@@ -189,7 +190,7 @@
                 </div>
             </div>
 
-            <div class="flex items-center gap-0.5 shrink-0 text-[9.5px]">
+            <div class="flex items-center gap-1 shrink-0 text-[9.5px]">
                 <button onclick="syncFromCentralDB(true)" class="font-black text-emerald-800 bg-emerald-50 hover:bg-emerald-100 px-1.5 py-1 rounded-lg border border-emerald-300/60 flex items-center gap-0.5 touch-active whitespace-nowrap shrink-0" title="실시간 DB 새로고침">
                     <i data-lucide="refresh-cw" class="w-2.5 h-2.5 text-emerald-600 shrink-0"></i>
                     <span>새로고침</span>
@@ -504,7 +505,6 @@
         </div>
     </div>
 
-    <!-- App Install Modal -->
     <div id="appInstallModal" class="fixed inset-0 z-50 flex items-end justify-center modal-backdrop hidden">
         <div id="appInstallModalCard" class="bg-white w-full max-w-[440px] rounded-t-3xl p-5 space-y-3.5 shadow-2xl bottom-sheet-enter max-h-[88vh] overflow-y-auto">
             <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto -mt-1 mb-1"></div>
@@ -587,7 +587,6 @@
         </div>
     </div>
 
-    <!-- Auth Modal -->
     <div id="authModal" class="fixed inset-0 z-50 flex items-end justify-center modal-backdrop hidden">
         <div id="authModalCard" class="bg-white w-full max-w-[440px] rounded-t-3xl p-5 space-y-4 shadow-2xl bottom-sheet-enter max-h-[85vh] overflow-y-auto">
             <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto -mt-1 mb-2"></div>
@@ -655,7 +654,6 @@
         </div>
     </div>
 
-    <!-- Detail Modal -->
     <div id="kakaoModal" class="fixed inset-0 z-50 flex items-end justify-center modal-backdrop hidden">
         <div id="kakaoModalCard" class="bg-white w-full max-w-[440px] rounded-t-3xl p-5 space-y-3.5 shadow-2xl bottom-sheet-enter max-h-[88vh] overflow-y-auto">
             <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto -mt-1 mb-1"></div>
@@ -720,7 +718,6 @@
         </div>
     </div>
 
-    <!-- Admin Modal -->
     <div id="adminModal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop p-3 hidden">
         <div id="adminModalCard" class="bg-white w-full max-w-[420px] rounded-3xl p-4 space-y-3 shadow-2xl max-h-[90vh] flex flex-col">
             <div class="flex items-center justify-between border-b border-gray-100 pb-2.5 shrink-0">
@@ -865,80 +862,227 @@
     </div>
 
     <script>
-        // ... existing credentials and global variables ...
-        async function syncFromCentralDB(isManual = false) {
-            if (!supabaseClient || isSyncing) return;
-            isSyncing = true;
-            
-            const badgeText = document.getElementById('dbSyncStatusText');
-            if (badgeText) badgeText.innerText = '동기화중';
+        // Global State & Default Data
+        let posts = [];
+        let currentRoleFilter = 'warehouse';
+        let currentUser = null;
+        let activeDetailPostId = null;
+        let pendingAction = null;
+        let isAdminUnlocked = false;
+        let adminPassword = 'admin';
+        let userDatabase = [];
+        let inquiries = [];
+        let isSyncing = false;
+        let splashProgress = 0;
+        let splashInterval = null;
 
-            try {
-                let response = await supabaseClient
-                    .from('posts')
-                    .select('*')
-                    .order('id', { ascending: false });
+        // Default Sample Data
+        const samplePosts = [
+            {
+                id: '101',
+                role: 'warehouse',
+                area: '경기 북부',
+                category: '의류/잡화',
+                title: '[의정부] S/S 브랜드 여성 의류 덤핑재고 5,000장 공급',
+                summary: '백화점 입점 브랜드 이월 덤핑. 방송 진행자 수수료 35% 지급 및 샘플 무상 지원!',
+                desc: '경기도 의정부시 물류창고에 보관 중인 S/S 시즌 여성 원피스, 블라우스 5,000장 덤핑 공급합니다.\n- 방송 판매 수수료 35% 즉시 정산\n- 숏폼 제작용 샘플 3종 무료 지원\n- 당일 출고 배송 전담팀 운영',
+                writerInfo: '의정부 메인물류',
+                phone: '010-1234-5678',
+                kakaoUrl: 'https://open.kakao.com/o/s1234567',
+                timeAgo: '방금 전',
+                views: 142,
+                likes: 18
+            },
+            {
+                id: '102',
+                role: 'celeb',
+                area: '서울',
+                category: '뷰티/화장품',
+                title: '[팔로워 15만] 뷰티/스킨케어 전문 인플루언서 공구 협업',
+                summary: '인스타/틱톡 통합 15만 팬덤 보유. 수분크림/마스크팩 덤핑 및 라이브커머스 진행 원함',
+                desc: '안녕하세요! 2030 여성 타겟 인플루언서입니다.\n- 주 진행 매체: 인스타그램 라이브 & 틱톡 숏폼\n- 평균 라이브 동시 시청자 800명 이상\n- 빠른 정산 및 완판 조건 매칭 환영합니다.',
+                writerInfo: '뷰티셀럽_지니',
+                phone: '010-9876-5432',
+                kakaoId: 'celeb_jiny',
+                timeAgo: '10분 전',
+                views: 89,
+                likes: 12
+            }
+        ];
 
-                if (response.error) {
-                    response = await supabaseClient
-                        .from('posts')
-                        .select('*');
-                }
+        const SUPABASE_URL = "https://your-supabase-url.supabase.co";
+        const SUPABASE_ANON_KEY = "your-supabase-anon-key";
 
-                if (!response.error && response.data) {
-                    const dbPosts = response.data.map(row => ({
-                        id: String(row.id),
-                        role: (row.role && String(row.role).trim()) ? String(row.role).trim() : 'warehouse',
-                        area: row.area || '전체',
-                        category: row.category || '기타',
-                        title: row.title || '제안글',
-                        summary: row.summary || '',
-                        desc: row.desc || '',
-                        writerInfo: row.writer_info || '회원',
-                        kakaoUrl: row.kakao_url || '',
-                        kakaoId: row.kakao_id || '',
-                        phone: row.phone || '',
-                        email: row.email || '',
-                        wechat: row.wechat || '',
-                        otherContact: row.other_contact || '',
-                        timeAgo: '최신',
-                        views: row.views || 0,
-                        likes: row.likes || 0
-                    }));
-                    
-                    const previousCount = posts.length;
-                    
-                    // Smart merger preserving local unsynced posts & preventing role degradation
-                    const mergedMap = new Map();
-                    dbPosts.forEach(p => mergedMap.set(String(p.id), p));
-                    
-                    posts.forEach(p => {
-                        const existing = mergedMap.get(String(p.id));
-                        if (!existing) {
-                            // Check title match to avoid duplicates
-                            const duplicateByTitle = dbPosts.find(dbP => dbP.title === p.title && dbP.writerInfo === p.writerInfo);
-                            if (!duplicateByTitle) {
-                                mergedMap.set(String(p.id), p);
-                            }
+        let supabaseClient = null;
+        try {
+            if (typeof supabase !== 'undefined' && SUPABASE_URL && SUPABASE_ANON_KEY && !SUPABASE_URL.includes("your-supabase-url")) {
+                supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+                    global: {
+                        headers: {
+                            'Cache-Control': 'no-cache, no-store, must-revalidate',
+                            'Pragma': 'no-cache'
                         }
-                    });
+                    }
+                });
+            }
+        } catch(e) {
+            console.warn('Supabase init failed:', e);
+        }
 
-                    posts = Array.from(mergedMap.values()).sort((a, b) => Number(b.id) - Number(a.id));
+        // Firebase Setup
+        const firebaseConfig = {
+            apiKey: "AIzaSyBVxxaASh3JFjyXxNSyCsqBBBrS0GOf8PE",
+            authDomain: "changgo-match.firebaseapp.com",
+            projectId: "changgo-match",
+            storageBucket: "changgo-match.firebasestorage.app",
+            messagingSenderId: "87959949264",
+            appId: "1:87959949264:web:7711ed81bd31afb62273d5",
+            measurementId: "G-YCKLXNH61B"
+        };
 
-                    savePostsToStorage();
-                    applyFilters();
-
-                    if (isManual) {
-                        showToast('🔄 최신 매칭 DB 동기화 완료!');
-                    } else if (previousCount > 0 && dbPosts.length > previousCount) {
-                        showToast(`🎉 새로운 매칭 제안이 등록되었습니다! (${dbPosts.length - previousCount}건)`);
+        function initFirebaseMessaging() {
+            try {
+                if (typeof firebase !== 'undefined' && firebase.initializeApp) {
+                    if (!firebase.apps.length) {
+                        firebase.initializeApp(firebaseConfig);
+                    }
+                    if ('serviceWorker' in navigator && firebase.messaging.isSupported()) {
+                        navigator.serviceWorker.register('/firebase-messaging-sw.js')
+                            .then((reg) => {
+                                const messaging = firebase.messaging();
+                                messaging.useServiceWorker(reg);
+                            }).catch(err => console.warn('SW Register warning:', err));
                     }
                 }
             } catch(e) {
-                console.warn('Sync failed:', e);
-            } finally {
-                isSyncing = false;
-                if (badgeText) badgeText.innerText = '연동';
+                console.warn('Firebase init exception:', e);
+            }
+        }
+
+        function startSplashAnimation() {
+            const progressBar = document.getElementById('splashProgressBar');
+            const percentText = document.getElementById('splashPercent');
+            const msgText = document.getElementById('splashMsg');
+
+            splashInterval = setInterval(() => {
+                splashProgress += Math.floor(Math.random() * 8) + 4;
+                if (splashProgress > 100) splashProgress = 100;
+
+                if (progressBar) progressBar.style.width = splashProgress + '%';
+                if (percentText) percentText.innerText = `(${splashProgress}%)`;
+
+                if (msgText) {
+                    if (splashProgress < 30) {
+                        msgText.innerText = '최신 매칭 DB 갱신 중...';
+                    } else if (splashProgress < 70) {
+                        msgText.innerText = '실시간 창고·셀럽 데이터 연동 중...';
+                    } else if (splashProgress < 99) {
+                        msgText.innerText = '1초 매칭 시스템 가동 준비 완료!';
+                    } else {
+                        msgText.innerText = '1초 매칭 DB 연동 완료!';
+                    }
+                }
+
+                if (splashProgress >= 100) {
+                    clearInterval(splashInterval);
+                    setTimeout(hideSplashScreen, 350);
+                }
+            }, 100);
+
+            // Fail-safe Timer
+            setTimeout(() => {
+                hideSplashScreen();
+            }, 3500);
+        }
+
+        function hideSplashScreen() {
+            if (splashInterval) clearInterval(splashInterval);
+            const splash = document.getElementById('splashScreen');
+            if (splash && !splash.classList.contains('splash-hide')) {
+                splash.classList.add('splash-hide');
+            }
+        }
+
+        function switchTab(tab) {
+            const tabFeed = document.getElementById('tabFeed');
+            const tabRegister = document.getElementById('tabRegister');
+            const navFeedBtn = document.getElementById('navFeedBtn');
+            const navRegisterBtn = document.getElementById('navRegisterBtn');
+
+            if (tab === 'feed') {
+                tabFeed.classList.remove('hidden');
+                tabRegister.classList.add('hidden');
+
+                navFeedBtn.className = "flex flex-col items-center gap-1 text-baemin transition touch-active font-extrabold";
+                navRegisterBtn.className = "flex flex-col items-center gap-1 text-gray-400 transition touch-active font-bold";
+                applyFilters();
+            } else if (tab === 'register') {
+                if (!currentUser) {
+                    showAuthModal('DB 무료 등록을 위해 3초 간편가입이 필요합니다.', () => switchTab('register'));
+                    return;
+                }
+                const bannedStatus = isUserBanned(currentUser.phone);
+                if (bannedStatus === '정지' || bannedStatus === '일시정지' || bannedStatus === '영구정지') {
+                    showToast(`⚠️ [${bannedStatus}] 상태에서는 글을 작성할 수 없습니다.`);
+                    return;
+                }
+
+                tabRegister.classList.remove('hidden');
+                tabFeed.classList.add('hidden');
+
+                navRegisterBtn.className = "flex flex-col items-center gap-1 text-baemin transition touch-active font-extrabold";
+                navFeedBtn.className = "flex flex-col items-center gap-1 text-gray-400 transition touch-active font-bold";
+            }
+            if (window.lucide && lucide.createIcons) lucide.createIcons();
+        }
+
+        function setRoleFilter(role) {
+            currentRoleFilter = role;
+            const btnWh = document.getElementById('roleFilterWh');
+            const btnCeleb = document.getElementById('roleFilterCeleb');
+
+            if (role === 'warehouse') {
+                btnWh.className = "flex-1 py-2 rounded-lg bg-white text-emerald-800 shadow-xs text-xs font-black transition flex items-center justify-center gap-1";
+                btnCeleb.className = "flex-1 py-2 rounded-lg text-gray-500 text-xs font-bold transition flex items-center justify-center gap-1";
+            } else {
+                btnCeleb.className = "flex-1 py-2 rounded-lg bg-white text-purple-900 shadow-xs text-xs font-black transition flex items-center justify-center gap-1";
+                btnWh.className = "flex-1 py-2 rounded-lg text-gray-500 text-xs font-bold transition flex items-center justify-center gap-1";
+            }
+
+            applyFilters();
+        }
+
+        function selectFormRole(role) {
+            const btnWh = document.getElementById('formRoleWhBtn');
+            const btnCeleb = document.getElementById('formRoleCelebBtn');
+            const radioWh = document.querySelector('input[name="formRole"][value="warehouse"]');
+            const radioCeleb = document.querySelector('input[name="formRole"][value="celeb"]');
+
+            if (role === 'warehouse') {
+                if (radioWh) radioWh.checked = true;
+                btnWh.className = "border border-emerald-500 bg-emerald-50 p-2.5 rounded-xl flex items-center justify-center gap-1.5 text-xs font-black text-emerald-900 touch-active";
+                btnCeleb.className = "border border-gray-200 p-2.5 rounded-xl flex items-center justify-center gap-1.5 text-xs font-bold text-gray-600 touch-active";
+            } else {
+                if (radioCeleb) radioCeleb.checked = true;
+                btnCeleb.className = "border border-purple-500 bg-purple-50 p-2.5 rounded-xl flex items-center justify-center gap-1.5 text-xs font-black text-purple-900 touch-active";
+                btnWh.className = "border border-gray-200 p-2.5 rounded-xl flex items-center justify-center gap-1.5 text-xs font-bold text-gray-600 touch-active";
+            }
+            updateFormRoleUI();
+        }
+
+        function updateFormRoleUI() {
+            const formRoleRadio = document.querySelector('input[name="formRole"]:checked');
+            const role = formRoleRadio ? formRoleRadio.value : 'warehouse';
+
+            const titleLabel = document.getElementById('formTitleLabel');
+            const descLabel = document.getElementById('formDescLabel');
+
+            if (role === 'warehouse') {
+                if (titleLabel) titleLabel.innerHTML = '상호명 / 게시글 제목 <span class="text-rose-500">*</span>';
+                if (descLabel) descLabel.innerHTML = '상세 내용 (자세한 제안사항) <span class="text-rose-500">*</span>';
+            } else {
+                if (titleLabel) titleLabel.innerHTML = '셀러 활동명 / 게시글 제목 <span class="text-rose-500">*</span>';
+                if (descLabel) descLabel.innerHTML = '채널 소개 및 협업 제안 <span class="text-rose-500">*</span>';
             }
         }
 
@@ -974,17 +1118,72 @@
             renderPosts(filtered);
         }
 
+        function renderPosts(list) {
+            const container = document.getElementById('postsList');
+            if (!container) return;
+
+            if (list.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white p-8 rounded-2xl border border-gray-100 text-center space-y-2 my-2">
+                        <div class="w-12 h-12 bg-gray-100 text-gray-400 rounded-2xl flex items-center justify-center mx-auto text-xl">
+                            🔍
+                        </div>
+                        <p class="text-xs font-black text-gray-700">등록된 매칭 게시물이 없습니다.</p>
+                        <p class="text-[10px] text-gray-400">하단 'DB 무료 등록' 탭에서 첫 제안글을 작성해 보세요!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = list.map(p => `
+                <div onclick="openKakaoModal('${p.id}')" class="bg-white p-3.5 rounded-2xl border border-gray-100 shadow-xs space-y-2 cursor-pointer touch-active hover:border-baemin/40 transition">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-1.5">
+                            <span class="bg-baemin-light text-baemin-dark text-[9.5px] font-black px-2 py-0.5 rounded-md border border-baemin/20">
+                                ${escapeHtml(p.area)} · ${escapeHtml(p.category)}
+                            </span>
+                            <span class="text-[9.5px] text-gray-400 font-medium">${escapeHtml(p.timeAgo || '최신')}</span>
+                        </div>
+                        <span class="text-[9.5px] text-gray-400 font-bold">
+                            👁️ ${p.views || 0}
+                        </span>
+                    </div>
+
+                    <div>
+                        <h3 class="font-bold text-xs text-gray-900 leading-snug line-clamp-1">
+                            ${escapeHtml(p.title)}
+                        </h3>
+                        <p class="text-[11px] text-gray-500 mt-1 line-clamp-2 leading-relaxed">
+                            ${escapeHtml(p.summary)}
+                        </p>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-1 border-t border-gray-50 text-[10px]">
+                        <span class="font-bold text-gray-600 truncate max-w-[160px]">
+                            👤 ${escapeHtml(p.writerInfo || '회원')}
+                        </span>
+                        <span class="font-black text-baemin-dark flex items-center gap-0.5">
+                            연락처 보기 <i data-lucide="chevron-right" class="w-3 h-3"></i>
+                        </span>
+                    </div>
+                </div>
+            `).join('');
+
+            if (window.lucide && lucide.createIcons) lucide.createIcons();
+        }
+
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            processPostSubmit();
+        }
+
         async function processPostSubmit() {
             try {
                 if (!currentUser) return;
 
                 const bannedStatus = isUserBanned(currentUser.phone);
-                if (bannedStatus === '정지' || bannedStatus === '일시정지') {
-                    showToast(`⚠️ [일시정지] 상태에서는 글을 작성할 수 없습니다.`);
-                    return;
-                }
-                if (bannedStatus === '영구정지') {
-                    showToast(`⚠️ [영구정지] 상태에서는 글을 작성할 수 없습니다.`);
+                if (bannedStatus === '정지' || bannedStatus === '일시정지' || bannedStatus === '영구정지') {
+                    showToast(`⚠️ [${bannedStatus}] 상태에서는 글을 작성할 수 없습니다.`);
                     return;
                 }
 
@@ -1107,6 +1306,106 @@
                 console.error('Post submit error:', err);
                 showToast('글 등록 중 오류가 발생했습니다. 다시 시도해주세요.');
             }
+        }
+
+        function mapPostToSupabaseRow(p) {
+            return {
+                role: p.role || 'warehouse',
+                area: p.area,
+                category: p.category,
+                title: p.title,
+                summary: p.summary,
+                desc: p.desc,
+                writer_info: p.writerInfo,
+                kakao_url: p.kakaoUrl,
+                kakao_id: p.kakaoId,
+                phone: p.phone,
+                email: p.email,
+                wechat: p.wechat,
+                other_contact: p.otherContact,
+                views: p.views || 0,
+                likes: p.likes || 0
+            };
+        }
+
+        async function syncFromCentralDB(isManual = false) {
+            if (!supabaseClient || isSyncing) return;
+            isSyncing = true;
+            
+            const badgeText = document.getElementById('dbSyncStatusText');
+            if (badgeText) badgeText.innerText = '동기화중';
+
+            try {
+                let response = await supabaseClient
+                    .from('posts')
+                    .select('*')
+                    .order('id', { ascending: false });
+
+                if (response.error) {
+                    response = await supabaseClient
+                        .from('posts')
+                        .select('*');
+                }
+
+                if (!response.error && response.data) {
+                    const dbPosts = response.data.map(row => ({
+                        id: String(row.id),
+                        role: (row.role && String(row.role).trim()) ? String(row.role).trim() : 'warehouse',
+                        area: row.area || '전체',
+                        category: row.category || '기타',
+                        title: row.title || '제안글',
+                        summary: row.summary || '',
+                        desc: row.desc || '',
+                        writerInfo: row.writer_info || '회원',
+                        kakaoUrl: row.kakao_url || '',
+                        kakaoId: row.kakao_id || '',
+                        phone: row.phone || '',
+                        email: row.email || '',
+                        wechat: row.wechat || '',
+                        otherContact: row.other_contact || '',
+                        timeAgo: '최신',
+                        views: row.views || 0,
+                        likes: row.likes || 0
+                    }));
+                    
+                    const previousCount = posts.length;
+                    
+                    const mergedMap = new Map();
+                    dbPosts.forEach(p => mergedMap.set(String(p.id), p));
+                    
+                    posts.forEach(p => {
+                        const existing = mergedMap.get(String(p.id));
+                        if (!existing) {
+                            const duplicateByTitle = dbPosts.find(dbP => dbP.title === p.title && dbP.writerInfo === p.writerInfo);
+                            if (!duplicateByTitle) {
+                                mergedMap.set(String(p.id), p);
+                            }
+                        }
+                    });
+
+                    posts = Array.from(mergedMap.values()).sort((a, b) => Number(b.id) - Number(a.id));
+
+                    savePostsToStorage();
+                    applyFilters();
+
+                    if (isManual) {
+                        showToast('🔄 최신 매칭 DB 동기화 완료!');
+                    } else if (previousCount > 0 && dbPosts.length > previousCount) {
+                        showToast(`🎉 새로운 매칭 제안이 등록되었습니다! (${dbPosts.length - previousCount}건)`);
+                    }
+                }
+            } catch(e) {
+                console.warn('Sync failed:', e);
+            } finally {
+                isSyncing = false;
+                if (badgeText) badgeText.innerText = '연동';
+            }
+        }
+
+        function initRealtimeSync() {
+            setInterval(() => {
+                syncFromCentralDB(false);
+            }, 3000);
         }
 
         function openInquiryModal() {
@@ -1270,6 +1569,81 @@
             }
         }
 
+        function openAppGuide() {
+            const modal = document.getElementById('appInstallModal');
+            const card = document.getElementById('appInstallModalCard');
+            if (modal && card) {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    card.classList.remove('bottom-sheet-enter');
+                    card.classList.add('bottom-sheet-active');
+                }, 10);
+            }
+            if (window.lucide && lucide.createIcons) lucide.createIcons();
+        }
+
+        function closeAppGuide() {
+            const modal = document.getElementById('appInstallModal');
+            const card = document.getElementById('appInstallModalCard');
+            if (card) {
+                card.classList.remove('bottom-sheet-active');
+                card.classList.add('bottom-sheet-enter');
+            }
+            setTimeout(() => {
+                if (modal) modal.classList.add('hidden');
+            }, 250);
+        }
+
+        function switchGuideTab(os) {
+            const btnAnd = document.getElementById('guideTabAndroid');
+            const btnIos = document.getElementById('guideTabIos');
+            const secAnd = document.getElementById('guideSectionAndroid');
+            const secIos = document.getElementById('guideSectionIos');
+
+            if (os === 'android') {
+                btnAnd.className = "flex-1 py-2 rounded-lg bg-white text-gray-900 shadow-xs text-xs font-black transition flex items-center justify-center gap-1";
+                btnIos.className = "flex-1 py-2 rounded-lg text-gray-500 text-xs font-bold transition flex items-center justify-center gap-1";
+                secAnd.classList.remove('hidden');
+                secIos.classList.add('hidden');
+            } else {
+                btnIos.className = "flex-1 py-2 rounded-lg bg-white text-gray-900 shadow-xs text-xs font-black transition flex items-center justify-center gap-1";
+                btnAnd.className = "flex-1 py-2 rounded-lg text-gray-500 text-xs font-bold transition flex items-center justify-center gap-1";
+                secIos.classList.remove('hidden');
+                secAnd.classList.add('hidden');
+            }
+        }
+
+        function requestNotificationPermission() {
+            if (!('Notification' in window)) {
+                showToast('이 브라우저는 알림 기능을 지원하지 않습니다.');
+                return;
+            }
+
+            Notification.requestPermission().then((permission) => {
+                if (permission === 'granted') {
+                    showToast('🔔 푸시 알림 수신 동의가 완료되었습니다!');
+                } else if (permission === 'denied') {
+                    showToast('⚠️ 알림 권한이 차단되었습니다. 브라우저 설정에서 해제해 주세요.');
+                }
+            });
+        }
+
+        function sendTestNotification() {
+            if (Notification.permission === 'granted') {
+                try {
+                    new Notification('창고의민족 매칭 알림', {
+                        body: '📲 실시간 매칭 푸시 알림 수신이 정상적으로 동작합니다!',
+                        icon: '/apple-touch-icon.png'
+                    });
+                    showToast('📲 화면 알림을 성공적으로 발생시켰습니다!');
+                } catch(e) {
+                    showToast('서비스 워커 알림 동작을 시작합니다.');
+                }
+            } else {
+                showToast('먼저 [푸시 알림 수신 동의] 버튼을 눌러 허용해 주세요.');
+            }
+        }
+
         function showAuthModal(reasonMessage, callback) {
             if (reasonMessage) {
                 const reasonEl = document.getElementById('authReasonText');
@@ -1402,6 +1776,27 @@
                 const actionToRun = pendingAction;
                 pendingAction = null;
                 setTimeout(() => actionToRun(), 300);
+            }
+        }
+
+        function updateUserUI() {
+            const userInfoHeader = document.getElementById('userInfoHeader');
+            const authBtnHeader = document.getElementById('authBtnHeader');
+            const userNameText = document.getElementById('userNameText');
+            const userRoleBadge = document.getElementById('userRoleBadge');
+
+            if (currentUser) {
+                if (userInfoHeader) userInfoHeader.classList.remove('hidden');
+                if (authBtnHeader) authBtnHeader.classList.add('hidden');
+
+                if (userNameText) userNameText.innerText = currentUser.name || '회원';
+                if (userRoleBadge) {
+                    userRoleBadge.innerText = currentUser.role === 'warehouse' ? '창고' : '셀럽';
+                    userRoleBadge.className = currentUser.role === 'warehouse' ? "text-[8px] bg-emerald-600 text-white px-1 py-0.5 rounded font-black whitespace-nowrap shrink-0" : "text-[8px] bg-purple-600 text-white px-1 py-0.5 rounded font-black whitespace-nowrap shrink-0";
+                }
+            } else {
+                if (userInfoHeader) userInfoHeader.classList.add('hidden');
+                if (authBtnHeader) authBtnHeader.classList.remove('hidden');
             }
         }
 
@@ -1555,7 +1950,6 @@
             savePostsToStorage();
 
             if (supabaseClient) {
-                const row = mapPostToSupabaseRow(post);
                 await supabaseClient.from('posts').update({ likes: post.likes }).eq('id', post.id);
             }
 
@@ -1576,23 +1970,6 @@
                 if (modal) modal.classList.add('hidden');
                 activeDetailPostId = null;
             }, 250);
-        }
-
-        function copySingleValue(textToCopy, labelName) {
-            if (!textToCopy) return;
-            const tempInput = document.createElement('input');
-            tempInput.value = textToCopy;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-
-            try {
-                document.execCommand('copy');
-                showToast(`${labelName} 복사 완료!`);
-            } catch (err) {
-                showToast('복사에 실패했습니다.');
-            } finally {
-                document.body.removeChild(tempInput);
-            }
         }
 
         function openAdminModal() {
@@ -1837,6 +2214,70 @@
                 toast.classList.remove('opacity-100');
                 toast.classList.add('opacity-0', 'pointer-events-none');
             }, 2200);
+        }
+
+        function savePostsToStorage() {
+            try {
+                localStorage.setItem('baemin_matching_posts', JSON.stringify(posts));
+            } catch(e) {}
+        }
+
+        function loadPostsFromStorage() {
+            try {
+                const saved = localStorage.getItem('baemin_matching_posts');
+                if (saved) {
+                    posts = JSON.parse(saved);
+                } else {
+                    posts = [...samplePosts];
+                }
+            } catch(e) {
+                posts = [...samplePosts];
+            }
+        }
+
+        function loadUserDatabase() {
+            try {
+                const saved = localStorage.getItem('baemin_user_db');
+                if (saved) userDatabase = JSON.parse(saved);
+            } catch(e) {}
+        }
+
+        function loadSavedAdminPassword() {
+            try {
+                const saved = localStorage.getItem('baemin_admin_password');
+                if (saved) adminPassword = saved;
+            } catch(e) {}
+        }
+
+        function saveInquiries() {
+            try {
+                localStorage.setItem('baemin_inquiries_db', JSON.stringify(inquiries));
+            } catch(e) {}
+        }
+
+        function loadInquiries() {
+            try {
+                const saved = localStorage.getItem('baemin_inquiries_db');
+                if (saved) inquiries = JSON.parse(saved);
+            } catch(e) {}
+        }
+
+        function initKakaoSDK() {
+            try {
+                if (typeof Kakao !== 'undefined' && !Kakao.isInitialized()) {
+                    Kakao.init('87959949264');
+                }
+            } catch(e) {}
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return String(text)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
         }
 
         function initApp() {

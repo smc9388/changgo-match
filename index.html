@@ -182,13 +182,20 @@
                 <div class="min-w-0">
                     <h1 class="font-extrabold text-sm text-gray-900 tracking-tight leading-none flex items-center gap-1 whitespace-nowrap">
                         <span>창고의민족</span>
-                        <span id="dbStatusBadge" class="bg-emerald-500 text-white text-[8px] font-black px-1 py-0.5 rounded-full shadow-xs whitespace-nowrap shrink-0">연동완료</span>
+                        <span id="dbStatusBadge" onclick="syncFromCentralDB(true)" class="bg-emerald-500 hover:bg-emerald-600 text-white text-[8px] font-black px-1.5 py-0.5 rounded-full shadow-xs whitespace-nowrap shrink-0 cursor-pointer flex items-center gap-0.5 touch-active">
+                            <span>🟢</span> <span id="dbSyncStatusText">실시간 연동</span>
+                        </span>
                     </h1>
                     <p class="text-[9px] text-gray-400 font-medium mt-0.5 whitespace-nowrap">실시간 매칭 DB 가동 중</p>
                 </div>
             </div>
 
             <div class="flex items-center gap-1 shrink-0">
+                <button onclick="syncFromCentralDB(true)" class="text-[10px] font-black text-emerald-800 bg-emerald-50 hover:bg-emerald-100 px-1.5 py-1 rounded-xl border border-emerald-300/60 flex items-center gap-1 touch-active shadow-2xs whitespace-nowrap shrink-0" title="실시간 DB 새로고침">
+                    <i data-lucide="refresh-cw" class="w-3 h-3 text-emerald-600 shrink-0"></i>
+                    <span class="whitespace-nowrap">새로고침</span>
+                </button>
+
                 <button onclick="openAppGuide()" class="text-[10px] font-black text-baemin-dark bg-baemin-light px-1.5 py-1 rounded-xl border border-baemin/30 flex items-center gap-1 touch-active shadow-2xs whitespace-nowrap shrink-0">
                     <i data-lucide="smartphone" class="w-3 h-3 text-baemin shrink-0"></i>
                     <span class="whitespace-nowrap">앱 설치</span>
@@ -246,6 +253,16 @@
                         </button>
                         <button id="roleFilterCeleb" onclick="setRoleFilter('celeb')" class="flex-1 py-2 rounded-lg text-gray-500 text-xs font-bold transition flex items-center justify-center gap-1">
                             🎥 셀러 / 인플루언서
+                        </button>
+                    </div>
+
+                    <div class="flex items-center justify-between px-1 text-[10px] text-gray-500 font-bold">
+                        <span class="flex items-center gap-1 text-emerald-700">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                            실시간 자동 동기화 중
+                        </span>
+                        <button onclick="syncFromCentralDB(true)" class="text-baemin-dark font-extrabold hover:underline flex items-center gap-0.5">
+                            🔄 최신 DB 불러오기
                         </button>
                     </div>
 
@@ -1197,8 +1214,7 @@
         }
 
         function mapPostToSupabaseRow(p) {
-            return {
-                id: String(p.id),
+            const row = {
                 title: p.title || '',
                 summary: p.summary || '',
                 area: p.area || '',
@@ -1212,16 +1228,30 @@
                 email: p.email || '',
                 wechat: p.wechat || '',
                 other_contact: p.otherContact || '',
-                views: p.views || 0,
-                likes: p.likes || 0
+                views: Number(p.views) || 0,
+                likes: Number(p.likes) || 0
             };
+            if (p.id && !isNaN(Number(p.id)) && Number(p.id) < 2147483647) {
+                row.id = Number(p.id);
+            }
+            return row;
         }
 
-        async function syncFromCentralDB() {
-            if (!supabaseClient) return;
+        let isSyncing = false;
+        async function syncFromCentralDB(isManual = false) {
+            if (!supabaseClient || isSyncing) return;
+            isSyncing = true;
+            
+            const badgeText = document.getElementById('dbSyncStatusText');
+            if (badgeText) badgeText.innerText = '동기화중...';
+
             try {
-                const { data, error } = await supabaseClient.from('posts').select('*').order('created_at', { ascending: false });
-                if (!error && data && data.length > 0) {
+                const { data, error } = await supabaseClient
+                    .from('posts')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (!error && data) {
                     const dbPosts = data.map(row => ({
                         id: String(row.id),
                         role: row.role || 'warehouse',
@@ -1242,118 +1272,54 @@
                         likes: row.likes || 0
                     }));
                     
-                    const mergedMap = new Map();
-                    posts.forEach(p => mergedMap.set(String(p.id), p));
-                    dbPosts.forEach(p => mergedMap.set(String(p.id), p));
+                    const previousCount = posts.length;
+                    
+                    // Central DB is master list
+                    if (dbPosts.length > 0) {
+                        posts = dbPosts;
+                    } else if (posts.length > 0) {
+                        // If DB is empty, push local sample/new posts to DB
+                        for (const localP of posts) {
+                            try {
+                                const dbRow = mapPostToSupabaseRow(localP);
+                                await supabaseClient.from('posts').insert([dbRow]);
+                            } catch(e) {}
+                        }
+                    }
 
-                    posts = Array.from(mergedMap.values());
                     savePostsToStorage();
                     applyFilters();
+
+                    if (isManual) {
+                        showToast('🔄 최신 매칭 DB 동기화 완료!');
+                    } else if (previousCount > 0 && dbPosts.length > previousCount) {
+                        showToast(`🎉 새로운 매칭 제안이 등록되었습니다! (${dbPosts.length - previousCount}건)`);
+                    }
                 }
-            } catch(e) {}
+            } catch(e) {
+                console.warn('Sync failed:', e);
+            } finally {
+                isSyncing = false;
+                if (badgeText) badgeText.innerText = '실시간 연동';
+            }
         }
 
-        function handleFormSubmit(event) {
-            if (event) event.preventDefault();
+        function initRealtimeSync() {
+            // Auto polling every 4 seconds for cross-device sync
+            setInterval(() => {
+                syncFromCentralDB(false);
+            }, 4000);
 
-            if (!currentUser) {
-                showAuthModal('글을 등록하려면 3초 간편가입이 필요합니다.', () => processPostSubmit());
-                return;
-            }
-
-            processPostSubmit();
-        }
-
-        async function processPostSubmit() {
-            if (!currentUser) return;
-
-            // TEMPORARY SUSPENSION / PERMANENT BAN RULE: Cannot write posts
-            const bannedStatus = isUserBanned(currentUser.phone);
-            if (bannedStatus === '정지' || bannedStatus === '일시정지') {
-                showToast(`⚠️ [일시정지] 상태에서는 글을 작성할 수 없습니다.`);
-                return;
-            }
-            if (bannedStatus === '영구정지') {
-                showToast(`⚠️ [영구정지] 상태에서는 글을 작성할 수 없습니다.`);
-                return;
-            }
-
-            const roleRadio = document.querySelector('input[name="formRole"]:checked');
-            const role = roleRadio ? roleRadio.value : 'warehouse';
-
-            const area = document.getElementById('formArea').value;
-            const category = document.getElementById('formCategory').value;
-            const title = document.getElementById('formTitle').value.trim();
-            const summary = document.getElementById('formSummary').value.trim();
-            const desc = document.getElementById('formDesc').value.trim();
-            const writerInfo = document.getElementById('formWriter').value.trim();
-            
-            const kakaoUrl = document.getElementById('formKakaoUrl').value.trim();
-            const kakaoId = document.getElementById('formKakaoId').value.trim();
-            const phone = document.getElementById('formPhone').value.trim();
-            const email = document.getElementById('formEmail').value.trim();
-            const wechat = document.getElementById('formWechat').value.trim();
-            const otherContact = document.getElementById('formOtherContact').value.trim();
-
-            if (!area || !category || !title || !summary || !desc) {
-                showToast('필수 항목을 모두 입력해주세요.');
-                return;
-            }
-
-            if (!kakaoUrl && !kakaoId && !phone && !email && !wechat && !otherContact) {
-                showToast('최소 1개 이상의 연락처를 입력해주세요.');
-                return;
-            }
-
-            const newPost = {
-                id: String(Date.now()),
-                role: role,
-                area: area,
-                category: category,
-                title: title,
-                summary: summary,
-                desc: desc,
-                writerInfo: writerInfo || `${currentUser.name} (${currentUser.phone || ''})`,
-                kakaoUrl: kakaoUrl,
-                kakaoId: kakaoId,
-                phone: phone,
-                email: email,
-                wechat: wechat,
-                otherContact: otherContact,
-                timeAgo: '방금 전',
-                views: 0,
-                likes: 0
-            };
-
-            posts.unshift(newPost);
-            savePostsToStorage();
-
-            const formEl = document.getElementById('postForm');
-            if (formEl) formEl.reset();
-
-            const regionSelect = document.getElementById('regionSelect');
-            const categorySelect = document.getElementById('categorySelect');
-            const searchInput = document.getElementById('searchInput');
-
-            if (regionSelect) regionSelect.value = 'all';
-            if (categorySelect) categorySelect.value = 'all';
-            if (searchInput) searchInput.value = '';
-
-            setRoleFilter(role);
-            switchTab('feed');
-
-            showToast('매칭 DB가 성공적으로 등록되었습니다! 🎉');
-
+            // Supabase Realtime channel subscription
             if (supabaseClient) {
                 try {
-                    const dbRow = mapPostToSupabaseRow(newPost);
-                    const { error } = await supabaseClient.from('posts').insert([dbRow]);
-                    if (error) {
-                        console.warn('Supabase Insert Error (saved locally):', error);
-                    }
-                } catch(e) {
-                    console.warn('Supabase Exception (saved locally):', e);
-                }
+                    supabaseClient
+                        .channel('public:posts')
+                        .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, () => {
+                            syncFromCentralDB(false);
+                        })
+                        .subscribe();
+                } catch(e) {}
             }
         }
 
@@ -1614,6 +1580,22 @@
                 posts.unshift(newPost);
                 savePostsToStorage();
 
+                if (supabaseClient) {
+                    try {
+                        const dbRow = mapPostToSupabaseRow(newPost);
+                        delete dbRow.id; // Let Supabase auto-assign primary key ID
+                        const { data, error } = await supabaseClient.from('posts').insert([dbRow]).select();
+                        if (error) {
+                            console.warn('Supabase Insert Error:', error);
+                        } else if (data && data.length > 0) {
+                            newPost.id = String(data[0].id);
+                            savePostsToStorage();
+                        }
+                    } catch(e) {
+                        console.warn('Supabase Exception:', e);
+                    }
+                }
+
                 const formEl = document.getElementById('postForm');
                 if (formEl) formEl.reset();
 
@@ -1633,18 +1615,9 @@
                 if (scrollable) scrollable.scrollTop = 0;
 
                 showToast('매칭 DB가 성공적으로 등록되었습니다! 🎉');
-
-                if (supabaseClient) {
-                    try {
-                        const dbRow = mapPostToSupabaseRow(newPost);
-                        const { error } = await supabaseClient.from('posts').insert([dbRow]);
-                        if (error) {
-                            console.warn('Supabase Insert Error (saved locally):', error);
-                        }
-                    } catch(e) {
-                        console.warn('Supabase Exception (saved locally):', e);
-                    }
-                }
+                
+                // Immediately force sync to reflect across devices
+                setTimeout(() => syncFromCentralDB(false), 500);
             } catch(err) {
                 console.error('Post submit error:', err);
                 showToast('글 등록 중 오류가 발생했습니다. 다시 시도해주세요.');
@@ -2421,6 +2394,7 @@
             initKakaoSDK();
             initFirebaseMessaging();
             syncFromCentralDB();
+            initRealtimeSync();
 
             applyFilters();
         }

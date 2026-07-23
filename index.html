@@ -527,6 +527,17 @@
                     <i data-lucide="download-cloud" class="w-4 h-4"></i>
                     <span>안드로이드 APK 다운로드 바로가기 ↗</span>
                 </a>
+
+                <div class="pt-2 border-t border-gray-100 space-y-2">
+                    <button onclick="requestNotificationPermission()" class="w-full bg-amber-400 hover:bg-amber-500 text-gray-900 font-black text-xs py-3 rounded-xl shadow-xs touch-active flex items-center justify-center gap-2">
+                        <i data-lucide="bell" class="w-4 h-4"></i>
+                        <span>🔔 푸시 알림 수신 동의 및 연결하기</span>
+                    </button>
+                    <button onclick="sendTestNotification()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold text-xs py-2.5 rounded-xl touch-active flex items-center justify-center gap-2">
+                        <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-500"></i>
+                        <span>📲 화면 알림 동작 테스트해보기</span>
+                    </button>
+                </div>
             </div>
 
             <div id="guideSectionIos" class="hidden space-y-3">
@@ -541,6 +552,11 @@
                         <p>3. 바탕화면에 생성된 앱으로 실행 시 <span class="bg-amber-200 font-bold px-1 rounded">알림 수신 허용</span> 완료!</p>
                     </div>
                 </div>
+
+                <button onclick="requestNotificationPermission()" class="w-full bg-amber-400 hover:bg-amber-500 text-gray-900 font-black text-xs py-3 rounded-xl shadow-xs touch-active flex items-center justify-center gap-2">
+                    <i data-lucide="bell" class="w-4 h-4"></i>
+                    <span>🔔 푸시 알림 수신 동의 및 연결하기</span>
+                </button>
 
                 <button onclick="copySingleValue('https://changgo-match.vercel.app', '웹사이트 URL')" class="w-full bg-slate-900 text-white font-black text-xs py-3.5 rounded-xl shadow-md touch-active flex items-center justify-center gap-2">
                     <i data-lucide="copy" class="w-4 h-4"></i>
@@ -866,17 +882,11 @@
                     if ('serviceWorker' in navigator && 'Notification' in window) {
                         navigator.serviceWorker.register('/firebase-messaging-sw.js')
                             .then((registration) => {
-                                return firebaseMessaging.getToken({
-                                    serviceWorkerRegistration: registration,
-                                    vapidKey: VAPID_KEY
-                                });
+                                console.log('Service Worker Registered Successfully:', registration);
                             })
-                            .then((currentToken) => {
-                                if (currentToken) {
-                                    console.log('FCM Push Token:', currentToken);
-                                }
-                            })
-                            .catch((err) => {});
+                            .catch((err) => {
+                                console.warn('Service Worker Registration failed (Ensure firebase-messaging-sw.js exists at root domain):', err);
+                            });
 
                         firebaseMessaging.onMessage((payload) => {
                             const title = payload.notification?.title || '창고의민족 알림';
@@ -886,6 +896,61 @@
                     }
                 }
             } catch(e) {}
+        }
+
+        async function requestNotificationPermission() {
+            if (!('Notification' in window)) {
+                showToast('❌ 현재 사용 중인 브라우저는 푸시 알림을 지원하지 않습니다.');
+                return;
+            }
+
+            try {
+                const permission = await Notification.requestPermission();
+                if (permission === 'granted') {
+                    showToast('✅ 푸시 알림 허용이 완료되었습니다!');
+                    
+                    if (firebaseMessaging && 'serviceWorker' in navigator) {
+                        const registration = await navigator.serviceWorker.ready;
+                        const token = await firebaseMessaging.getToken({
+                            serviceWorkerRegistration: registration,
+                            vapidKey: VAPID_KEY
+                        });
+
+                        if (token) {
+                            console.log('Registered FCM Token:', token);
+                            showToast('🎉 기기 알림 등록 완료!');
+                        }
+                    }
+                } else if (permission === 'denied') {
+                    showToast('⚠️ 휴대폰 설정에서 알림 권한이 차단되어 있습니다.');
+                } else {
+                    showToast('알림 권한이 요청 대기 상태입니다.');
+                }
+            } catch (err) {
+                console.error('Notification Error:', err);
+                showToast('알림 설정 처리 중 오류가 발생했습니다.');
+            }
+        }
+
+        function sendTestNotification() {
+            if (!('Notification' in window)) {
+                showToast('현재 브라우저는 알림을 지원하지 않습니다.');
+                return;
+            }
+
+            if (Notification.permission === 'granted') {
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.ready.then((registration) => {
+                        registration.showNotification('창고의민족 푸시 테스트', {
+                            body: '🎉 푸시 알림이 정상적으로 수신되었습니다!',
+                            icon: '/apple-touch-icon.png'
+                        });
+                    });
+                }
+                showToast('🔔 테스트 알림을 발송했습니다.');
+            } else {
+                showToast('먼저 [🔔 푸시 알림 수신 동의] 버튼을 눌러주세요.');
+            }
         }
 
         function hideSplashScreen() {
@@ -965,7 +1030,6 @@
                 .replace(/'/g, '&#039;');
         }
 
-        // Global State
         let currentUser = null;
         let pendingAction = null;
         let activeDetailPostId = null;
@@ -977,7 +1041,6 @@
         let inquiries = [];
         let currentRoleFilter = 'warehouse';
 
-        // Sample initial posts if local/DB is empty
         const samplePosts = [
             {
                 id: '101',
@@ -1222,7 +1285,6 @@
             if (window.lucide && lucide.createIcons) lucide.createIcons();
         }
 
-        // Dynamic Form UI updates based on role
         function updateFormRoleUI() {
             const warehouseRadio = document.querySelector('input[name="formRole"][value="warehouse"]');
             const isWarehouse = warehouseRadio && warehouseRadio.checked;

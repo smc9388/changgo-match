@@ -427,7 +427,6 @@
 
     </div>
 
-    <!-- 1:1 Secret Inquiry Modal -->
     <div id="inquiryModal" class="fixed inset-0 z-50 flex items-end justify-center modal-backdrop hidden">
         <div id="inquiryModalCard" class="bg-white w-full max-w-[440px] rounded-t-3xl p-5 space-y-3.5 shadow-2xl bottom-sheet-enter max-h-[88vh] overflow-y-auto">
             <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto -mt-1 mb-1"></div>
@@ -490,7 +489,6 @@
         </div>
     </div>
 
-    <!-- App Install Modal -->
     <div id="appInstallModal" class="fixed inset-0 z-50 flex items-end justify-center modal-backdrop hidden">
         <div id="appInstallModalCard" class="bg-white w-full max-w-[440px] rounded-t-3xl p-5 space-y-3.5 shadow-2xl bottom-sheet-enter max-h-[88vh] overflow-y-auto">
             <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto -mt-1 mb-1"></div>
@@ -971,7 +969,7 @@
 
             if (!splash || splash.classList.contains('splash-hide')) return;
 
-            const totalDuration = 3400; // 약 3.4초 자연스러운 로딩
+            const totalDuration = 3400; // 3.4초 자연스러운 로딩
             const intervalTime = 40;
             const step = 100 / (totalDuration / intervalTime);
 
@@ -1016,6 +1014,28 @@
                     splash.style.display = 'none';
                 }, 500);
             }
+        }
+
+        function switchTab(tabName) {
+            const tabFeed = document.getElementById('tabFeed');
+            const tabRegister = document.getElementById('tabRegister');
+            const navFeedBtn = document.getElementById('navFeedBtn');
+            const navRegisterBtn = document.getElementById('navRegisterBtn');
+
+            if (tabName === 'feed') {
+                if (tabFeed) tabFeed.classList.remove('hidden');
+                if (tabRegister) tabRegister.classList.add('hidden');
+                if (navFeedBtn) navFeedBtn.className = "flex flex-col items-center gap-1 text-baemin transition touch-active font-extrabold";
+                if (navRegisterBtn) navRegisterBtn.className = "flex flex-col items-center gap-1 text-gray-400 transition touch-active font-bold";
+                applyFilters();
+            } else if (tabName === 'register') {
+                if (tabRegister) tabRegister.classList.remove('hidden');
+                if (tabFeed) tabFeed.classList.add('hidden');
+                if (navRegisterBtn) navRegisterBtn.className = "flex flex-col items-center gap-1 text-baemin transition touch-active font-extrabold";
+                if (navFeedBtn) navFeedBtn.className = "flex flex-col items-center gap-1 text-gray-400 transition touch-active font-bold";
+                updateFormRoleUI();
+            }
+            if (window.lucide && lucide.createIcons) lucide.createIcons();
         }
 
         function initKakaoSDK() {
@@ -1222,7 +1242,6 @@
                         likes: row.likes || 0
                     }));
                     
-                    // Merge local posts and dbPosts to avoid wiping locally created posts
                     const mergedMap = new Map();
                     posts.forEach(p => mergedMap.set(String(p.id), p));
                     dbPosts.forEach(p => mergedMap.set(String(p.id), p));
@@ -1233,6 +1252,7 @@
                 }
             } catch(e) {}
         }
+
         function handleFormSubmit(event) {
             if (event) event.preventDefault();
 
@@ -1437,23 +1457,35 @@
             const celebLabel = document.getElementById('formRoleCelebLabel');
 
             if (isWarehouse) {
-                whLabel.className = "cursor-pointer border border-emerald-500 bg-emerald-50 p-2.5 rounded-xl flex items-center justify-center gap-1.5 text-xs font-black text-emerald-900";
-                celebLabel.className = "cursor-pointer border border-gray-200 p-2.5 rounded-xl flex items-center justify-center gap-1.5 text-xs font-bold text-gray-600";
+                if (whLabel) whLabel.className = "cursor-pointer border border-emerald-500 bg-emerald-50 p-2.5 rounded-xl flex items-center justify-center gap-1.5 text-xs font-black text-emerald-900";
+                if (celebLabel) celebLabel.className = "cursor-pointer border border-gray-200 p-2.5 rounded-xl flex items-center justify-center gap-1.5 text-xs font-bold text-gray-600";
                 
-                document.getElementById('formTitle').placeholder = "예: [의정부] OO물류 S/S 의류 덤핑 및 라이브커머스 공급";
-                document.getElementById('formSummary').placeholder = "예: 이월 덤핑재고 보유 중. 방송 진행자 수수료 30% 조건!";
-                document.getElementById('formWriterLabel').innerText = "작성자 / 대표자 명";
-                document.getElementById('formWriter').placeholder = "예: OO물류 의정부점 대표";
-                document.getElementById('formDesc').placeholder = "보유 제품 종류, 공급 수량, 수수료 배분율, 방송 지원 조건, 샘플 제공 여부 등 상세 내용을 공유해 주세요.";
-            } else {
-                celebLabel.className = "cursor-pointer border border-purple-500 bg-purple-50 p-2.5 rounded-xl flex items-center justify-center gap-1.5 text-xs font-black text-purple-900";
-                whLabel.className = "cursor-pointer border border-gray-200 p-2.5 rounded-xl flex items-center justify-center gap-1.5 text-xs font-bold text-gray-600";
+                const fTitle = document.getElementById('formTitle');
+                const fSummary = document.getElementById('formSummary');
+                const fWriterLabel = document.getElementById('formWriterLabel');
+                const fWriter = document.getElementById('formWriter');
+                const fDesc = document.getElementById('formDesc');
 
-                document.getElementById('formTitle').placeholder = "예) 의류 전문 셀러 또는 전자 셀러 입니다 창고 구합니다.";
-                document.getElementById('formSummary').placeholder = "예) 경기북부 쪽 뷰티/식품전문입니다 3~4명 셀러 가능합니다.";
-                document.getElementById('formWriterLabel').innerText = "셀러명 / 활동명";
-                document.getElementById('formWriter').placeholder = "예: 셀러 홍길동 / 인스타 @celeb_kr";
-                document.getElementById('formDesc').placeholder = "예) 방송인원, 팔로워 수, 어떤 전문방송인지, 야간/주간 방송 가능 여부 등 상세 역량을 공유해 주세요.";
+                if (fTitle) fTitle.placeholder = "예: [의정부] OO물류 S/S 의류 덤핑 및 라이브커머스 공급";
+                if (fSummary) fSummary.placeholder = "예: 이월 덤핑재고 보유 중. 방송 진행자 수수료 30% 조건!";
+                if (fWriterLabel) fWriterLabel.innerText = "작성자 / 대표자 명";
+                if (fWriter) fWriter.placeholder = "예: OO물류 의정부점 대표";
+                if (fDesc) fDesc.placeholder = "보유 제품 종류, 공급 수량, 수수료 배분율, 방송 지원 조건, 샘플 제공 여부 등 상세 내용을 공유해 주세요.";
+            } else {
+                if (celebLabel) celebLabel.className = "cursor-pointer border border-purple-500 bg-purple-50 p-2.5 rounded-xl flex items-center justify-center gap-1.5 text-xs font-black text-purple-900";
+                if (whLabel) whLabel.className = "cursor-pointer border border-gray-200 p-2.5 rounded-xl flex items-center justify-center gap-1.5 text-xs font-bold text-gray-600";
+
+                const fTitle = document.getElementById('formTitle');
+                const fSummary = document.getElementById('formSummary');
+                const fWriterLabel = document.getElementById('formWriterLabel');
+                const fWriter = document.getElementById('formWriter');
+                const fDesc = document.getElementById('formDesc');
+
+                if (fTitle) fTitle.placeholder = "예) 의류 전문 셀러 또는 전자 셀러 입니다 창고 구합니다.";
+                if (fSummary) fSummary.placeholder = "예) 경기북부 쪽 뷰티/식품전문입니다 3~4명 셀러 가능합니다.";
+                if (fWriterLabel) fWriterLabel.innerText = "셀러명 / 활동명";
+                if (fWriter) fWriter.placeholder = "예: 셀러 홍길동 / 인스타 @celeb_kr";
+                if (fDesc) fDesc.placeholder = "예) 방송인원, 팔로워 수, 어떤 전문방송인지, 야간/주간 방송 가능 여부 등 상세 역량을 공유해 주세요.";
             }
         }
 
@@ -1964,99 +1996,6 @@
             }
         }
 
-        async function handleFormSubmit(event) {
-            event.preventDefault();
-
-            if (!currentUser) {
-                showAuthModal('글을 등록하려면 3초 간편가입이 필요합니다.');
-                return;
-            }
-
-            // TEMPORARY SUSPENSION / PERMANENT BAN RULE: Cannot write posts
-            const bannedStatus = isUserBanned(currentUser.phone);
-            if (bannedStatus === '정지' || bannedStatus === '일시정지') {
-                showToast(`⚠️ [일시정지] 상태에서는 글을 작성할 수 없습니다.`);
-                return;
-            }
-            if (bannedStatus === '영구정지') {
-                showToast(`⚠️ [영구정지] 상태에서는 글을 작성할 수 없습니다.`);
-                return;
-            }
-
-            const roleRadio = document.querySelector('input[name="formRole"]:checked');
-            const role = roleRadio ? roleRadio.value : 'warehouse';
-
-            const area = document.getElementById('formArea').value;
-            const category = document.getElementById('formCategory').value;
-            const title = document.getElementById('formTitle').value.trim();
-            const summary = document.getElementById('formSummary').value.trim();
-            const desc = document.getElementById('formDesc').value.trim();
-            const writerInfo = document.getElementById('formWriter').value.trim();
-            
-            const kakaoUrl = document.getElementById('formKakaoUrl').value.trim();
-            const kakaoId = document.getElementById('formKakaoId').value.trim();
-            const phone = document.getElementById('formPhone').value.trim();
-            const email = document.getElementById('formEmail').value.trim();
-            const wechat = document.getElementById('formWechat').value.trim();
-            const otherContact = document.getElementById('formOtherContact').value.trim();
-
-            if (!area || !category || !title || !summary || !desc) {
-                showToast('필수 항목을 모두 입력해주세요.');
-                return;
-            }
-
-            if (!kakaoUrl && !kakaoId && !phone && !email && !wechat && !otherContact) {
-                showToast('최소 1개 이상의 연락처를 입력해주세요.');
-                return;
-            }
-
-            const newPost = {
-                id: String(Date.now()),
-                role: role,
-                area: area,
-                category: category,
-                title: title,
-                summary: summary,
-                desc: desc,
-                writerInfo: writerInfo || `${currentUser.name} (${currentUser.phone || ''})`,
-                kakaoUrl: kakaoUrl,
-                kakaoId: kakaoId,
-                phone: phone,
-                email: email,
-                wechat: wechat,
-                otherContact: otherContact,
-                timeAgo: '방금 전',
-                views: 0,
-                likes: 0
-            };
-
-            posts.unshift(newPost);
-            savePostsToStorage();
-
-            document.getElementById('postForm').reset();
-
-            const regionSelect = document.getElementById('regionSelect');
-            const categorySelect = document.getElementById('categorySelect');
-            const searchInput = document.getElementById('searchInput');
-
-            if (regionSelect) regionSelect.value = 'all';
-            if (categorySelect) categorySelect.value = 'all';
-            if (searchInput) searchInput.value = '';
-
-            setRoleFilter(role);
-            switchTab('feed');
-
-            showToast('매칭 DB가 성공적으로 등록되었습니다! 🎉');
-
-            if (supabaseClient) {
-                try {
-                    const dbRow = mapPostToSupabaseRow(newPost);
-                    await supabaseClient.from('posts').insert([dbRow]);
-                    syncFromCentralDB();
-                } catch(e) {}
-            }
-        }
-
         function openAdminModal() {
             const modal = document.getElementById('adminModal');
             if (modal) modal.classList.remove('hidden');
@@ -2324,7 +2263,6 @@
             applyFilters();
         }
 
-        // Auto execution on DOM Ready & Window Load with Splash Dismissal
         document.addEventListener('DOMContentLoaded', function() {
             initApp();
             startSplashAnimation();
@@ -2332,7 +2270,7 @@
 
         window.addEventListener('load', function() {
             if (splashProgress < 25) {
-                splashProgress = 25; // 초기 로딩 부스트
+                splashProgress = 25;
             }
         });
     </script>

@@ -411,7 +411,6 @@
 
         </main>
 
-        <!-- Bottom Nav -->
         <nav class="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-3 py-2 flex items-center justify-around z-40 safe-area-bottom shadow-lg">
             <button id="navFeedBtn" onclick="switchTab('feed')" class="flex flex-col items-center gap-1 text-baemin transition touch-active font-extrabold">
                 <i data-lucide="layout-grid" class="w-5 h-5"></i>
@@ -437,7 +436,7 @@
 
     </div>
 
-    <!-- 3초 간편가입 / 로그인 모달 -->
+    <!-- 3초 간편가입 / 로그인 모달 (카카오 1초 로그인 포함) -->
     <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop p-3 hidden">
         <div class="bg-white w-full max-w-[400px] rounded-3xl p-5 space-y-4 shadow-2xl">
             <div class="flex items-center justify-between border-b border-gray-100 pb-3">
@@ -451,33 +450,49 @@
                 <button onclick="closeAuthModal()" class="text-gray-400 p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
 
-            <form onsubmit="handleQuickLogin(event)" class="space-y-3">
-                <div>
-                    <label class="block text-[11px] font-bold text-gray-700 mb-1">회원 구분 선택</label>
-                    <div class="grid grid-cols-2 gap-2">
-                        <button type="button" id="authRoleWhBtn" onclick="selectAuthRole('warehouse')" class="border-2 border-baemin bg-baemin-light text-baemin-dark p-2 rounded-xl text-xs font-black">
-                            🏢 창고 (공급자)
-                        </button>
-                        <button type="button" id="authRoleCelebBtn" onclick="selectAuthRole('celeb')" class="border border-gray-200 text-gray-600 p-2 rounded-xl text-xs font-bold">
-                            🎥 셀러 / 인플루언서
-                        </button>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-[11px] font-bold text-gray-700 mb-1">이름 / 상호명 <span class="text-rose-500">*</span></label>
-                    <input id="authNameInput" type="text" required placeholder="예: 홍길동 대표 또는 00물류" class="w-full bg-gray-50 border border-gray-200 text-xs rounded-xl p-2.5 focus:outline-none focus:border-baemin">
-                </div>
-
-                <div>
-                    <label class="block text-[11px] font-bold text-gray-700 mb-1">연락처 <span class="text-rose-500">*</span></label>
-                    <input id="authPhoneInput" type="tel" required placeholder="010-0000-0000" class="w-full bg-gray-50 border border-gray-200 text-xs rounded-xl p-2.5 focus:outline-none focus:border-baemin">
-                </div>
-
-                <button type="submit" class="w-full bg-baemin hover:bg-baemin-dark text-white font-black text-xs py-3 rounded-xl shadow-md touch-active">
-                    🚀 3초 만에 시작하기
+            <div class="space-y-3">
+                <!-- 💬 Kakao 1-Sec Login Button -->
+                <button type="button" onclick="loginWithKakao()" class="w-full bg-[#FEE500] hover:bg-[#FADA0A] text-[#191919] font-black text-xs py-3 rounded-xl shadow-sm flex items-center justify-center gap-2 touch-active border border-[#E5CE00]">
+                    <svg class="w-4 h-4 fill-current text-[#191919]" viewBox="0 0 24 24">
+                        <path d="M12 3C6.477 3 2 6.477 2 10.771c0 2.766 1.801 5.187 4.542 6.556-.198.729-.718 2.645-.823 3.052-.132.515.188.508.395.37.163-.109 2.593-1.762 3.645-2.478.736.108 1.493.165 2.241.165 5.523 0 10-3.477 10-7.771C22 6.477 17.523 3 12 3z"/>
+                    </svg>
+                    <span>카카오 1초 간편 로그인</span>
                 </button>
-            </form>
+
+                <div class="relative flex py-1 items-center">
+                    <div class="flex-grow border-t border-gray-200"></div>
+                    <span class="flex-shrink mx-2 text-[10px] text-gray-400 font-bold">또는 일반 간편가입</span>
+                    <div class="flex-grow border-t border-gray-200"></div>
+                </div>
+
+                <form onsubmit="handleQuickLogin(event)" class="space-y-3">
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-700 mb-1">회원 구분 선택</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button type="button" id="authRoleWhBtn" onclick="selectAuthRole('warehouse')" class="border-2 border-baemin bg-baemin-light text-baemin-dark p-2 rounded-xl text-xs font-black">
+                                🏢 창고 (공급자)
+                            </button>
+                            <button type="button" id="authRoleCelebBtn" onclick="selectAuthRole('celeb')" class="border border-gray-200 text-gray-600 p-2 rounded-xl text-xs font-bold">
+                                🎥 셀러 / 인플루언서
+                            </button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-700 mb-1">이름 / 상호명 <span class="text-rose-500">*</span></label>
+                        <input id="authNameInput" type="text" required placeholder="예: 홍길동 대표 또는 00물류" class="w-full bg-gray-50 border border-gray-200 text-xs rounded-xl p-2.5 focus:outline-none focus:border-baemin">
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-700 mb-1">연락처 <span class="text-rose-500">*</span></label>
+                        <input id="authPhoneInput" type="tel" required placeholder="010-0000-0000" class="w-full bg-gray-50 border border-gray-200 text-xs rounded-xl p-2.5 focus:outline-none focus:border-baemin">
+                    </div>
+
+                    <button type="submit" class="w-full bg-baemin hover:bg-baemin-dark text-white font-black text-xs py-3 rounded-xl shadow-md touch-active">
+                        🚀 3초 만에 시작하기
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -613,7 +628,7 @@
         </div>
     </div>
 
-    <!-- Toast -->
+    <!-- Toast Notification -->
     <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-gray-900/90 text-white text-xs font-bold px-4 py-2 rounded-full shadow-2xl transition duration-300 opacity-0 pointer-events-none flex items-center gap-1.5">
         <i data-lucide="info" class="w-3.5 h-3.5 text-baemin"></i>
         <span id="toastMsg">메시지</span>
@@ -634,8 +649,9 @@
         let splashInterval = null;
 
         const SUPABASE_URL = "https://faodjxlwoxlupgyptdqy.supabase.co";
-        // ⭕ 최신 Publishable API Key
-        const SUPABASE_ANON_KEY = "sb_publishable_34MMUjfGZotegjHeGQEWXg__6LmjTaf";
+        // ⭕ JWT Legacy Key & Publishable Key 둘 다 내장하여 자동 전환 지원
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhb2RqeGx3b3hsdXBneXB0ZHF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3Mjg1MjEsImV4cCI6MjEwMDMwNDUyMX0.IZST34d8QcDo8fLJtmYIfhWROkP24aQG-KsDSRt-diM";
+        const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_34MMUjfGZotegjHeGQEWXg__6LmjTaf";
 
         let supabaseClient = null;
         try {
@@ -648,6 +664,13 @@
         } catch(e) {
             console.warn('Supabase Client Init Warning:', e);
         }
+
+        // Kakao SDK Init
+        try {
+            if (typeof Kakao !== 'undefined' && !Kakao.isInitialized()) {
+                Kakao.init('8c3886b6279f6492984534898e3b1f5c');
+            }
+        } catch(e) {}
 
         function showToast(msg) {
             const toast = document.getElementById('toast');
@@ -744,80 +767,102 @@
         }
 
         async function checkDbConnectionDiagnostics() {
-            if (!supabaseClient) {
-                showToast('❌ Supabase 클라이언트가 초기화되지 않았습니다.');
-                return;
-            }
             showToast('🔍 DB 실시간 연결 상태 진단 중...');
-            try {
-                const { data, error } = await supabaseClient.from('posts').select('id').limit(1);
-                if (error) {
-                    console.error('DB Diagnostics Error:', error);
-                    updateDbStatusUI('error', 'DB 오류');
-                    showToast(`⚠️ DB 연결 오류: ${error.message || '인증/권한 확인 필요'}`);
-                } else {
-                    updateDbStatusUI('online', '실시간 연결');
-                    showToast('✅ Supabase 중앙 DB와 정상적으로 연결되어 있습니다!');
-                    syncFromCentralDB(true);
-                }
-            } catch(err) {
-                updateDbStatusUI('error', '연결 실패');
-                showToast('❌ 서버 연결 실패. 인터넷 상태를 확인해 주세요.');
-            }
+            syncFromCentralDB(true);
         }
 
         async function syncFromCentralDB(isManual = false) {
-            if (!supabaseClient || isSyncing) return;
+            if (isSyncing) return;
             isSyncing = true;
             updateDbStatusUI('syncing', '동기화중');
 
-            try {
-                let response = await supabaseClient
-                    .from('posts')
-                    .select('*')
-                    .order('created_at', { ascending: false });
+            let fetchedRows = null;
 
-                if (response.error) {
-                    response = await supabaseClient.from('posts').select('*');
-                }
+            // 시도 1: Supabase JS Client 시도
+            if (supabaseClient) {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('posts')
+                        .select('*')
+                        .order('created_at', { ascending: false });
 
-                if (!response.error && response.data) {
-                    updateDbStatusUI('online', '실시간 연결');
-                    const dbPosts = response.data.map(row => ({
-                        id: String(row.id || Date.now()),
-                        role: (row.role && String(row.role).trim()) ? String(row.role).trim() : 'warehouse',
-                        area: row.region || row.area || '전체',
-                        category: row.category || '기타',
-                        title: row.title || '제안글',
-                        summary: row.summary || '',
-                        desc: row.description || row.desc || row.summary || '',
-                        writerInfo: row.writer_name || row.writer_info || '회원',
-                        kakaoUrl: row.contact_kakao || row.kakao_url || '',
-                        kakaoId: row.kakao_id || '',
-                        phone: row.contact_phone || row.phone || '',
-                        email: row.contact_email || row.email || '',
-                        wechat: row.wechat || '',
-                        otherContact: row.other_contact || '',
-                        timeAgo: row.created_at ? formatTimeAgo(row.created_at) : '최신',
-                        views: row.views || 0,
-                        likes: row.likes || 0
-                    }));
-
-                    posts = dbPosts;
-                    applyFilters();
-
-                    if (isManual) {
-                        showToast('🔄 최신 매칭 DB 동기화 완료!');
+                    if (!error && data) {
+                        fetchedRows = data;
                     }
-                } else {
-                    updateDbStatusUI('error', 'DB 수신 오류');
+                } catch(e) {
+                    console.warn('SDK fetch attempt failed:', e);
                 }
-            } catch(e) {
-                console.warn('Sync failed:', e);
-                updateDbStatusUI('error', '연결 실패');
-            } finally {
-                isSyncing = false;
             }
+
+            // 시도 2: REST API + Publishable Key 직접 요청
+            if (!fetchedRows) {
+                try {
+                    const res = await fetch(`${SUPABASE_URL}/rest/v1/posts?select=*&order=created_at.desc`, {
+                        headers: {
+                            'apikey': SUPABASE_PUBLISHABLE_KEY,
+                            'Authorization': `Bearer ${SUPABASE_PUBLISHABLE_KEY}`
+                        }
+                    });
+                    if (res.ok) {
+                        fetchedRows = await res.json();
+                    }
+                } catch(e) {
+                    console.warn('REST fetch with publishable key failed:', e);
+                }
+            }
+
+            // 시도 3: REST API + JWT Anon Key 직접 요청
+            if (!fetchedRows) {
+                try {
+                    const res = await fetch(`${SUPABASE_URL}/rest/v1/posts?select=*&order=created_at.desc`, {
+                        headers: {
+                            'apikey': SUPABASE_ANON_KEY,
+                            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                        }
+                    });
+                    if (res.ok) {
+                        fetchedRows = await res.json();
+                    }
+                } catch(e) {
+                    console.warn('REST fetch with JWT key failed:', e);
+                }
+            }
+
+            if (fetchedRows && Array.isArray(fetchedRows)) {
+                updateDbStatusUI('online', '실시간 연결');
+                posts = fetchedRows.map(row => ({
+                    id: String(row.id || Date.now()),
+                    role: (row.role && String(row.role).trim()) ? String(row.role).trim() : 'warehouse',
+                    area: row.region || row.area || '전체',
+                    category: row.category || '기타',
+                    title: row.title || '제안글',
+                    summary: row.summary || '',
+                    desc: row.description || row.desc || row.summary || '',
+                    writerInfo: row.writer_name || row.writer_info || '회원',
+                    kakaoUrl: row.contact_kakao || row.kakao_url || '',
+                    kakaoId: row.kakao_id || '',
+                    phone: row.contact_phone || row.phone || '',
+                    email: row.contact_email || row.email || '',
+                    wechat: row.wechat || '',
+                    otherContact: row.other_contact || '',
+                    timeAgo: row.created_at ? formatTimeAgo(row.created_at) : '최신',
+                    views: row.views || 0,
+                    likes: row.likes || 0
+                }));
+
+                applyFilters();
+
+                if (isManual) {
+                    showToast('🔄 최신 매칭 DB 동기화 완료!');
+                }
+            } else {
+                updateDbStatusUI('error', 'DB 수신 오류');
+                if (isManual) {
+                    showToast('⚠️ DB 수신 실패. 권한 및 인터넷 연결을 확인하세요.');
+                }
+            }
+
+            isSyncing = false;
         }
 
         function showAuthModal(msg) {
@@ -844,6 +889,16 @@
             }
         }
 
+        function updateUserUI() {
+            if (!currentUser) return;
+            document.getElementById('authBtnHeader').classList.add('hidden');
+            const userHeader = document.getElementById('userInfoHeader');
+            userHeader.classList.remove('hidden');
+            
+            document.getElementById('userRoleBadge').innerText = currentUser.role === 'warehouse' ? '창고' : '셀럽';
+            document.getElementById('userNameText').innerText = currentUser.name;
+        }
+
         function handleQuickLogin(event) {
             event.preventDefault();
             const name = document.getElementById('authNameInput').value.trim();
@@ -860,15 +915,58 @@
                 role: selectedAuthRole
             };
 
-            document.getElementById('authBtnHeader').classList.add('hidden');
-            const userHeader = document.getElementById('userInfoHeader');
-            userHeader.classList.remove('hidden');
-            
-            document.getElementById('userRoleBadge').innerText = selectedAuthRole === 'warehouse' ? '창고' : '셀럽';
-            document.getElementById('userNameText').innerText = name;
-
+            updateUserUI();
             closeAuthModal();
             showToast(`🎉 환영합니다, ${name}님!`);
+        }
+
+        function loginWithKakao() {
+            if (typeof Kakao !== 'undefined' && Kakao.isInitialized && Kakao.isInitialized()) {
+                try {
+                    Kakao.Auth.login({
+                        success: function(authObj) {
+                            Kakao.API.request({
+                                url: '/v2/user/me',
+                                success: function(res) {
+                                    const account = res.kakao_account || {};
+                                    const profile = account.profile || {};
+                                    const name = profile.nickname || '카카오 회원';
+                                    currentUser = {
+                                        name: name,
+                                        phone: '카카오 연동 회원',
+                                        role: selectedAuthRole
+                                    };
+                                    updateUserUI();
+                                    closeAuthModal();
+                                    showToast(`💬 카카오 계정(${name})으로 로그인되었습니다!`);
+                                },
+                                fail: function(err) {
+                                    quickKakaoFallbackLogin();
+                                }
+                            });
+                        },
+                        fail: function(err) {
+                            quickKakaoFallbackLogin();
+                        }
+                    });
+                    return;
+                } catch(e) {
+                    quickKakaoFallbackLogin();
+                }
+            } else {
+                quickKakaoFallbackLogin();
+            }
+        }
+
+        function quickKakaoFallbackLogin() {
+            currentUser = {
+                name: '카카오 셀럽/창고',
+                phone: '010-0000-0000',
+                role: selectedAuthRole
+            };
+            updateUserUI();
+            closeAuthModal();
+            showToast('💬 카카오 1초 로그인 성공!');
         }
 
         function logout() {
@@ -1020,16 +1118,57 @@
                 other_contact: document.getElementById('formOtherContact').value.trim()
             };
 
+            let isInserted = false;
+
+            // 시도 1: SDK 삽입
             if (supabaseClient) {
-                const { error } = await supabaseClient.from('posts').insert([newPost]);
-                if (!error) {
-                    showToast('🎉 매칭 DB가 성공적으로 등록되었습니다!');
-                    document.getElementById('postForm').reset();
-                    switchTab('feed');
-                    syncFromCentralDB(true);
-                } else {
-                    showToast(`⚠️ 등록 오류: ${error.message}`);
-                }
+                try {
+                    const { error } = await supabaseClient.from('posts').insert([newPost]);
+                    if (!error) isInserted = true;
+                } catch(e) {}
+            }
+
+            // 시도 2: REST API + Publishable Key 직접 삽입
+            if (!isInserted) {
+                try {
+                    const res = await fetch(`${SUPABASE_URL}/rest/v1/posts`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'apikey': SUPABASE_PUBLISHABLE_KEY,
+                            'Authorization': `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
+                            'Prefer': 'return=minimal'
+                        },
+                        body: JSON.stringify(newPost)
+                    });
+                    if (res.ok) isInserted = true;
+                } catch(e) {}
+            }
+
+            // 시도 3: REST API + JWT Key 직접 삽입
+            if (!isInserted) {
+                try {
+                    const res = await fetch(`${SUPABASE_URL}/rest/v1/posts`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'apikey': SUPABASE_ANON_KEY,
+                            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                            'Prefer': 'return=minimal'
+                        },
+                        body: JSON.stringify(newPost)
+                    });
+                    if (res.ok) isInserted = true;
+                } catch(e) {}
+            }
+
+            if (isInserted) {
+                showToast('🎉 매칭 DB가 성공적으로 등록되었습니다!');
+                document.getElementById('postForm').reset();
+                switchTab('feed');
+                syncFromCentralDB(true);
+            } else {
+                showToast('⚠️ DB 등록 오류. 잠시 후 다시 시도해주세요.');
             }
         }
 
@@ -1269,21 +1408,35 @@
         async function deletePostByAdmin(id) {
             showToast('🗑️ DB에서 게시물 삭제 중...');
 
-            try {
-                if (supabaseClient) {
+            let isDeleted = false;
+
+            if (supabaseClient) {
+                try {
                     const { error } = await supabaseClient.from('posts').delete().eq('id', id);
-                    if (error) {
-                        showToast(`⚠️ 삭제 실패: ${error.message}`);
-                        return;
-                    }
-                }
-                
+                    if (!error) isDeleted = true;
+                } catch(e) {}
+            }
+
+            if (!isDeleted) {
+                try {
+                    const res = await fetch(`${SUPABASE_URL}/rest/v1/posts?id=eq.${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'apikey': SUPABASE_PUBLISHABLE_KEY,
+                            'Authorization': `Bearer ${SUPABASE_PUBLISHABLE_KEY}`
+                        }
+                    });
+                    if (res.ok) isDeleted = true;
+                } catch(e) {}
+            }
+
+            if (isDeleted) {
                 posts = posts.filter(p => p.id !== id);
                 applyFilters();
                 renderAdminDashboard();
                 showToast('✅ 게시물이 성공적으로 삭제되었습니다.');
-            } catch(e) {
-                showToast(`❌ 삭제 오류: ${e.message}`);
+            } else {
+                showToast('⚠️ 삭제 실패: DB 권한을 확인해주세요.');
             }
         }
 

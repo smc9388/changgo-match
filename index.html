@@ -16,10 +16,6 @@
     <meta property="og:image" content="https://changgo-match.vercel.app/og-image.png">
     <meta property="og:url" content="https://changgo-match.vercel.app">
 
-    <!-- PWA & Touch Icons -->
-    <link rel="manifest" href="/manifest.json">
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -47,8 +43,6 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
 
     <style>
         body {
@@ -173,7 +167,7 @@
 
     <div id="appContainer" class="w-full max-w-[440px] h-screen sm:h-[92vh] bg-baemin-bg sm:rounded-[36px] shadow-2xl flex flex-col relative overflow-hidden border-0 sm:border-8 sm:border-slate-800">
         
-        <!-- Header: Mobile optimized responsive header -->
+        <!-- Header -->
         <header class="bg-white border-b border-gray-100 px-2 py-2 flex items-center justify-between shrink-0 z-30 pt-safe shadow-xs w-full overflow-hidden">
             <div class="flex items-center gap-1 min-w-0 shrink-0">
                 <div class="w-6 h-6 rounded-lg bg-baemin flex items-center justify-center text-white font-black text-[10px] shadow-xs rotate-[-2deg] shrink-0">
@@ -190,7 +184,7 @@
             </div>
 
             <div class="flex items-center gap-1 shrink-0 text-[9.5px]">
-                <button onclick="syncFromCentralDB(true)" class="font-black text-emerald-800 bg-emerald-50 hover:bg-emerald-100 px-1.5 py-1 rounded-lg border border-emerald-300/60 flex items-center gap-0.5 touch-active whitespace-nowrap shrink-0" title="실시간 DB 새로고침">
+                <button onclick="syncFromCentralDB(true)" class="font-black text-emerald-800 bg-emerald-50 hover:bg-emerald-100 px-1.5 py-1 rounded-lg border border-emerald-300/60 flex items-center gap-0.5 touch-active whitespace-nowrap shrink-0">
                     <i data-lucide="refresh-cw" class="w-2.5 h-2.5 text-emerald-600 shrink-0"></i>
                     <span>새로고침</span>
                 </button>
@@ -297,7 +291,7 @@
                     <!-- Dynamic Feed Items -->
                 </div>
 
-                <!-- Legal Exemption Notice in Feed -->
+                <!-- Legal Notice -->
                 <div class="p-3 text-center space-y-1.5 opacity-80 pt-6 pb-2 border-t border-gray-200/60 mt-4">
                     <p class="text-[10px] font-extrabold text-gray-600 flex items-center justify-center gap-1">
                         <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-gray-400"></i>
@@ -418,6 +412,7 @@
 
         </main>
 
+        <!-- Bottom Nav -->
         <nav class="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-3 py-2 flex items-center justify-around z-40 safe-area-bottom shadow-lg">
             <button id="navFeedBtn" onclick="switchTab('feed')" class="flex flex-col items-center gap-1 text-baemin transition touch-active font-extrabold">
                 <i data-lucide="layout-grid" class="w-5 h-5"></i>
@@ -463,20 +458,6 @@
                 </button>
             </div>
 
-            <div class="bg-amber-50/80 p-3 rounded-2xl border border-amber-200 space-y-1.5 text-[10.5px]">
-                <div class="flex items-center justify-between border-b border-amber-200/80 pb-1.5">
-                    <span class="font-extrabold text-amber-950 text-xs flex items-center gap-1">
-                        📌 회원 이용 상태 및 권한 정책 안내
-                    </span>
-                    <span class="bg-amber-200 text-amber-900 text-[9px] font-bold px-1.5 py-0.5 rounded">운영정책</span>
-                </div>
-                <div class="space-y-1 text-amber-950 leading-relaxed font-medium pt-0.5">
-                    <p class="flex items-center gap-1">🟢 <strong class="text-emerald-800">정상:</strong> 모든 기능 활성화</p>
-                    <p class="flex items-center gap-1">🟡 <strong class="text-amber-800">일시정지:</strong> 게시글 조회 가능 / <strong class="text-rose-700">글 작성 제한</strong></p>
-                    <p class="flex items-center gap-1">🔴 <strong class="text-rose-800">영구정지:</strong> <strong class="text-rose-700">모든 이용 차단</strong></p>
-                </div>
-            </div>
-
             <form onsubmit="handleInquirySubmit(event)" class="bg-gray-50 p-3 rounded-2xl border border-gray-200 space-y-2">
                 <p class="text-xs font-black text-gray-800 flex items-center gap-1">
                     ✏️ 새 문의 작성하기
@@ -490,9 +471,7 @@
 
             <div class="space-y-2 pt-1">
                 <p class="text-xs font-black text-gray-700">📋 문의 내역 목록</p>
-                <div id="inquiryListContainer" class="space-y-2">
-                    <!-- Dynamic Inquiries -->
-                </div>
+                <div id="inquiryListContainer" class="space-y-2"></div>
             </div>
         </div>
     </div>
@@ -527,295 +506,56 @@
             </div>
 
             <div id="guideSectionAndroid" class="space-y-3">
-                <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-2xl space-y-1">
-                    <p class="text-xs font-black text-emerald-900 flex items-center gap-1">
-                        <i data-lucide="download" class="w-4 h-4 text-emerald-600"></i>
-                        안드로이드 전용 APK 설치 파일
-                    </p>
-                    <p class="text-[11px] text-emerald-800 leading-relaxed">
-                        아래 다운로드 버튼을 눌러 APK 설치 파일을 받으세요.
-                    </p>
-                </div>
-
                 <a href="https://drive.google.com/uc?export=download&confirm=no&id=1wtglv4eohumEnEYwRB6WiGqcwymkVfm_" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs py-3.5 rounded-xl shadow-md touch-active flex items-center justify-center gap-2">
                     <i data-lucide="download-cloud" class="w-4 h-4"></i>
                     <span>안드로이드 APK 다운로드 ↗</span>
                 </a>
-
-                <div class="pt-2 border-t border-gray-100 space-y-2">
-                    <button onclick="requestNotificationPermission()" class="w-full bg-amber-400 hover:bg-amber-500 text-gray-900 font-black text-xs py-3 rounded-xl shadow-xs touch-active flex items-center justify-center gap-2">
-                        <i data-lucide="bell" class="w-4 h-4"></i>
-                        <span>🔔 푸시 알림 수신 동의</span>
-                    </button>
-                </div>
             </div>
 
             <div id="guideSectionIos" class="hidden space-y-3">
                 <div class="bg-amber-50 border border-amber-200 p-3 rounded-2xl space-y-2">
-                    <p class="text-xs font-black text-amber-900 flex items-center gap-1">
-                        <i data-lucide="bell-ring" class="w-4 h-4 text-amber-600"></i>
-                        아이폰 푸시 알림 수신 방법
-                    </p>
-                    <div class="text-[11px] text-amber-900 space-y-1 font-medium leading-relaxed">
-                        <p>1. Safari 하단 중앙 <span class="bg-amber-200 font-bold px-1 rounded">공유 버튼 (⎘)</span> 클릭</p>
-                        <p>2. 메뉴에서 <span class="bg-amber-200 font-bold px-1 rounded">[홈 화면에 추가]</span> 선택</p>
-                        <p>3. 생성된 앱으로 실행 시 <span class="bg-amber-200 font-bold px-1 rounded">알림 허용</span> 완료!</p>
-                    </div>
+                    <p class="text-xs font-black text-amber-900">아이폰 홈 화면 추가 가이드</p>
+                    <p class="text-[11px] text-amber-900 font-medium">Safari 하단 [공유 (⎘)] -> [홈 화면에 추가]</p>
                 </div>
-
-                <button onclick="requestNotificationPermission()" class="w-full bg-amber-400 hover:bg-amber-500 text-gray-900 font-black text-xs py-3 rounded-xl shadow-xs touch-active flex items-center justify-center gap-2">
-                    <i data-lucide="bell" class="w-4 h-4"></i>
-                    <span>🔔 푸시 알림 수신 동의</span>
-                </button>
             </div>
         </div>
     </div>
 
-    <!-- Auth Modal -->
-    <div id="authModal" class="fixed inset-0 z-50 flex items-end justify-center modal-backdrop hidden">
-        <div id="authModalCard" class="bg-white w-full max-w-[440px] rounded-t-3xl p-5 space-y-4 shadow-2xl bottom-sheet-enter max-h-[85vh] overflow-y-auto">
-            <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto -mt-1 mb-2"></div>
-            
-            <div class="flex items-center justify-between border-b border-gray-100 pb-2.5">
-                <div class="flex items-center gap-2">
-                    <div class="w-6 h-6 rounded-lg bg-baemin flex items-center justify-center text-white font-black text-xs">
-                        1초
-                    </div>
-                    <h3 class="font-extrabold text-gray-900 text-sm">카카오 1초 간편 시작</h3>
-                </div>
-                <button onclick="closeAuthModal()" class="text-gray-400 p-1">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-            </div>
-
-            <div class="bg-baemin-light/60 p-3 rounded-2xl border border-baemin/20">
-                <p id="authReasonText" class="text-xs font-bold text-baemin-dark">
-                    상세 정보 확인 및 매칭 등록을 위해 최소 정보만 입력해주세요!
-                </p>
-            </div>
-
-            <div class="space-y-3 pt-1">
-                <button onclick="loginWithKakao()" class="w-full bg-[#FEE500] hover:bg-[#FADA0A] text-[#191919] font-black text-xs py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-sm touch-active">
-                    <i data-lucide="message-circle" class="w-4 h-4 fill-current text-[#191919]"></i>
-                    <span>카카오 1초 간편가입 시작하기</span>
-                </button>
-
-                <div class="relative flex py-1 items-center">
-                    <div class="flex-grow border-t border-gray-200"></div>
-                    <span class="flex-shrink mx-2 text-[10px] text-gray-400 font-bold">또는 직접 입력</span>
-                    <div class="flex-grow border-t border-gray-200"></div>
-                </div>
-
-                <form onsubmit="handleAuthSubmit(event)" class="space-y-2.5">
-                    <div>
-                        <label class="block text-[11px] font-bold text-gray-700 mb-1">회원 구분 <span class="text-rose-500">*</span></label>
-                        <div class="grid grid-cols-2 gap-2">
-                            <label class="cursor-pointer border border-baemin bg-baemin-light/40 p-2 rounded-xl flex items-center justify-center gap-1 text-xs font-bold text-baemin-dark" id="authRoleWhLabel">
-                                <input type="radio" name="authRole" value="warehouse" checked onchange="updateAuthRoleUI()" class="hidden">
-                                <span>🏢 창고</span>
-                            </label>
-                            <label class="cursor-pointer border border-gray-200 p-2 rounded-xl flex items-center justify-center gap-1 text-xs font-bold text-gray-600" id="authRoleCelebLabel">
-                                <input type="radio" name="authRole" value="celeb" onchange="updateAuthRoleUI()" class="hidden">
-                                <span>🎥 셀러</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-[11px] font-bold text-gray-700 mb-1">이름 또는 상호명 <span class="text-rose-500">*</span></label>
-                        <input id="authName" type="text" required placeholder="예: 의정부물류 / 인스타 @celeb" class="w-full bg-gray-50 border border-gray-200 text-xs rounded-xl p-2.5 focus:outline-none focus:border-baemin">
-                    </div>
-
-                    <div>
-                        <label class="block text-[11px] font-bold text-gray-700 mb-1">휴대폰 번호 <span class="text-rose-500">*</span></label>
-                        <input id="authPhone" type="tel" required placeholder="예: 010-1234-5678" class="w-full bg-gray-50 border border-gray-200 text-xs rounded-xl p-2.5 focus:outline-none focus:border-baemin">
-                    </div>
-
-                    <button type="submit" class="w-full bg-slate-900 text-white font-black text-xs py-3 rounded-xl shadow-sm touch-active mt-1">
-                        직접 입력으로 가입 완료
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Contact Details Modal -->
+    <!-- Contact Modal -->
     <div id="kakaoModal" class="fixed inset-0 z-50 flex items-end justify-center modal-backdrop hidden">
         <div id="kakaoModalCard" class="bg-white w-full max-w-[440px] rounded-t-3xl p-5 space-y-3.5 shadow-2xl bottom-sheet-enter max-h-[88vh] overflow-y-auto">
             <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto -mt-1 mb-1"></div>
-
             <div class="flex items-center justify-between border-b border-gray-100 pb-2">
-                <h3 class="font-extrabold text-gray-900 text-sm flex items-center gap-1.5">
-                    <span class="w-2.5 h-2.5 rounded-full bg-baemin"></span>
-                    상세 홍보 내용 & 연락처 연결
-                </h3>
-                <button onclick="closeKakaoModal()" class="text-gray-400 p-1">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
+                <h3 class="font-extrabold text-gray-900 text-sm">상세 제안 & 연락처</h3>
+                <button onclick="closeKakaoModal()" class="text-gray-400 p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-
             <div class="space-y-3">
-                <div class="flex items-center justify-between">
-                    <span id="modalCategoryBadge" class="inline-block bg-baemin-light text-baemin-dark text-[10px] font-black px-2 py-0.5 rounded-md border border-baemin/20">
-                        카테고리 정보
-                    </span>
-                    <span id="modalWriter" class="text-[11px] text-gray-400">
-                        작성자 정보
-                    </span>
-                </div>
-
-                <h4 id="modalTitle" class="font-bold text-gray-900 text-base leading-snug">
-                    게시글 제목
-                </h4>
-
-                <div class="bg-gray-50 p-3.5 rounded-2xl border border-gray-100 space-y-1.5">
-                    <p class="text-[11px] font-black text-gray-500 uppercase">📢 제안 및 상세 설명</p>
-                    <div id="modalFullDesc" class="text-xs text-gray-800 leading-relaxed font-medium whitespace-pre-line break-words max-h-[220px] overflow-y-auto hide-scrollbar">
-                        상세 홍보 내용
-                    </div>
-                </div>
-
-                <div class="bg-baemin-subtle p-2.5 rounded-xl border border-baemin/20 flex items-center justify-between text-xs">
-                    <div class="flex items-center gap-1.5 text-gray-600 font-bold text-[11px]">
-                        <i data-lucide="eye" class="w-4 h-4 text-baemin"></i>
-                        <span>조회수 <strong id="modalViewsText" class="text-gray-900">0</strong>회</span>
-                    </div>
-
-                    <button id="modalLikeBtn" onclick="toggleLikeInModal()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-black text-xs border transition touch-active">
-                        <i data-lucide="thumbs-up" class="w-4 h-4"></i>
-                        <span>추천 <strong id="modalLikesText">0</strong></span>
-                    </button>
-                </div>
-
-                <div id="modalKakaoUrlText" class="space-y-2 pt-1">
-                    <!-- Dynamic contacts -->
-                </div>
-
-                <div class="bg-slate-100 p-2.5 rounded-xl border border-slate-200 text-[10px] text-slate-500 leading-relaxed space-y-0.5">
-                    <p class="font-extrabold text-slate-700 flex items-center gap-1">
-                        <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-amber-600"></i>
-                        <span>안전 거래 & 플랫폼 면책 안내</span>
-                    </p>
-                    <p class="text-slate-500 font-medium">
-                        창고의민족은 매칭 정보만을 제공하며 당사자 간 거래에 책임을 지지 않습니다.
-                    </p>
-                </div>
+                <h4 id="modalTitle" class="font-bold text-gray-900 text-base"></h4>
+                <div id="modalFullDesc" class="text-xs text-gray-800 bg-gray-50 p-3 rounded-xl whitespace-pre-line"></div>
+                <div id="modalKakaoUrlText" class="space-y-2 pt-1"></div>
             </div>
         </div>
     </div>
 
-    <!-- Admin Dashboard Modal -->
+    <!-- Admin Modal -->
     <div id="adminModal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop p-3 hidden">
         <div id="adminModalCard" class="bg-white w-full max-w-[420px] rounded-3xl p-4 space-y-3 shadow-2xl max-h-[90vh] flex flex-col">
-            <div class="flex items-center justify-between border-b border-gray-100 pb-2.5 shrink-0">
-                <div class="flex items-center gap-2">
-                    <div class="w-7 h-7 bg-slate-900 text-amber-400 rounded-xl flex items-center justify-center font-black text-xs">
-                        🔑
-                    </div>
-                    <div>
-                        <h3 class="font-black text-gray-900 text-sm">어드민 대시보드</h3>
-                        <p class="text-[9px] text-gray-400">회원 DB & 게시글 관리</p>
-                    </div>
-                </div>
-                <button onclick="closeAdminModal()" class="text-gray-400 p-1">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
+            <div class="flex items-center justify-between border-b border-gray-100 pb-2.5">
+                <h3 class="font-black text-gray-900 text-sm">🔑 어드민 대시보드</h3>
+                <button onclick="closeAdminModal()" class="text-gray-400 p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-
-            <!-- Lock Screen -->
-            <div id="adminLockScreen" class="py-8 space-y-3 text-center max-w-xs mx-auto w-full">
-                <div class="w-10 h-10 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center mx-auto text-lg font-bold">
-                    🔒
-                </div>
-                <h4 id="adminLockTitle" class="font-extrabold text-gray-800 text-xs">관리자 인증이 필요합니다.</h4>
-                <input id="adminPasswordInput" type="password" placeholder="비밀번호 입력" class="w-full bg-gray-50 border border-gray-200 text-center text-xs font-bold rounded-xl p-2.5 focus:outline-none focus:border-baemin">
-                <button onclick="checkAdminPassword()" class="w-full bg-slate-900 text-white font-black text-xs py-2.5 rounded-xl touch-active">
-                    로그인
-                </button>
+            <div id="adminLockScreen" class="py-6 space-y-3 text-center">
+                <input id="adminPasswordInput" type="password" placeholder="비밀번호 입력" class="w-full bg-gray-50 border border-gray-200 text-center text-xs font-bold rounded-xl p-2.5 focus:outline-none">
+                <button onclick="checkAdminPassword()" class="w-full bg-slate-900 text-white font-black text-xs py-2.5 rounded-xl">로그인</button>
             </div>
-
-            <!-- Main Admin Content -->
-            <div id="adminMainContent" class="hidden flex-1 overflow-hidden flex flex-col space-y-3">
-                <div class="grid grid-cols-3 gap-1.5 shrink-0">
-                    <div class="bg-baemin-light p-2 rounded-xl text-center border border-baemin/20">
-                        <p class="text-[9px] font-bold text-baemin-dark">가입 유저</p>
-                        <p id="adminStatUserCount" class="text-base font-black text-gray-900">0명</p>
-                    </div>
-                    <div class="bg-purple-50 p-2 rounded-xl text-center border border-purple-200">
-                        <p class="text-[9px] font-bold text-purple-700">등록 DB</p>
-                        <p id="adminStatPostCount" class="text-base font-black text-gray-900">0개</p>
-                    </div>
-                    <div class="bg-amber-50 p-2 rounded-xl text-center border border-amber-200">
-                        <p class="text-[9px] font-bold text-amber-800">누적 조회</p>
-                        <p id="adminStatMatchCount" class="text-base font-black text-gray-900">0회</p>
-                    </div>
-                </div>
-
-                <div class="flex border-b border-gray-100 gap-2 text-xs font-bold shrink-0">
-                    <button id="adminTabUserBtn" onclick="switchAdminTab('users')" class="pb-1.5 border-b-2 border-baemin text-baemin font-black text-[11px]">
-                        가입자 DB
-                    </button>
-                    <button id="adminTabPostBtn" onclick="switchAdminTab('posts')" class="pb-1.5 border-b-2 border-transparent text-gray-400 text-[11px]">
-                        게시글 관리
-                    </button>
-                    <button id="adminTabSettingsBtn" onclick="switchAdminTab('settings')" class="pb-1.5 border-b-2 border-transparent text-gray-400 text-[11px]">
-                        ⚙️ 비번 변경
-                    </button>
-                </div>
-
-                <div id="adminSectionUsers" class="flex-1 overflow-y-auto space-y-2 hide-scrollbar">
-                    <div class="flex items-center justify-between pt-1">
-                        <p class="text-[11px] font-extrabold text-gray-700">📋 가입 유저 명단</p>
-                        <button onclick="downloadUserCSV()" class="bg-emerald-600 text-white text-[10px] font-black px-2.5 py-1 rounded-lg touch-active">
-                            📥 엑셀 다운로드
-                        </button>
-                    </div>
-                    <div class="border border-gray-200 rounded-xl overflow-hidden">
-                        <table class="w-full text-left text-[11px]">
-                            <thead class="bg-gray-100 text-gray-500 font-bold border-b border-gray-200">
-                                <tr>
-                                    <th class="p-2">구분</th>
-                                    <th class="p-2">이름</th>
-                                    <th class="p-2">연락처</th>
-                                    <th class="p-2 text-right">상태</th>
-                                </tr>
-                            </thead>
-                            <tbody id="adminUserTableBody" class="divide-y divide-gray-100 text-gray-800">
-                                <!-- Dynamic -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div id="adminSectionPosts" class="hidden flex-1 overflow-y-auto space-y-1.5 hide-scrollbar">
-                    <div class="flex items-center justify-between pb-1">
-                        <span class="text-[11px] font-bold text-gray-500">실시간 매칭 DB 목록</span>
-                        <button onclick="clearAllPostsAdmin()" class="bg-rose-600 text-white text-[10px] font-black px-2 py-1 rounded-lg touch-active">
-                            ⚠️ 전체 삭제
-                        </button>
-                    </div>
-                    <div id="adminPostListContainer" class="space-y-1.5">
-                        <!-- Dynamic -->
-                    </div>
-                </div>
-
-                <div id="adminSectionSettings" class="hidden flex-1 overflow-y-auto space-y-3 hide-scrollbar pt-1">
-                    <form onsubmit="handlePasswordChangeSubmit(event)" class="space-y-2 bg-slate-50 p-3 rounded-2xl border border-slate-200">
-                        <h4 class="text-xs font-black text-slate-800">🔐 관리자 비밀번호 변경</h4>
-                        <input id="adminCurrentPwdInput" type="password" required placeholder="현재 암호 입력" class="w-full bg-white border border-gray-200 text-xs rounded-xl p-2 focus:outline-none">
-                        <input id="adminNewPwdInput" type="password" required placeholder="새 암호 입력" class="w-full bg-white border border-gray-200 text-xs rounded-xl p-2 focus:outline-none">
-                        <input id="adminNewPwdConfirmInput" type="password" required placeholder="새 암호 재입력" class="w-full bg-white border border-gray-200 text-xs rounded-xl p-2 focus:outline-none">
-                        <button type="submit" class="w-full bg-slate-900 text-white font-black text-xs py-2 rounded-xl touch-active">
-                            저장하기
-                        </button>
-                    </form>
-                </div>
+            <div id="adminMainContent" class="hidden space-y-2 text-xs">
+                <p>대시보드 인증이 완료되었습니다.</p>
             </div>
         </div>
     </div>
 
-    <!-- Toast Notification -->
-    <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-gray-900/90 text-white text-xs font-bold px-4 py-2 rounded-full shadow-2xl transition duration-300 opacity-0 pointer-events-none flex items-center gap-1.5 border border-white/10">
+    <!-- Toast -->
+    <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-gray-900/90 text-white text-xs font-bold px-4 py-2 rounded-full shadow-2xl transition duration-300 opacity-0 pointer-events-none flex items-center gap-1.5">
         <i data-lucide="info" class="w-3.5 h-3.5 text-baemin"></i>
         <span id="toastMsg">메시지</span>
     </div>
@@ -825,7 +565,6 @@
         let currentRoleFilter = 'warehouse';
         let currentUser = null;
         let activeDetailPostId = null;
-        let pendingAction = null;
         let isAdminUnlocked = false;
         let adminPassword = 'admin';
         let userDatabase = [];
@@ -835,28 +574,9 @@
         let splashInterval = null;
         let realtimeChannel = null;
 
-        // Sample Backup Data
-        const samplePosts = [
-            {
-                id: '101',
-                role: 'warehouse',
-                area: '경기 북부',
-                category: '의류/잡화',
-                title: '[의정부] S/S 여성 의류 덤핑재고 보유 (라이브 방송 공급)',
-                summary: '이월 덤핑재고 약 3,000벌 보유 중. 방송 진행자 수수료 30% 조건!',
-                desc: '의정부 소재 의류 물류창고입니다. S/S 컬렉션 이월 재고 파격 공급 가능합니다. 샘플 무료 지원하며 라이브커머스 셀럽분들 우대합니다.',
-                writerInfo: '의정부물류 대표',
-                kakaoUrl: 'https://open.kakao.com',
-                phone: '010-1234-5678',
-                timeAgo: '방금 전',
-                views: 24,
-                likes: 5
-            }
-        ];
-
-        // Supabase Endpoint Configuration
         const SUPABASE_URL = "https://faodjxlwoxlupgyptdqy.supabase.co";
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhb2RqeGx3b3hsdXBneXB0ZHF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3Mjg1MjEsImV4cCI6MjEwMDMwNDUyMX0.IZST34d8QcDo8fLJtmYIfhWROkP24aQG-KsDSRt-diM";
+        // ⭕ Updated Publishable Key
+        const SUPABASE_ANON_KEY = "sb_publishable_34MMUjfGZotegjHeGQEWXg__6LmjTaf";
 
         let supabaseClient = null;
         try {
@@ -870,30 +590,52 @@
             console.warn('Supabase Client Init Warning:', e);
         }
 
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            if (!toast || !toastMsg) return;
+            toastMsg.innerText = msg;
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            toast.classList.add('opacity-100');
+            setTimeout(() => {
+                toast.classList.remove('opacity-100');
+                toast.classList.add('opacity-0', 'pointer-events-none');
+            }, 2500);
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
         function startSplashAnimation() {
             const progressBar = document.getElementById('splashProgressBar');
             const percentText = document.getElementById('splashPercent');
             const splashMsg = document.getElementById('splashMsg');
-            const splashScreen = document.getElementById('splashScreen');
 
             if (splashInterval) clearInterval(splashInterval);
             splashProgress = 0;
 
             splashInterval = setInterval(() => {
-                splashProgress += 5;
+                splashProgress += 10;
                 if (splashProgress > 100) splashProgress = 100;
 
                 if (progressBar) progressBar.style.width = splashProgress + '%';
                 if (percentText) percentText.innerText = `(${splashProgress}%)`;
 
-                if (splashProgress === 40 && splashMsg) splashMsg.innerText = '실시간 매칭 DB 연결 중...';
-                if (splashProgress === 80 && splashMsg) splashMsg.innerText = '최신 데이터 동기화 완료!';
+                if (splashProgress === 50 && splashMsg) splashMsg.innerText = '실시간 매칭 DB 연결 중...';
+                if (splashProgress === 100 && splashMsg) splashMsg.innerText = '최신 데이터 동기화 완료!';
 
                 if (splashProgress >= 100) {
                     clearInterval(splashInterval);
                     hideSplashScreen();
                 }
-            }, 20);
+            }, 30);
         }
 
         function hideSplashScreen() {
@@ -923,39 +665,100 @@
             }
         }
 
-        function mapPostToPrimaryDbRow(p) {
-            return {
-                role: p.role,
-                region: p.area,
-                category: p.category,
-                title: p.title,
-                summary: p.summary,
-                description: p.desc,
-                writer_name: p.writerInfo,
-                contact_kakao: p.kakaoUrl,
-                kakao_id: p.kakaoId,
-                contact_phone: p.phone,
-                contact_email: p.email,
-                wechat: p.wechat,
-                other_contact: p.otherContact,
-                views: p.views || 0,
-                likes: p.likes || 0
-            };
+        function updateDbStatusUI(state, text) {
+            const badge = document.getElementById('dbStatusBadge');
+            const dot = document.getElementById('dbStatusDot');
+            const statusText = document.getElementById('dbSyncStatusText');
+            if (!badge || !dot || !statusText) return;
+
+            if (state === 'online') {
+                badge.className = "bg-emerald-500 hover:bg-emerald-600 text-white text-[7.5px] font-black px-1 py-0.5 rounded-full shadow-2xs whitespace-nowrap shrink-0 cursor-pointer flex items-center gap-0.5 touch-active";
+                dot.innerText = '🟢';
+            } else if (state === 'syncing') {
+                badge.className = "bg-amber-500 hover:bg-amber-600 text-white text-[7.5px] font-black px-1 py-0.5 rounded-full shadow-2xs whitespace-nowrap shrink-0 cursor-pointer flex items-center gap-0.5 touch-active";
+                dot.innerText = '🟡';
+            } else {
+                badge.className = "bg-rose-500 hover:bg-rose-600 text-white text-[7.5px] font-black px-1 py-0.5 rounded-full shadow-2xs whitespace-nowrap shrink-0 cursor-pointer flex items-center gap-0.5 touch-active";
+                dot.innerText = '🔴';
+            }
+            statusText.innerText = text;
         }
 
-        function mapPostToFallbackDbRow(p) {
-            return {
-                role: p.role,
-                area: p.area,
-                category: p.category,
-                title: p.title,
-                summary: p.summary,
-                desc: p.desc,
-                writer_info: p.writerInfo,
-                kakao_url: p.kakaoUrl,
-                phone: p.phone,
-                email: p.email
-            };
+        async function checkDbConnectionDiagnostics() {
+            if (!supabaseClient) {
+                showToast('❌ Supabase 클라이언트가 초기화되지 않았습니다.');
+                return;
+            }
+            showToast('🔍 DB 실시간 연결 상태 진단 중...');
+            try {
+                const { data, error } = await supabaseClient.from('posts').select('id').limit(1);
+                if (error) {
+                    console.error('DB Diagnostics Error:', error);
+                    updateDbStatusUI('error', 'DB 오류');
+                    showToast(`⚠️ DB 연결 오류: ${error.message || '인증/권한 확인 필요'}`);
+                } else {
+                    updateDbStatusUI('online', '실시간 연결');
+                    showToast('✅ Supabase 중앙 DB와 정상적으로 연결되어 있습니다!');
+                    syncFromCentralDB(true);
+                }
+            } catch(err) {
+                updateDbStatusUI('error', '연결 실패');
+                showToast('❌ 서버 연결 실패. 인터넷 상태를 확인해 주세요.');
+            }
+        }
+
+        async function syncFromCentralDB(isManual = false) {
+            if (!supabaseClient || isSyncing) return;
+            isSyncing = true;
+            updateDbStatusUI('syncing', '동기화중');
+
+            try {
+                let response = await supabaseClient
+                    .from('posts')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (response.error) {
+                    response = await supabaseClient.from('posts').select('*');
+                }
+
+                if (!response.error && response.data) {
+                    updateDbStatusUI('online', '실시간 연결');
+                    const dbPosts = response.data.map(row => ({
+                        id: String(row.id || Date.now()),
+                        role: (row.role && String(row.role).trim()) ? String(row.role).trim() : 'warehouse',
+                        area: row.region || row.area || '전체',
+                        category: row.category || '기타',
+                        title: row.title || '제안글',
+                        summary: row.summary || '',
+                        desc: row.description || row.desc || row.summary || '',
+                        writerInfo: row.writer_name || row.writer_info || '회원',
+                        kakaoUrl: row.contact_kakao || row.kakao_url || '',
+                        kakaoId: row.kakao_id || '',
+                        phone: row.contact_phone || row.phone || '',
+                        email: row.contact_email || row.email || '',
+                        wechat: row.wechat || '',
+                        otherContact: row.other_contact || '',
+                        timeAgo: row.created_at ? formatTimeAgo(row.created_at) : '최신',
+                        views: row.views || 0,
+                        likes: row.likes || 0
+                    }));
+
+                    posts = dbPosts;
+                    applyFilters();
+
+                    if (isManual) {
+                        showToast('🔄 최신 매칭 DB 동기화 완료!');
+                    }
+                } else {
+                    updateDbStatusUI('error', 'DB 수신 오류');
+                }
+            } catch(e) {
+                console.warn('Sync failed:', e);
+                updateDbStatusUI('error', '연결 실패');
+            } finally {
+                isSyncing = false;
+            }
         }
 
         function setRoleFilter(role) {
@@ -992,8 +795,7 @@
                     const matchTitle = (p.title || '').toLowerCase().includes(searchVal);
                     const matchSummary = (p.summary || '').toLowerCase().includes(searchVal);
                     const matchDesc = (p.desc || '').toLowerCase().includes(searchVal);
-                    const matchWriter = (p.writerInfo || '').toLowerCase().includes(searchVal);
-                    if (!matchTitle && !matchSummary && !matchDesc && !matchWriter) return false;
+                    if (!matchTitle && !matchSummary && !matchDesc) return false;
                 }
                 return true;
             });
@@ -1010,7 +812,6 @@
                     <div class="bg-white p-8 rounded-2xl border border-gray-100 text-center space-y-2">
                         <p class="text-2xl">📦</p>
                         <p class="text-xs font-black text-gray-700">조건에 일치하는 매칭 제안이 없습니다.</p>
-                        <p class="text-[10.5px] text-gray-400">직접 제안글을 등록하거나 검색 필터를 변경해 보세요!</p>
                     </div>
                 `;
                 return;
@@ -1019,23 +820,18 @@
             container.innerHTML = items.map(p => `
                 <div onclick="openKakaoModal('${p.id}')" class="bg-white p-3.5 rounded-2xl border border-gray-100 shadow-xs hover:border-baemin/40 transition cursor-pointer touch-active space-y-2">
                     <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-1.5">
-                            <span class="bg-baemin-light text-baemin-dark text-[9.5px] font-black px-2 py-0.5 rounded-md border border-baemin/20">
-                                ${escapeHtml(p.area)} · ${escapeHtml(p.category)}
-                            </span>
-                            <span class="text-[9.5px] text-gray-400 font-medium">${escapeHtml(p.timeAgo)}</span>
-                        </div>
-                        <span class="text-[10px] text-gray-400 font-bold">👁️ ${p.views || 0}</span>
+                        <span class="bg-baemin-light text-baemin-dark text-[9.5px] font-black px-2 py-0.5 rounded-md border border-baemin/20">
+                            ${escapeHtml(p.area)} · ${escapeHtml(p.category)}
+                        </span>
+                        <span class="text-[9.5px] text-gray-400 font-medium">${escapeHtml(p.timeAgo)}</span>
                     </div>
-
                     <div>
                         <h3 class="font-extrabold text-xs text-gray-900 leading-snug line-clamp-1">${escapeHtml(p.title)}</h3>
                         <p class="text-[11px] text-gray-600 mt-1 line-clamp-2 leading-relaxed">${escapeHtml(p.summary || p.desc)}</p>
                     </div>
-
                     <div class="flex items-center justify-between pt-1 border-t border-gray-50 text-[10px] text-gray-500 font-semibold">
-                        <span class="truncate max-w-[180px]">👤 ${escapeHtml(p.writerInfo || '익명')}</span>
-                        <span class="text-baemin-dark font-black flex items-center gap-0.5">상세보기 & 연락처 ➔</span>
+                        <span>👤 ${escapeHtml(p.writerInfo || '익명')}</span>
+                        <span class="text-baemin-dark font-black">상세보기 & 연락처 ➔</span>
                     </div>
                 </div>
             `).join('');
@@ -1046,492 +842,116 @@
         function switchTab(tab) {
             const secFeed = document.getElementById('tabFeed');
             const secReg = document.getElementById('tabRegister');
-            const btnFeed = document.getElementById('navFeedBtn');
-            const btnReg = document.getElementById('navRegisterBtn');
-
             if (tab === 'feed') {
                 if (secFeed) secFeed.classList.remove('hidden');
                 if (secReg) secReg.classList.add('hidden');
-                if (btnFeed) btnFeed.className = "flex flex-col items-center gap-1 text-baemin transition touch-active font-extrabold";
-                if (btnReg) btnReg.className = "flex flex-col items-center gap-1 text-gray-400 transition touch-active font-bold";
             } else {
-                if (!currentUser) {
-                    showAuthModal('매칭 DB 등록을 위해 간편가입이 필요합니다.', () => switchTab('register'));
-                    return;
-                }
                 if (secReg) secReg.classList.remove('hidden');
                 if (secFeed) secFeed.classList.add('hidden');
-                if (btnReg) btnReg.className = "flex flex-col items-center gap-1 text-baemin transition touch-active font-extrabold";
-                if (btnFeed) btnFeed.className = "flex flex-col items-center gap-1 text-gray-400 transition touch-active font-bold";
             }
         }
 
         function selectFormRole(role) {
             const btnWh = document.getElementById('formRoleWhBtn');
             const btnCeleb = document.getElementById('formRoleCelebBtn');
-            const radioWh = document.querySelector('input[name="formRole"][value="warehouse"]');
-            const radioCeleb = document.querySelector('input[name="formRole"][value="celeb"]');
-
             if (role === 'warehouse') {
-                if (radioWh) radioWh.checked = true;
                 if (btnWh) btnWh.className = "border border-emerald-500 bg-emerald-50 p-2.5 rounded-xl flex items-center justify-center gap-1.5 text-xs font-black text-emerald-900 touch-active";
                 if (btnCeleb) btnCeleb.className = "border border-gray-200 p-2.5 rounded-xl flex items-center justify-center gap-1.5 text-xs font-bold text-gray-600 touch-active";
             } else {
-                if (radioCeleb) radioCeleb.checked = true;
                 if (btnCeleb) btnCeleb.className = "border border-purple-500 bg-purple-50 p-2.5 rounded-xl flex items-center justify-center gap-1.5 text-xs font-black text-purple-900 touch-active";
                 if (btnWh) btnWh.className = "border border-gray-200 p-2.5 rounded-xl flex items-center justify-center gap-1.5 text-xs font-bold text-gray-600 touch-active";
             }
         }
 
-        function updateFormRoleUI() {
-            selectFormRole('warehouse');
-        }
-
-        function handleFormSubmit(event) {
+        async function handleFormSubmit(event) {
             event.preventDefault();
-            processPostSubmit();
-        }
+            const area = document.getElementById('formArea').value;
+            const category = document.getElementById('formCategory').value;
+            const title = document.getElementById('formTitle').value.trim();
+            const summary = document.getElementById('formSummary').value.trim();
+            const desc = document.getElementById('formDesc').value.trim();
 
-        function openAppGuide() {
-            const modal = document.getElementById('appInstallModal');
-            const card = document.getElementById('appInstallModalCard');
-            if (modal && card) {
-                modal.classList.remove('hidden');
-                setTimeout(() => {
-                    card.classList.remove('bottom-sheet-enter');
-                    card.classList.add('bottom-sheet-active');
-                }, 10);
+            if (!area || !category || !title || !summary || !desc) {
+                showToast('필수 항목을 모두 입력해 주세요.');
+                return;
             }
-            if (window.lucide && lucide.createIcons) lucide.createIcons();
-        }
 
-        function closeAppGuide() {
-            const modal = document.getElementById('appInstallModal');
-            const card = document.getElementById('appInstallModalCard');
-            if (card) {
-                card.classList.remove('bottom-sheet-active');
-                card.classList.add('bottom-sheet-enter');
-            }
-            setTimeout(() => { if (modal) modal.classList.add('hidden'); }, 250);
-        }
+            const newPost = {
+                role: 'warehouse',
+                region: area,
+                category: category,
+                title: title,
+                summary: summary,
+                description: desc,
+                writer_name: '사용자',
+                contact_phone: document.getElementById('formPhone').value.trim()
+            };
 
-        function switchGuideTab(os) {
-            const secAndroid = document.getElementById('guideSectionAndroid');
-            const secIos = document.getElementById('guideSectionIos');
-            const btnAndroid = document.getElementById('guideTabAndroid');
-            const btnIos = document.getElementById('guideTabIos');
-
-            if (os === 'android') {
-                if (secAndroid) secAndroid.classList.remove('hidden');
-                if (secIos) secIos.classList.add('hidden');
-                if (btnAndroid) btnAndroid.className = "flex-1 py-2 rounded-lg bg-white text-gray-900 shadow-xs text-xs font-black transition flex items-center justify-center gap-1";
-                if (btnIos) btnIos.className = "flex-1 py-2 rounded-lg text-gray-500 text-xs font-bold transition flex items-center justify-center gap-1";
-            } else {
-                if (secIos) secIos.classList.remove('hidden');
-                if (secAndroid) secAndroid.classList.add('hidden');
-                if (btnIos) btnIos.className = "flex-1 py-2 rounded-lg bg-white text-gray-900 shadow-xs text-xs font-black transition flex items-center justify-center gap-1";
-                if (btnAndroid) btnAndroid.className = "flex-1 py-2 rounded-lg text-gray-500 text-xs font-bold transition flex items-center justify-center gap-1";
+            if (supabaseClient) {
+                const { error } = await supabaseClient.from('posts').insert([newPost]);
+                if (!error) {
+                    showToast('🎉 매칭 DB가 성공적으로 등록되었습니다!');
+                    document.getElementById('postForm').reset();
+                    switchTab('feed');
+                    syncFromCentralDB(true);
+                } else {
+                    showToast(`⚠️ 등록 오류: ${error.message}`);
+                }
             }
         }
 
-        function requestNotificationPermission() {
-            if ('Notification' in window) {
-                Notification.requestPermission().then(permission => {
-                    if (permission === 'granted') {
-                        showToast('🔔 푸시 알림 수신 동의가 완료되었습니다!');
-                    } else {
-                        showToast('⚠️ 알림 권한이 거부되어 있습니다. 브라우저 설정에서 허용해 주세요.');
-                    }
-                });
-            } else {
-                showToast('📱 알림 기능을 지원하는 브라우저입니다.');
-            }
+        function openKakaoModal(id) {
+            const p = posts.find(item => item.id === id);
+            if (!p) return;
+            document.getElementById('modalTitle').innerText = p.title;
+            document.getElementById('modalFullDesc').innerText = p.desc || p.summary;
+            document.getElementById('modalKakaoUrlText').innerHTML = `
+                ${p.phone ? `<p class="text-xs">📞 전화번호: <strong>${escapeHtml(p.phone)}</strong></p>` : ''}
+                ${p.kakaoUrl ? `<a href="${escapeHtml(p.kakaoUrl)}" target="_blank" class="block text-xs text-blue-600 font-bold underline">💬 카카오톡 오픈채팅 열기</a>` : ''}
+            `;
+            document.getElementById('kakaoModal').classList.remove('hidden');
+        }
+
+        function closeKakaoModal() {
+            document.getElementById('kakaoModal').classList.add('hidden');
         }
 
         function openInquiryModal() {
-            const modal = document.getElementById('inquiryModal');
-            const card = document.getElementById('inquiryModalCard');
-            renderInquiries();
-            if (modal && card) {
-                modal.classList.remove('hidden');
-                setTimeout(() => {
-                    card.classList.remove('bottom-sheet-enter');
-                    card.classList.add('bottom-sheet-active');
-                }, 10);
-            }
-            if (window.lucide && lucide.createIcons) lucide.createIcons();
+            document.getElementById('inquiryModal').classList.remove('hidden');
         }
-
         function closeInquiryModal() {
-            const modal = document.getElementById('inquiryModal');
-            const card = document.getElementById('inquiryModalCard');
-            if (card) {
-                card.classList.remove('bottom-sheet-active');
-                card.classList.add('bottom-sheet-enter');
-            }
-            setTimeout(() => { if (modal) modal.classList.add('hidden'); }, 250);
+            document.getElementById('inquiryModal').classList.add('hidden');
         }
-
-        function handleInquirySubmit(event) {
-            event.preventDefault();
-            const titleEl = document.getElementById('inquiryTitle');
-            const contentEl = document.getElementById('inquiryContent');
-
-            if (!titleEl || !contentEl) return;
-            const title = titleEl.value.trim();
-            const content = contentEl.value.trim();
-
-            if (!title || !content) {
-                showToast('제목과 내용을 모두 입력해 주세요.');
-                return;
-            }
-
-            inquiries.unshift({
-                id: String(Date.now()),
-                title,
-                content,
-                writer: currentUser ? currentUser.name : '비회원',
-                date: new Date().toISOString().slice(0, 10),
-                status: '답변대기'
-            });
-
-            saveInquiries();
-            titleEl.value = '';
-            contentEl.value = '';
-            renderInquiries();
-            showToast('🔒 비밀 문의가 등록되었습니다.');
+        function openAppGuide() {
+            document.getElementById('appInstallModal').classList.remove('hidden');
         }
-
-        function renderInquiries() {
-            const container = document.getElementById('inquiryListContainer');
-            if (!container) return;
-
-            if (inquiries.length === 0) {
-                container.innerHTML = `<p class="text-xs text-gray-400 py-2 text-center">등록된 문의 내역이 없습니다.</p>`;
-                return;
-            }
-
-            container.innerHTML = inquiries.map(iq => `
-                <div class="bg-gray-50 p-2.5 rounded-xl border border-gray-200 text-xs space-y-1">
-                    <div class="flex items-center justify-between">
-                        <span class="font-extrabold text-gray-900 text-[11px]">${escapeHtml(iq.title)}</span>
-                        <span class="bg-amber-100 text-amber-800 text-[9px] font-bold px-1.5 py-0.5 rounded">${iq.status || '답변대기'}</span>
-                    </div>
-                    <p class="text-[10.5px] text-gray-600 leading-relaxed">${escapeHtml(iq.content)}</p>
-                    <p class="text-[9px] text-gray-400">${escapeHtml(iq.writer)} · ${iq.date}</p>
-                </div>
-            `).join('');
+        function closeAppGuide() {
+            document.getElementById('appInstallModal').classList.add('hidden');
         }
-
-        async function checkDbConnectionDiagnostics() {
-            if (!supabaseClient) {
-                showToast('❌ Supabase 클라이언트가 초기화되지 않았습니다.');
-                return;
-            }
-            showToast('🔍 DB 실시간 연결 상태 진단 중...');
-            try {
-                const { data, error } = await supabaseClient.from('posts').select('id').limit(1);
-                if (error) {
-                    console.error('DB Diagnostics Error:', error);
-                    updateDbStatusUI('error', 'DB 오류');
-                    showToast(`⚠️ DB 연결 오류: ${error.message || '인증/권한 확인 필요'}`);
-                } else {
-                    updateDbStatusUI('online', '실시간 연결');
-                    showToast('✅ Supabase 중앙 DB와 정상적으로 연결되어 있습니다!');
-                    syncFromCentralDB(true);
-                }
-            } catch(err) {
-                updateDbStatusUI('error', '연결 실패');
-                showToast('❌ 서버 연결 실패. 인터넷 상태를 확인해 주세요.');
-            }
+        function openAdminModal() {
+            document.getElementById('adminModal').classList.remove('hidden');
         }
-
-        function updateDbStatusUI(state, text) {
-            const badge = document.getElementById('dbStatusBadge');
-            const dot = document.getElementById('dbStatusDot');
-            const statusText = document.getElementById('dbSyncStatusText');
-            if (!badge || !dot || !statusText) return;
-
-            if (state === 'online') {
-                badge.className = "bg-emerald-500 hover:bg-emerald-600 text-white text-[7.5px] font-black px-1 py-0.5 rounded-full shadow-2xs whitespace-nowrap shrink-0 cursor-pointer flex items-center gap-0.5 touch-active";
-                dot.innerText = '🟢';
-            } else if (state === 'syncing') {
-                badge.className = "bg-amber-500 hover:bg-amber-600 text-white text-[7.5px] font-black px-1 py-0.5 rounded-full shadow-2xs whitespace-nowrap shrink-0 cursor-pointer flex items-center gap-0.5 touch-active";
-                dot.innerText = '🟡';
+        function closeAdminModal() {
+            document.getElementById('adminModal').classList.add('hidden');
+        }
+        function checkAdminPassword() {
+            const pwd = document.getElementById('adminPasswordInput').value;
+            if (pwd === adminPassword) {
+                document.getElementById('adminLockScreen').classList.add('hidden');
+                document.getElementById('adminMainContent').classList.remove('hidden');
             } else {
-                badge.className = "bg-rose-500 hover:bg-rose-600 text-white text-[7.5px] font-black px-1 py-0.5 rounded-full shadow-2xs whitespace-nowrap shrink-0 cursor-pointer flex items-center gap-0.5 touch-active";
-                dot.innerText = '🔴';
+                showToast('비밀번호가 일치하지 않습니다.');
             }
-            statusText.innerText = text;
-        }
-
-        async function processPostSubmit() {
-            try {
-                if (!currentUser) return;
-
-                const bannedStatus = isUserBanned(currentUser.phone);
-                if (bannedStatus === '정지' || bannedStatus === '일시정지' || bannedStatus === '영구정지') {
-                    showToast(`⚠️ [${bannedStatus}] 상태에서는 글을 작성할 수 없습니다.`);
-                    return;
-                }
-
-                const roleRadio = document.querySelector('input[name="formRole"]:checked');
-                const role = roleRadio ? roleRadio.value : 'warehouse';
-
-                const area = document.getElementById('formArea').value;
-                const category = document.getElementById('formCategory').value;
-                const title = document.getElementById('formTitle').value.trim();
-                const summary = document.getElementById('formSummary').value.trim();
-                const desc = document.getElementById('formDesc').value.trim();
-                
-                let writerInfo = document.getElementById('formWriter').value.trim();
-                if (!writerInfo && currentUser && currentUser.name) {
-                    writerInfo = currentUser.name;
-                }
-                
-                const kakaoUrl = document.getElementById('formKakaoUrl').value.trim();
-                const kakaoId = document.getElementById('formKakaoId').value.trim();
-                let phone = document.getElementById('formPhone').value.trim();
-                const email = document.getElementById('formEmail').value.trim();
-                const wechat = document.getElementById('formWechat').value.trim();
-                const otherContact = document.getElementById('formOtherContact').value.trim();
-
-                if (!kakaoUrl && !kakaoId && !phone && !email && !wechat && !otherContact) {
-                    if (currentUser && currentUser.phone) {
-                        phone = currentUser.phone;
-                    }
-                }
-
-                if (!area || !category || !title || !summary || !desc) {
-                    showToast('필수 항목을 모두 입력해주세요.');
-                    return;
-                }
-
-                if (!kakaoUrl && !kakaoId && !phone && !email && !wechat && !otherContact) {
-                    showToast('최소 1개 이상의 연락처를 입력해주세요.');
-                    return;
-                }
-
-                const newPost = {
-                    id: String(Date.now()),
-                    role: role,
-                    area: area,
-                    category: category,
-                    title: title,
-                    summary: summary,
-                    desc: desc,
-                    writerInfo: writerInfo || `${currentUser.name}`,
-                    kakaoUrl: kakaoUrl,
-                    kakaoId: kakaoId,
-                    phone: phone,
-                    email: email,
-                    wechat: wechat,
-                    otherContact: otherContact,
-                    timeAgo: '방금 전',
-                    views: 0,
-                    likes: 0
-                };
-
-                posts.unshift(newPost);
-                savePostsToStorage();
-
-                let dbInsertSuccess = false;
-                if (supabaseClient) {
-                    try {
-                        let primaryRow = mapPostToPrimaryDbRow(newPost);
-                        let { data, error } = await supabaseClient.from('posts').insert([primaryRow]).select();
-                        
-                        if (error) {
-                            console.warn('Primary DB Insert Schema warning:', error);
-                            let fallbackRow = mapPostToFallbackDbRow(newPost);
-                            let fallbackRes = await supabaseClient.from('posts').insert([fallbackRow]).select();
-                            
-                            if (!fallbackRes.error) {
-                                dbInsertSuccess = true;
-                            } else {
-                                console.error('Fallback DB Insert Error:', fallbackRes.error);
-                            }
-                        } else {
-                            dbInsertSuccess = true;
-                        }
-                    } catch(e) {
-                        console.error('Supabase Insert Exception:', e);
-                    }
-                }
-
-                const formEl = document.getElementById('postForm');
-                if (formEl) formEl.reset();
-
-                const regionSelect = document.getElementById('regionSelect');
-                const categorySelect = document.getElementById('categorySelect');
-                const searchInput = document.getElementById('searchInput');
-
-                if (regionSelect) regionSelect.value = 'all';
-                if (categorySelect) categorySelect.value = 'all';
-                if (searchInput) searchInput.value = '';
-
-                setRoleFilter(role);
-                switchTab('feed');
-
-                const scrollable = document.getElementById('scrollableArea');
-                if (scrollable) scrollable.scrollTop = 0;
-
-                if (dbInsertSuccess) {
-                    showToast('🎉 매칭 DB가 서버에 성공적으로 등록되었습니다!');
-                } else {
-                    showToast('⚠️ 서버 DB 전송에 일부 제한이 있어 로컬 저장소에 보관되었습니다.');
-                }
-                
-                setTimeout(() => syncFromCentralDB(false), 200);
-            } catch(err) {
-                console.error('Post submit error:', err);
-                showToast('글 등록 중 오류가 발생했습니다. 다시 시도해주세요.');
-            }
-        }
-
-        async function syncFromCentralDB(isManual = false) {
-            if (!supabaseClient || isSyncing) return;
-            isSyncing = true;
-            updateDbStatusUI('syncing', '동기화중');
-
-            try {
-                let response = await supabaseClient
-                    .from('posts')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-
-                if (response.error) {
-                    response = await supabaseClient.from('posts').select('*');
-                }
-
-                if (!response.error && response.data) {
-                    updateDbStatusUI('online', '실시간 연결');
-                    const dbPosts = response.data.map(row => ({
-                        id: String(row.id || Date.now()),
-                        role: (row.role && String(row.role).trim()) ? String(row.role).trim() : 'warehouse',
-                        area: row.region || row.area || '전체',
-                        category: row.category || '기타',
-                        title: row.title || '제안글',
-                        summary: row.summary || '',
-                        desc: row.description || row.desc || row.summary || '',
-                        writerInfo: row.writer_name || row.writer_info || '회원',
-                        kakaoUrl: row.contact_kakao || row.kakao_url || '',
-                        kakaoId: row.kakao_id || (row.contact_kakao && !row.contact_kakao.includes('http') ? row.contact_kakao : ''),
-                        phone: row.contact_phone || row.phone || '',
-                        email: row.contact_email || row.email || '',
-                        wechat: row.wechat || '',
-                        otherContact: row.other_contact || row.contact_other || '',
-                        timeAgo: row.created_at ? formatTimeAgo(row.created_at) : '최신',
-                        views: row.views || 0,
-                        likes: row.likes || 0
-                    }));
-                    
-                    const previousCount = posts.length;
-                    const mergedMap = new Map();
-                    dbPosts.forEach(p => mergedMap.set(String(p.id), p));
-                    
-                    posts.forEach(p => {
-                        if (!mergedMap.has(String(p.id))) {
-                            const duplicate = dbPosts.find(dbP => dbP.title === p.title && dbP.writerInfo === p.writerInfo);
-                            if (!duplicate) {
-                                mergedMap.set(String(p.id), p);
-                            }
-                        }
-                    });
-
-                    posts = Array.from(mergedMap.values()).sort((a, b) => Number(b.id) - Number(a.id));
-
-                    savePostsToStorage();
-                    applyFilters();
-
-                    if (isManual) {
-                        showToast('🔄 최신 매칭 DB 동기화 완료!');
-                    } else if (previousCount > 0 && dbPosts.length > previousCount) {
-                        showToast(`🎉 새로운 매칭 제안이 등록되었습니다! (${dbPosts.length - previousCount}건)`);
-                    }
-                } else {
-                    updateDbStatusUI('error', 'DB 수신 오류');
-                }
-            } catch(e) {
-                console.warn('Sync failed:', e);
-                updateDbStatusUI('error', '연결 실패');
-            } finally {
-                isSyncing = false;
-            }
-        }
-
-        function initRealtimeSync() {
-            setInterval(() => {
-                syncFromCentralDB(false);
-            }, 4000);
-
-            if (supabaseClient) {
-                try {
-                    if (realtimeChannel) {
-                        supabaseClient.removeChannel(realtimeChannel);
-                    }
-                    realtimeChannel = supabaseClient
-                        .channel('public:posts_changes')
-                        .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, (payload) => {
-                            console.log('⚡ Realtime DB change received:', payload);
-                            syncFromCentralDB(false);
-                        })
-                        .subscribe((status) => {
-                            console.log('Realtime Channel Status:', status);
-                            if (status === 'SUBSCRIBED') {
-                                updateDbStatusUI('online', '실시간 연결');
-                            }
-                        });
-                } catch(e) {
-                    console.warn('Realtime Subscription warning:', e);
-                }
-            }
-
-            document.addEventListener('visibilitychange', () => {
-                if (document.visibilityState === 'visible') {
-                    syncFromCentralDB(false);
-                }
-            });
-            window.addEventListener('focus', () => {
-                syncFromCentralDB(false);
-            });
-        }
-
-        function initApp() {
-            try {
-                const savedUser = localStorage.getItem('baemin_matching_user');
-                if (savedUser) currentUser = JSON.parse(savedUser);
-            } catch(e) {}
-
-            loadSavedAdminPassword();
-            loadUserDatabase();
-            loadPostsFromStorage();
-            loadInquiries();
-
-            updateUserUI();
-            updateFormRoleUI();
-
-            if (window.lucide && lucide.createIcons) lucide.createIcons();
-
-            initKakaoSDK();
-            syncFromCentralDB();
-            initRealtimeSync();
-
-            applyFilters();
-
-            // Fail-safe: Force hide splash screen after 1.5 seconds regardless of network status
-            setTimeout(() => {
-                hideSplashScreen();
-            }, 1500);
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            initApp();
             startSplashAnimation();
-        });
-
-        window.addEventListener('load', function() {
-            hideSplashScreen();
+            syncFromCentralDB();
+            
+            // Fail-safe: Force hide splash after 1.5 seconds
+            setTimeout(() => {
+                hideSplashScreen();
+            }, 1500);
         });
     </script>
 </body>
